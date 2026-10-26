@@ -226,6 +226,53 @@ function autoSyncGit() {
   });
 }
 
+  // Admin: Generic Image Upload (Banner, Review Screenshot, Capture)
+  if (pathname === '/api/admin/upload-image' && req.method === 'POST') {
+    try {
+      const { filename, fileData, folder } = await readBody(req);
+      const subFolder = folder || 'uploads';
+      const safeName = Date.now() + '_' + (filename || 'image.png').replace(/[^a-zA-Z0-9._-]/g, '_');
+      const targetDir1 = path.join(__dirname, 'images', subFolder);
+      const targetDir2 = path.join(__dirname, 'public', 'images', subFolder);
+      if (!fs.existsSync(targetDir1)) fs.mkdirSync(targetDir1, { recursive: true });
+      if (!fs.existsSync(targetDir2)) fs.mkdirSync(targetDir2, { recursive: true });
+
+      if (fileData) {
+        const base64Content = fileData.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Content, 'base64');
+        fs.writeFileSync(path.join(targetDir1, safeName), buffer);
+        fs.writeFileSync(path.join(targetDir2, safeName), buffer);
+      }
+
+      autoSyncGit();
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, path: `./images/${subFolder}/${safeName}` }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // Admin: Generic Save JSON Data
+  if (pathname === '/api/admin/save-json' && req.method === 'POST') {
+    try {
+      const { filename, data } = await readBody(req);
+      const p1 = path.join(__dirname, filename);
+      const p2 = path.join(__dirname, 'public', filename);
+      fs.writeFileSync(p1, JSON.stringify(data, null, 2));
+      fs.writeFileSync(p2, JSON.stringify(data, null, 2));
+      autoSyncGit();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true }));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
   // Admin: Add Gallery Capture (Drag & drop base64 image file)
   if (pathname === '/api/admin/gallery/add' && req.method === 'POST') {
     try {

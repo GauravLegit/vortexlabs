@@ -1,31 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#09090b] text-zinc-200 antialiased">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>VortexLabs Admin Dashboard</title>
-  
-  <!-- Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VortexLabs | Admin Panel</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Inter & JetBrains Mono Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
-          colors: {
-            brand: '#10b981',
-            dark: {
-              900: '#121214',
-              950: '#09090b',
-              border: '#27272a'
-            }
-          },
           fontFamily: {
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace']
           }
         }
@@ -37,40 +31,36 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    body {
-      -webkit-tap-highlight-color: transparent;
-      background-color: #09090b;
-      color: #e4e4e7;
-    }
+    /* Ultra-clean scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #09090b; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-    .dropzone-active {
-      border-color: #10b981 !important;
-      background-color: #18181b !important;
-    }
+    .aspect-video-card { aspect-ratio: 16 / 9; }
   </style>
 </head>
-<body class="min-h-full flex flex-col font-sans bg-[#09090b] text-zinc-300">
+<body class="bg-[#09090b] text-zinc-100 min-h-screen font-sans antialiased selection:bg-zinc-800 selection:text-white">
 
-  <!-- ================= NOTIFICATION TOAST ================= -->
-  <div id="toast" class="fixed top-4 left-4 right-4 z-50 transform transition-all duration-200 -translate-y-24 opacity-0 pointer-events-none max-w-sm mx-auto">
-    <div class="px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 border border-zinc-700 bg-zinc-900 text-white">
+  <!-- ================= MINIMAL TOAST ================= -->
+  <div id="toast" class="fixed top-4 right-4 z-50 transform -translate-y-24 opacity-0 transition-all duration-200 pointer-events-none">
+    <div class="bg-zinc-900 border border-zinc-800 text-zinc-200 text-xs px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2">
       <i id="toast-icon" data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-      <span id="toast-message" class="text-xs font-medium flex-1">Saved successfully</span>
+      <span id="toast-message" class="font-medium">Success</span>
     </div>
   </div>
 
-  <!-- ================= LIGHTBOX PREVIEW MODAL ================= -->
-  <div id="lightbox" class="fixed inset-0 z-50 bg-black/90 hidden items-center justify-center p-4">
-    <div class="relative max-w-4xl w-full flex flex-col items-center">
-      <button id="close-lightbox" class="absolute -top-10 right-0 text-zinc-400 hover:text-white p-2">
-        <i data-lucide="x" class="w-6 h-6"></i>
-      </button>
-      <img id="lightbox-img" src="" alt="Capture Preview" class="max-h-[80vh] w-auto max-w-full rounded-xl border border-zinc-800 object-contain">
-      <div class="mt-3 text-center">
-        <h4 id="lightbox-title" class="text-sm font-semibold text-white"></h4>
-        <span id="lightbox-badge" class="text-xs text-emerald-400 font-mono mt-0.5 inline-block"></span>
+  <!-- ================= LIGHTBOX ZOOM PREVIEW ================= -->
+  <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 hidden items-center justify-center p-4">
+    <div class="relative max-w-5xl w-full max-h-[92vh] flex flex-col items-center">
+      <div class="w-full flex items-center justify-between pb-3 text-xs text-zinc-400">
+        <span id="lb-title" class="truncate font-mono"></span>
+        <button id="close-lb" class="text-zinc-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
+      <img id="lb-img" src="" alt="Zoom preview" class="max-h-[82vh] max-w-full object-contain rounded-lg border border-zinc-800">
     </div>
   </div>
 
@@ -155,24 +145,87 @@
           <textarea id="edit-res-desc" rows="3" required class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600"></textarea>
         </div>
 
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Thumbnail / Banner Image</label>
+          <div class="flex items-center gap-2">
+            <input type="file" id="edit-res-banner-file" accept="image/*" class="hidden">
+            <button type="button" onclick="document.getElementById('edit-res-banner-file').click()" class="px-3 py-2 rounded-lg text-xs font-medium bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 flex items-center gap-1.5">
+              <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Change Banner Image</span>
+            </button>
+            <span class="text-[11px] text-zinc-500 font-mono truncate" id="edit-res-banner-filename">Keep current banner</span>
+          </div>
+          <img id="edit-res-banner-preview" class="mt-2 h-24 w-full object-cover rounded-lg border border-zinc-800">
+        </div>
+
         <div class="flex items-center justify-end gap-2 pt-2">
           <button type="button" id="btn-cancel-edit-res" class="px-4 py-2 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300">
             Cancel
           </button>
           <button type="submit" id="btn-submit-edit-res" class="px-4 py-2 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black">
-            Update Resource
+            Save Resource
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ================= LOGIN SCREEN ================= -->
-  <div id="login-container" class="min-h-screen w-full flex items-center justify-center p-4 bg-[#09090b]">
-    <div class="w-full max-w-sm bg-zinc-900 border border-zinc-800 p-6 sm:p-8 rounded-2xl shadow-xl space-y-6">
-      <div>
+  <!-- ================= RESOURCE SHOWCASE PICTURES MODAL ================= -->
+  <div id="res-showcase-modal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full p-5 sm:p-6 space-y-4 shadow-2xl max-h-[92vh] flex flex-col">
+      <!-- Header -->
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3 shrink-0">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <span id="showcase-modal-title">Resource Showcase</span>
+            <span id="showcase-modal-count" class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-emerald-400">0 Captures</span>
+          </h3>
+          <p class="text-xs text-zinc-400 mt-0.5">Captures here are displayed live on the resource's dedicated showcase page and main gallery.</p>
+        </div>
+        <button id="close-res-showcase-modal" class="text-zinc-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Upload New Capture Form for this Resource -->
+      <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3.5 space-y-2.5 shrink-0">
+        <span class="text-xs font-semibold text-white block">Add Picture to this Showcase</span>
+        <form id="form-add-resource-capture" class="space-y-2.5">
+          <input type="hidden" id="res-showcase-cat-id">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <input type="text" id="res-capture-title" placeholder="Capture Title (e.g. In-Game Menu)" class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+            <div class="relative shrink-0">
+              <input type="file" id="res-capture-file" accept="image/*" class="hidden">
+              <button type="button" onclick="document.getElementById('res-capture-file').click()" class="w-full sm:w-auto px-3 py-2 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 flex items-center justify-center gap-1.5">
+                <i data-lucide="upload" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span id="res-capture-file-label">Choose Picture</span>
+              </button>
+            </div>
+            <button type="submit" id="btn-submit-res-capture" class="px-4 py-2 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black shrink-0 flex items-center justify-center gap-1.5">
+              <span>Upload Picture</span>
+            </button>
+          </div>
+          <div id="res-capture-preview-box" class="hidden flex items-center gap-2 pt-1">
+            <img id="res-capture-preview" src="" class="h-12 w-20 object-cover rounded border border-zinc-800">
+            <span class="text-[11px] text-zinc-400 font-mono" id="res-capture-filename"></span>
+          </div>
+        </form>
+      </div>
+
+      <!-- Captures List Grid -->
+      <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="res-showcase-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LOGIN VIEW ================= -->
+  <div id="login-container" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 space-y-6">
+      
+      <div class="text-center space-y-1">
         <h1 class="text-xl font-bold text-white tracking-tight">VortexLabs Admin</h1>
-        <p class="text-xs text-zinc-400 mt-1">Sign in to manage your website.</p>
+        <p class="text-xs text-zinc-400">Sign in to manage portfolio, captures & resources</p>
       </div>
 
       <form id="login-form" class="space-y-4">
@@ -223,7 +276,7 @@
       </div>
     </header>
 
-    <!-- Clean Horizontal Navigation Bar -->
+    <!-- Clean Horizontal Navigation Bar (No Leads Section) -->
     <nav class="border-b border-zinc-800/60 bg-zinc-950 px-4 sm:px-6">
       <div class="max-w-4xl mx-auto flex items-center gap-2 overflow-x-auto scrollbar-none py-2" id="nav-tabs">
         <button data-tab="tab-overview" class="nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 text-white transition-colors">
@@ -236,10 +289,7 @@
           Resources (<span id="tab-count-resources">7</span>)
         </button>
         <button data-tab="tab-reviews" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
-          Reviews (<span id="tab-count-reviews">3</span>)
-        </button>
-        <button data-tab="tab-inquiries" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
-          Leads (<span id="tab-count-inquiries">1</span>)
+          Reviews (<span id="tab-count-reviews">4</span>)
         </button>
       </div>
     </nav>
@@ -250,12 +300,12 @@
       <!-- ================= TAB: OVERVIEW ================= -->
       <section id="tab-overview" class="tab-pane space-y-5">
         
-        <!-- Summary Cards Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <!-- Summary Cards Grid (3 cards only: Gallery, Resources, Reviews) -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
             <span class="text-xs text-zinc-400 font-medium block">Total Captures</span>
             <span class="text-2xl font-bold text-white mt-1 block" id="stat-captures">142</span>
-            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">In Gallery</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">In Visual Showcase</span>
           </div>
 
           <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
@@ -266,32 +316,33 @@
 
           <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
             <span class="text-xs text-zinc-400 font-medium block">Client Reviews</span>
-            <span class="text-2xl font-bold text-white mt-1 block" id="stat-reviews">3</span>
-            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">5.0 Star Average</span>
-          </div>
-
-          <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-            <span class="text-xs text-zinc-400 font-medium block">Client Leads</span>
-            <span class="text-2xl font-bold text-white mt-1 block" id="stat-inquiries">1</span>
-            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">Inquiries</span>
+            <span class="text-2xl font-bold text-white mt-1 block" id="stat-reviews">4</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">Verified Screenshots</span>
           </div>
         </div>
 
         <!-- Fast Actions Minimal Box -->
         <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
           <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Fast Actions</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <button onclick="switchTab('tab-gallery'); showUploadForm();" class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-left transition-colors flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-white block">Upload New Screenshot</span>
-                <span class="text-[11px] text-zinc-500">Add capture to Visual Showcase</span>
+                <span class="text-xs font-semibold text-white block">Upload Capture</span>
+                <span class="text-[11px] text-zinc-500">Add to Visual Showcase</span>
               </div>
               <i data-lucide="plus" class="w-4 h-4 text-zinc-400"></i>
             </button>
             <button onclick="switchTab('tab-resources'); showAddResourceForm();" class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-left transition-colors flex items-center justify-between">
               <div>
-                <span class="text-xs font-semibold text-white block">Add Featured Resource</span>
-                <span class="text-[11px] text-zinc-500">Publish plugin or server setup card</span>
+                <span class="text-xs font-semibold text-white block">Add Resource</span>
+                <span class="text-[11px] text-zinc-500">Publish plugin / setup</span>
+              </div>
+              <i data-lucide="plus" class="w-4 h-4 text-zinc-400"></i>
+            </button>
+            <button onclick="switchTab('tab-reviews'); showAddReviewForm();" class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-left transition-colors flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-white block">Add Review</span>
+                <span class="text-[11px] text-zinc-500">Upload screenshot & rating</span>
               </div>
               <i data-lucide="plus" class="w-4 h-4 text-zinc-400"></i>
             </button>
@@ -307,15 +358,15 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-base font-bold text-white">Visual Showcase</h2>
-            <p class="text-xs text-zinc-400">Manage all 142 in-game captures and GUI previews</p>
+            <p class="text-xs text-zinc-400">Manage all 142 in-game captures and screenshots</p>
           </div>
           <button id="btn-toggle-upload" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
             <span>Upload Screenshot</span>
           </button>
         </div>
 
-        <!-- Flat Minimalist Upload Box -->
+        <!-- Upload Panel -->
         <div id="upload-panel" class="hidden bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
           <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
             <span class="text-xs font-semibold text-white">Upload Screenshot to Gallery</span>
@@ -325,47 +376,43 @@
           </div>
 
           <form id="form-upload-capture" class="space-y-3.5">
-            
-            <!-- Tap to pick file -->
-            <div id="dropzone" class="border border-dashed border-zinc-700 hover:border-zinc-500 rounded-xl p-5 text-center cursor-pointer transition-colors bg-zinc-950 relative">
-              <input type="file" id="capture-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-              
-              <div id="dropzone-empty" class="space-y-1.5 py-2">
-                <i data-lucide="image" class="w-6 h-6 text-zinc-500 mx-auto"></i>
-                <span class="text-xs font-medium text-white block">Tap to select photo from phone or drop file here</span>
-                <span class="text-[11px] text-zinc-500 block">PNG, JPG, JPEG, WEBP</span>
+            <!-- Dropzone -->
+            <div id="dropzone" class="border border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-950 p-6 rounded-xl text-center cursor-pointer transition-colors">
+              <input type="file" id="file-capture" accept="image/*" class="hidden">
+              <div id="dropzone-prompt" class="space-y-1.5">
+                <i data-lucide="image" class="w-7 h-7 text-zinc-500 mx-auto"></i>
+                <span class="text-xs text-zinc-300 block font-medium">Choose image from your phone or PC</span>
+                <span class="text-[11px] text-zinc-500 block">PNG, JPG, WebP supported</span>
               </div>
-
               <div id="dropzone-preview" class="hidden space-y-2">
-                <img id="preview-img" src="" alt="Preview" class="max-h-48 mx-auto rounded-lg border border-zinc-800 object-contain">
-                <span id="preview-filename" class="text-xs font-mono text-zinc-400 block truncate"></span>
-                <span class="text-[11px] text-zinc-500 underline block">Tap to change image</span>
+                <img id="preview-image" src="" class="max-h-48 mx-auto rounded-lg object-contain border border-zinc-800">
+                <span id="preview-filename" class="text-xs text-zinc-400 font-mono block"></span>
               </div>
             </div>
 
-            <div class="space-y-2.5">
-              <div>
-                <label class="block text-xs font-medium text-zinc-400 mb-1">Title *</label>
-                <input type="text" id="capture-title" required placeholder="e.g. Astral Alignment Crystal 3D Hologram" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+            <!-- Meta details -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div class="sm:col-span-1">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Category</label>
+                <select id="upload-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+                  <option value="runeforged">Survival World</option>
+                  <option value="runeforgedrunes">Rune Mechanics</option>
+                  <option value="runeforgedvote">Vote Holograms</option>
+                  <option value="vortexlabsbot">Discord Bot</option>
+                  <option value="grimstonediscord">Grimstone Setup</option>
+                  <option value="hermessurvival">Hermes Server</option>
+                  <option value="custom">Custom Capture</option>
+                </select>
               </div>
 
-              <div class="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label class="block text-xs font-medium text-zinc-400 mb-1">Category</label>
-                  <select id="capture-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
-                    <option value="runeforged">Survival World</option>
-                    <option value="runeforgedrunes">Rune Mechanics</option>
-                    <option value="runeforgedvote">Vote Holograms</option>
-                    <option value="vortexlabsbot">Discord Bot</option>
-                    <option value="grimstonediscord">Grimstone Setup</option>
-                    <option value="hermessurvival">Hermes Server</option>
-                    <option value="custom">Custom Capture</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
-                  <input type="text" id="capture-badge" placeholder="e.g. In-Game GUI" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
-                </div>
+              <div class="sm:col-span-1">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
+                <input type="text" id="upload-badge" placeholder="e.g. Survival Spawn" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+              </div>
+
+              <div class="sm:col-span-1">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Title</label>
+                <input type="text" id="upload-title" placeholder="e.g. Spawn Center View" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
             </div>
 
@@ -418,7 +465,7 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-base font-bold text-white">Featured Resources</h2>
-            <p class="text-xs text-zinc-400">Manage all 7 plugins and setup cards</p>
+            <p class="text-xs text-zinc-400">Manage plugins, setups, thumbnails, and showcase pictures</p>
           </div>
           <button id="btn-toggle-add-resource" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -457,7 +504,21 @@
               <textarea id="res-desc" rows="2" required placeholder="Description of features..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600"></textarea>
             </div>
 
-            <button type="submit" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black transition-colors">
+            <!-- Thumbnail Upload Option -->
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Thumbnail / Banner Image</label>
+              <div class="flex items-center gap-2">
+                <input type="file" id="res-banner-file" accept="image/*" class="hidden">
+                <button type="button" onclick="document.getElementById('res-banner-file').click()" class="px-3 py-2 rounded-lg text-xs font-medium bg-zinc-950 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 flex items-center gap-1.5">
+                  <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span id="res-banner-label">Select Banner Image</span>
+                </button>
+                <span class="text-[11px] text-zinc-500 font-mono truncate" id="res-banner-filename">Default banner used if omitted</span>
+              </div>
+              <img id="res-banner-preview" class="hidden mt-2 h-24 w-full object-cover rounded-lg border border-zinc-800">
+            </div>
+
+            <button type="submit" id="btn-submit-add-resource" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black transition-colors">
               Save Resource Card
             </button>
           </form>
@@ -470,13 +531,13 @@
 
       </section>
 
-      <!-- ================= TAB: REVIEWS ================= -->
+      <!-- ================= TAB: REVIEWS (100% IMAGE-BASED) ================= -->
       <section id="tab-reviews" class="tab-pane hidden space-y-4">
         
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-base font-bold text-white">Client Reviews</h2>
-            <p class="text-xs text-zinc-400">Manage client testimonials & feedback</p>
+            <p class="text-xs text-zinc-400">Upload screenshot reviews from Discord & clients</p>
           </div>
           <button id="btn-toggle-add-review" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -484,10 +545,10 @@
           </button>
         </div>
 
-        <!-- Add Review Panel -->
+        <!-- Add Review Panel (Image-based) -->
         <div id="add-review-panel" class="hidden bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3.5">
           <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
-            <span class="text-xs font-semibold text-white">Add Client Review</span>
+            <span class="text-xs font-semibold text-white">Add Verified Review Screenshot</span>
             <button id="btn-close-review-panel" class="text-zinc-500 hover:text-white">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
@@ -496,42 +557,51 @@
           <form id="form-add-review" class="space-y-3">
             <div class="grid grid-cols-2 gap-2.5">
               <div>
-                <label class="block text-xs font-medium text-zinc-400 mb-1">Author Name *</label>
-                <input type="text" id="rev-author" required placeholder="e.g. Alex K." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Client Name *</label>
+                <input type="text" id="rev-author" required placeholder="e.g. SugoiKenny" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
               <div>
-                <label class="block text-xs font-medium text-zinc-400 mb-1">Role / Network</label>
-                <input type="text" id="rev-role" placeholder="Owner, CraftRealms" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Star Rating *</label>
+                <select id="rev-rating" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+                  <option value="5.0">★★★★★ 5.0 Stars</option>
+                  <option value="4.5">★★★★½ 4.5 Stars</option>
+                  <option value="4.2">★★★★☆ 4.2 Stars</option>
+                  <option value="4.0">★★★★☆ 4.0 Stars</option>
+                  <option value="3.5">★★★½☆ 3.5 Stars</option>
+                  <option value="3.0">★★★☆☆ 3.0 Stars</option>
+                </select>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-medium text-zinc-400 mb-1">Review Quote *</label>
-              <textarea id="rev-content" rows="2" required placeholder="What the client said..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600"></textarea>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Role / Badge</label>
+              <input type="text" id="rev-role" placeholder="Verified Client" value="Verified Client" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
             </div>
 
-            <button type="submit" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black transition-colors">
-              Save Review
+            <div>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Review Screenshot *</label>
+              <div id="rev-dropzone" class="border border-dashed border-zinc-800 hover:border-zinc-700 bg-zinc-950 p-4 rounded-xl text-center cursor-pointer transition-colors">
+                <input type="file" id="rev-file" accept="image/*" class="hidden">
+                <div id="rev-upload-prompt" class="space-y-1">
+                  <i data-lucide="image" class="w-6 h-6 text-zinc-500 mx-auto"></i>
+                  <span class="text-xs text-zinc-300 block font-medium">Select Review Screenshot</span>
+                  <span class="text-[10px] text-zinc-500 block">Tap to select photo from phone gallery or file manager</span>
+                </div>
+                <div id="rev-preview-box" class="hidden">
+                  <img id="rev-preview-img" src="" class="max-h-40 mx-auto rounded-lg object-contain border border-zinc-800">
+                  <span id="rev-preview-name" class="text-[10px] text-zinc-400 font-mono mt-1.5 block"></span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="btn-save-review" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black transition-colors flex items-center justify-center gap-1.5">
+              <span>Save & Publish Review</span>
             </button>
           </form>
         </div>
 
         <!-- Reviews List -->
         <div id="reviews-list" class="space-y-3">
-          <!-- Populated by JS -->
-        </div>
-
-      </section>
-
-      <!-- ================= TAB: LEADS ================= -->
-      <section id="tab-inquiries" class="tab-pane hidden space-y-4">
-        
-        <div>
-          <h2 class="text-base font-bold text-white">Commission Leads</h2>
-          <p class="text-xs text-zinc-400">Quotes and inquiries submitted by server owners</p>
-        </div>
-
-        <div id="inquiries-list" class="space-y-3">
           <!-- Populated by JS -->
         </div>
 
@@ -555,7 +625,6 @@
     const loginError = document.getElementById('login-error');
     const logoutBtn = document.getElementById('logout-btn');
 
-    // Detect if running on GitHub Pages
     const isGitHubPages = window.location.hostname.endsWith('github.io');
 
     // ================= PERSISTENT LOGIN =================
@@ -678,38 +747,50 @@
           GITHUB_TOKEN = token;
         }
       }
-      return GITHUB_TOKEN;
+      if (!token) throw new Error("GitHub Token required");
+      return token;
     }
 
-    async function githubGetFile(filePath) {
-      const token = await getValidToken();
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
-        headers: {
-          'Authorization': 'token ' + token,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      if (!res.ok) throw new Error('File not found: ' + filePath);
-      return await res.json();
-    }
+    async function githubSaveJSON(filename, jsonData, commitMessage) {
+      if (!isGitHubPages) {
+        // Local Node server save
+        try {
+          const localRes = await fetch('/api/admin/save-json', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename, data: jsonData })
+          });
+          if (localRes.ok) return await localRes.json();
+        } catch (e) {}
+      }
 
-    async function githubSaveJSON(filePath, jsonObject, commitMessage) {
+      // GitHub REST API
       const token = await getValidToken();
       let sha = null;
       try {
-        const fileInfo = await githubGetFile(filePath);
-        sha = fileInfo.sha;
+        const getRes = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filename}?ref=main`, {
+          headers: {
+            'Authorization': 'token ' + token,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (getRes.ok) {
+          const fileInfo = await getRes.json();
+          sha = fileInfo.sha;
+        }
       } catch (e) {}
 
-      const utf8Bytes = new TextEncoder().encode(JSON.stringify(jsonObject, null, 2));
+      const utf8Bytes = new TextEncoder().encode(JSON.stringify(jsonData, null, 2));
       let binary = '';
-      utf8Bytes.forEach(b => binary += String.fromCharCode(b));
+      for (let i = 0; i < utf8Bytes.length; i++) {
+        binary += String.fromCharCode(utf8Bytes[i]);
+      }
       const base64 = btoa(binary);
 
-      const body = { message: commitMessage, content: base64 };
+      const body = { message: commitMessage, content: base64, branch: "main" };
       if (sha) body.sha = sha;
 
-      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filename}`, {
         method: 'PUT',
         headers: {
           'Authorization': 'token ' + token,
@@ -725,7 +806,27 @@
       return await res.json();
     }
 
-    async function githubUploadImage(filePath, base64Data, commitMessage) {
+    async function githubUploadImage(filePath, base64Data, commitMessage, folder = 'uploads') {
+      if (!isGitHubPages) {
+        // Local Node server upload
+        try {
+          const localRes = await fetch('/api/admin/upload-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              filename: filePath.split('/').pop(),
+              fileData: base64Data,
+              folder: folder
+            })
+          });
+          if (localRes.ok) {
+            const data = await localRes.json();
+            return { path: data.path };
+          }
+        } catch (e) {}
+      }
+
+      // GitHub REST API upload
       const token = await getValidToken();
       const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
       const body = { message: commitMessage, content: base64 };
@@ -742,14 +843,13 @@
         const err = await res.json();
         throw new Error(err.message || 'Image upload failed');
       }
-      return await res.json();
+      return { path: './' + filePath };
     }
 
     // ================= DATA STATE =================
     let galleryData = [];
     let resourcesData = [];
     let reviewsData = [];
-    let inquiriesData = [];
 
     async function loadAllData() {
       try {
@@ -767,118 +867,63 @@
         if (res.ok) reviewsData = await res.json();
       } catch (e) {}
 
-      try {
-        const res = await fetch('/data/inquiries.json?v=' + Date.now());
-        if (res.ok) inquiriesData = await res.json();
-      } catch (e) {}
-
       updateCounts();
       renderGallery();
       renderResources();
       renderReviews();
-      renderInquiries();
-      if (window.lucide) lucide.createIcons();
     }
 
     function updateCounts() {
       document.getElementById('stat-captures').textContent = galleryData.length;
-      document.getElementById('stat-resources').textContent = resourcesData.length;
-      document.getElementById('stat-reviews').textContent = reviewsData.length;
-      document.getElementById('stat-inquiries').textContent = inquiriesData.length;
-
       document.getElementById('tab-count-gallery').textContent = galleryData.length;
+
+      document.getElementById('stat-resources').textContent = resourcesData.length;
       document.getElementById('tab-count-resources').textContent = resourcesData.length;
+
+      document.getElementById('stat-reviews').textContent = reviewsData.length;
       document.getElementById('tab-count-reviews').textContent = reviewsData.length;
-      document.getElementById('tab-count-inquiries').textContent = inquiriesData.length;
     }
 
     // ================= LIGHTBOX PREVIEW =================
     const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const lightboxTitle = document.getElementById('lightbox-title');
-    const lightboxBadge = document.getElementById('lightbox-badge');
-    const closeLightbox = document.getElementById('close-lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbTitle = document.getElementById('lb-title');
+    document.getElementById('close-lb').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
 
-    function openLightbox(src, title, badge) {
-      lightboxImg.src = src;
-      lightboxTitle.textContent = title;
-      lightboxBadge.textContent = badge || '';
+    function openLightbox(src, title) {
+      lbImg.src = src;
+      lbTitle.textContent = title || 'Visual Capture';
       lightbox.classList.remove('hidden');
       lightbox.classList.add('flex');
     }
 
-    closeLightbox.addEventListener('click', () => {
+    function closeLightbox() {
       lightbox.classList.add('hidden');
       lightbox.classList.remove('flex');
-    });
-
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) {
-        lightbox.classList.add('hidden');
-        lightbox.classList.remove('flex');
-      }
-    });
-
-    // ================= EDIT CAPTURE MODAL =================
-    const editModal = document.getElementById('edit-modal');
-    const closeEditModal = document.getElementById('close-edit-modal');
-    const btnCancelEdit = document.getElementById('btn-cancel-edit');
-    const formEditCapture = document.getElementById('form-edit-capture');
-
-    function openEditCapture(src) {
-      const item = galleryData.find(i => i.src === src);
-      if (!item) return;
-      document.getElementById('edit-src').value = src;
-      document.getElementById('edit-title').value = item.title || '';
-      document.getElementById('edit-category').value = item.category || 'custom';
-      document.getElementById('edit-badge').value = item.badge || '';
-      editModal.classList.remove('hidden');
-      editModal.classList.add('flex');
+      lbImg.src = '';
     }
 
-    function closeEditCaptureModal() {
-      editModal.classList.add('hidden');
-      editModal.classList.remove('flex');
-    }
+    // ================= GALLERY MANAGEMENT =================
+    let currentGalleryCat = 'all';
+    let gallerySearchQuery = '';
+    let galleryPage = 1;
+    const PAGE_SIZE = 24;
 
-    closeEditModal.addEventListener('click', closeEditCaptureModal);
-    btnCancelEdit.addEventListener('click', closeEditCaptureModal);
-
-    formEditCapture.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const src = document.getElementById('edit-src').value;
-      const title = document.getElementById('edit-title').value.trim();
-      const category = document.getElementById('edit-category').value;
-      const badge = document.getElementById('edit-badge').value.trim();
-
-      const item = galleryData.find(i => i.src === src);
-      if (item) {
-        item.title = title;
-        item.category = category;
-        item.categoryName = getCategoryName(category);
-        item.badge = badge;
-      }
-
-      closeEditCaptureModal();
-      showToast('Saving update...');
-      renderGallery();
-
-      // Persist
-      await persistGalleryData();
-      showToast('Capture updated successfully');
-    });
-
-    // ================= GALLERY UPLOAD =================
     const uploadPanel = document.getElementById('upload-panel');
     const btnToggleUpload = document.getElementById('btn-toggle-upload');
     const btnCloseUpload = document.getElementById('btn-close-upload');
-    const fileInput = document.getElementById('capture-file');
-    const dropzoneEmpty = document.getElementById('dropzone-empty');
+    const fileCaptureInput = document.getElementById('file-capture');
+    const dropzone = document.getElementById('dropzone');
+    const dropzonePrompt = document.getElementById('dropzone-prompt');
     const dropzonePreview = document.getElementById('dropzone-preview');
-    const previewImg = document.getElementById('preview-img');
+    const previewImage = document.getElementById('preview-image');
     const previewFilename = document.getElementById('preview-filename');
 
-    let selectedFile = null;
+    let stagedFileData = null;
+    let stagedFilename = '';
 
     function showUploadForm() {
       uploadPanel.classList.remove('hidden');
@@ -887,186 +932,191 @@
 
     btnToggleUpload.addEventListener('click', () => {
       uploadPanel.classList.toggle('hidden');
-      if (!uploadPanel.classList.contains('hidden')) {
-        uploadPanel.scrollIntoView({ behavior: 'smooth' });
-      }
     });
-
     btnCloseUpload.addEventListener('click', () => {
       uploadPanel.classList.add('hidden');
-      resetUpload();
     });
 
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        handleFile(e.target.files[0]);
-      }
+    dropzone.addEventListener('click', () => fileCaptureInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-zinc-500'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-zinc-500'));
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-zinc-500');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileCaptureInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
     });
 
     function handleFile(file) {
       if (!file.type.startsWith('image/')) {
-        showToast('Please select a valid image', true);
+        showToast('Please select an image file', true);
         return;
       }
-      selectedFile = file;
+      stagedFilename = file.name;
       const reader = new FileReader();
       reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewFilename.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
-        dropzoneEmpty.classList.add('hidden');
+        stagedFileData = e.target.result;
+        previewImage.src = stagedFileData;
+        previewFilename.textContent = stagedFilename;
+        dropzonePrompt.classList.add('hidden');
         dropzonePreview.classList.remove('hidden');
+
+        if (!document.getElementById('upload-title').value) {
+          const autoTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+          document.getElementById('upload-title').value = autoTitle;
+        }
       };
       reader.readAsDataURL(file);
     }
 
-    function resetUpload() {
-      document.getElementById('form-upload-capture').reset();
-      selectedFile = null;
-      dropzonePreview.classList.add('hidden');
-      dropzoneEmpty.classList.remove('hidden');
-      previewImg.src = '';
-    }
-
-    // Save Capture
     document.getElementById('form-upload-capture').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!selectedFile) {
-        showToast('Please choose an image first', true);
+      if (!stagedFileData) {
+        showToast('Please select a screenshot to upload', true);
         return;
       }
 
-      const title = document.getElementById('capture-title').value.trim();
-      const category = document.getElementById('capture-category').value;
-      const badge = document.getElementById('capture-badge').value.trim() || 'Showcase Capture';
       const saveBtn = document.getElementById('btn-save-capture');
-
       saveBtn.disabled = true;
-      saveBtn.textContent = 'Uploading...';
+      saveBtn.innerHTML = `<span>Uploading...</span>`;
 
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64Data = reader.result;
-        const safeName = Date.now() + '_' + selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const imageRelPath = './images/uploads/' + safeName;
+      const category = document.getElementById('upload-category').value;
+      const badge = document.getElementById('upload-badge').value.trim() || 'Showcase Capture';
+      const title = document.getElementById('upload-title').value.trim() || stagedFilename;
 
+      const safeName = Date.now() + '_' + stagedFilename.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const gitPath = `images/uploads/${safeName}`;
+
+      try {
+        const uploadResult = await githubUploadImage(gitPath, stagedFileData, `Add gallery capture: ${title}`, 'uploads');
         const newItem = {
           category: category,
           categoryName: getCategoryName(category),
           badge: badge,
           title: title,
-          src: imageRelPath
+          src: uploadResult.path
         };
 
         galleryData.unshift(newItem);
         renderGallery();
         updateCounts();
-        resetUpload();
+
+        await githubSaveJSON('gallery-data.json', galleryData, `Add gallery capture ${title}`);
+        showToast('Screenshot uploaded & published');
+
+        // Reset
+        document.getElementById('form-upload-capture').reset();
+        stagedFileData = null;
+        dropzonePrompt.classList.remove('hidden');
+        dropzonePreview.classList.add('hidden');
         uploadPanel.classList.add('hidden');
-
-        try {
-          if (isGitHubPages) {
-            // Direct GitHub API upload
-            await githubUploadImage('images/uploads/' + safeName, base64Data, `Add capture ${title}`);
-            await githubSaveJSON('gallery-data.json', galleryData, `Update gallery with ${title}`);
-            showToast('Uploaded & Committed to GitHub Pages!');
-          } else {
-            // Local server API
-            const res = await fetch('/api/admin/gallery/add', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                filename: selectedFile.name,
-                fileData: base64Data,
-                title, category,
-                categoryName: getCategoryName(category),
-                badge
-              })
-            });
-            if (res.ok) {
-              showToast('Capture saved successfully');
-            } else {
-              // Fallback to GitHub API if local endpoint failed
-              await githubUploadImage('images/uploads/' + safeName, base64Data, `Add capture ${title}`);
-              await githubSaveJSON('gallery-data.json', galleryData, `Update gallery with ${title}`);
-              showToast('Saved via Cloud GitHub sync');
-            }
-          }
-        } catch (err) {
-          showToast('Saved locally. Push when online.', false);
-        }
-
+      } catch (err) {
+        showToast(err.message || 'Upload failed', true);
+      } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = 'Save & Upload to Showcase';
-      };
-      reader.readAsDataURL(selectedFile);
+        saveBtn.innerHTML = `<span>Save & Upload to Showcase</span>`;
+      }
     });
-
-    async function persistGalleryData() {
-      try {
-        if (isGitHubPages) {
-          await githubSaveJSON('gallery-data.json', galleryData, 'Update gallery-data.json');
-        } else {
-          // Send to local endpoint
-          await fetch('/api/admin/gallery/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src: '__dummy__' }) });
-          // And also commit to GitHub
-          await githubSaveJSON('gallery-data.json', galleryData, 'Update gallery-data.json');
-        }
-      } catch (e) {}
-    }
 
     function getCategoryName(cat) {
       const map = {
-        'runeforged': 'Survival Spawn & World',
-        'runeforgedrunes': 'Rune Mechanics & GUIs',
-        'runeforgedvote': 'Astral Voting Holograms',
-        'vortexlabsbot': 'Discord Bot Systems',
-        'grimstonediscord': 'Grimstone Network Setup',
-        'hermessurvival': 'Hermes Survival Server'
+        runeforged: 'Survival Spawn & World',
+        runeforgedrunes: 'Rune Mechanics & Enchanting UI',
+        runeforgedvote: 'Astral Alignment & Vote Engine',
+        vortexlabsbot: 'Discord Bot Automation',
+        grimstonediscord: 'Grimstone Network Community',
+        hermessurvival: 'Hermes Survival Infrastructure',
+        custom: 'Custom Showcase'
       };
-      return map[cat] || 'Custom Showcase';
+      return map[cat] || 'Showcase Capture';
     }
 
-    // ================= GALLERY GRID & PAGINATION =================
-    let currentCat = 'all';
-    let gallerySearch = '';
-    let displayLimit = 16;
+    // Filter pills
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.filter-pill').forEach(p => {
+          p.className = 'filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white';
+        });
+        pill.className = 'filter-pill active px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-800 text-white';
+        currentGalleryCat = pill.dataset.cat;
+        galleryPage = 1;
+        renderGallery();
+      });
+    });
 
-    function renderGallery() {
-      const grid = document.getElementById('gallery-grid');
-      const loadMoreBtn = document.getElementById('btn-load-more');
+    // Search
+    const searchInput = document.getElementById('gallery-search');
+    const clearSearch = document.getElementById('clear-search');
+    searchInput.addEventListener('input', (e) => {
+      gallerySearchQuery = e.target.value.toLowerCase().trim();
+      clearSearch.classList.toggle('hidden', !gallerySearchQuery);
+      galleryPage = 1;
+      renderGallery();
+    });
+    clearSearch.addEventListener('click', () => {
+      searchInput.value = '';
+      gallerySearchQuery = '';
+      clearSearch.classList.add('hidden');
+      galleryPage = 1;
+      renderGallery();
+    });
 
-      const filtered = galleryData.filter(item => {
-        const matchCat = (currentCat === 'all' || item.category === currentCat);
-        const matchSearch = !gallerySearch || item.title.toLowerCase().includes(gallerySearch) || (item.badge && item.badge.toLowerCase().includes(gallerySearch));
+    document.getElementById('btn-load-more').addEventListener('click', () => {
+      galleryPage++;
+      renderGallery(true);
+    });
+
+    function getFilteredGallery() {
+      return galleryData.filter(item => {
+        const matchCat = currentGalleryCat === 'all' || item.category === currentGalleryCat;
+        const matchSearch = !gallerySearchQuery || 
+          item.title.toLowerCase().includes(gallerySearchQuery) ||
+          item.badge.toLowerCase().includes(gallerySearchQuery);
         return matchCat && matchSearch;
       });
+    }
 
-      const visible = filtered.slice(0, displayLimit);
+    function renderGallery(append = false) {
+      const container = document.getElementById('gallery-grid');
+      const filtered = getFilteredGallery();
+      const total = filtered.length;
+      const paginated = filtered.slice(0, galleryPage * PAGE_SIZE);
 
-      if (visible.length === 0) {
-        grid.innerHTML = '<div class="col-span-full text-center py-8 text-zinc-500 text-xs">No captures match this filter.</div>';
-        loadMoreBtn.classList.add('hidden');
+      const loadMoreContainer = document.getElementById('load-more-container');
+      if (paginated.length >= total) {
+        loadMoreContainer.classList.add('hidden');
+      } else {
+        loadMoreContainer.classList.remove('hidden');
+      }
+
+      if (total === 0) {
+        container.innerHTML = '<div class="col-span-full p-8 text-center text-xs text-zinc-500 bg-zinc-900 border border-zinc-800 rounded-xl">No captures match this filter.</div>';
         return;
       }
 
-      grid.innerHTML = visible.map(item => `
+      const html = paginated.map(item => `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden flex flex-col justify-between group">
-          <div class="aspect-video bg-zinc-950 relative overflow-hidden cursor-pointer" onclick="openLightbox('${item.src}', '${escapeHtml(item.title)}', '${escapeHtml(item.badge || '')}')">
-            <img src="${item.src}" alt="${item.title}" class="w-full h-full object-contain p-1" loading="lazy">
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-medium bg-black/80 text-zinc-300 border border-zinc-700">
-              ${item.badge || 'Capture'}
+          <div class="relative bg-zinc-950 aspect-video-card overflow-hidden cursor-pointer" onclick="openLightbox('${item.src}', '${escapeHtml(item.title)}')">
+            <img src="${item.src}" alt="${escapeHtml(item.title)}" loading="lazy" class="w-full h-full object-contain transition-transform duration-200 group-hover:scale-105">
+            <span class="absolute top-2 left-2 text-[10px] font-mono px-2 py-0.5 rounded bg-black/80 text-zinc-300 border border-zinc-800">
+              ${escapeHtml(item.badge)}
             </span>
           </div>
-          <div class="p-3 border-t border-zinc-800/80 flex items-center justify-between gap-2">
-            <div class="min-w-0 flex-1">
-              <h4 class="text-xs font-medium text-white truncate" title="${item.title}">${item.title}</h4>
-              <span class="text-[10px] text-zinc-500 block truncate mt-0.5">${item.categoryName || item.category}</span>
+
+          <div class="p-3 border-t border-zinc-800 flex items-center justify-between gap-2">
+            <div class="truncate">
+              <span class="text-xs font-semibold text-white block truncate">${escapeHtml(item.title)}</span>
+              <span class="text-[10px] text-zinc-500 font-mono block truncate">${escapeHtml(item.categoryName)}</span>
             </div>
+
             <div class="flex items-center gap-1 shrink-0">
-              <button onclick="openEditCapture('${item.src}')" title="Edit" class="text-xs text-zinc-400 hover:text-white p-1 rounded hover:bg-zinc-800">
-                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+              <button onclick="openEditCapture('${item.src}')" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors" title="Edit Details">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="deleteCapture('${item.src}')" title="Delete" class="text-xs text-rose-400 hover:text-rose-300 p-1 rounded hover:bg-zinc-800">
+              <button onclick="deleteCapture('${item.src}')" class="p-1.5 rounded-lg text-rose-400 hover:text-rose-300 hover:bg-zinc-800 transition-colors" title="Delete">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </div>
@@ -1074,70 +1124,58 @@
         </div>
       `).join('');
 
-      if (displayLimit < filtered.length) {
-        loadMoreBtn.classList.remove('hidden');
-        loadMoreBtn.textContent = `Load More (${filtered.length - displayLimit} remaining)...`;
-      } else {
-        loadMoreBtn.classList.add('hidden');
-      }
-
+      container.innerHTML = html;
       if (window.lucide) lucide.createIcons();
     }
 
-    document.getElementById('btn-load-more').addEventListener('click', () => {
-      displayLimit += 20;
+    // Edit capture
+    const editModal = document.getElementById('edit-modal');
+    document.getElementById('close-edit-modal').addEventListener('click', () => editModal.classList.add('hidden'));
+    document.getElementById('btn-cancel-edit').addEventListener('click', () => editModal.classList.add('hidden'));
+
+    function openEditCapture(src) {
+      const item = galleryData.find(x => x.src === src);
+      if (!item) return;
+      document.getElementById('edit-src').value = src;
+      document.getElementById('edit-title').value = item.title;
+      document.getElementById('edit-badge').value = item.badge;
+      document.getElementById('edit-category').value = item.category || 'custom';
+      editModal.classList.remove('hidden');
+      editModal.classList.add('flex');
+    }
+
+    document.getElementById('form-edit-capture').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const src = document.getElementById('edit-src').value;
+      const item = galleryData.find(x => x.src === src);
+      if (item) {
+        item.title = document.getElementById('edit-title').value.trim();
+        item.badge = document.getElementById('edit-badge').value.trim();
+        item.category = document.getElementById('edit-category').value;
+        item.categoryName = getCategoryName(item.category);
+      }
+      editModal.classList.add('hidden');
+      editModal.classList.remove('flex');
       renderGallery();
-    });
 
-    document.querySelectorAll('#gallery-filters .filter-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        document.querySelectorAll('#gallery-filters .filter-pill').forEach(p => {
-          p.classList.remove('bg-zinc-800', 'text-white');
-          p.classList.add('bg-zinc-950', 'text-zinc-400');
-        });
-        pill.classList.remove('bg-zinc-950', 'text-zinc-400');
-        pill.classList.add('bg-zinc-800', 'text-white');
-        currentCat = pill.dataset.cat;
-        displayLimit = 16;
-        renderGallery();
-      });
-    });
-
-    const searchInput = document.getElementById('gallery-search');
-    const clearSearch = document.getElementById('clear-search');
-
-    searchInput.addEventListener('input', (e) => {
-      gallerySearch = e.target.value.toLowerCase().trim();
-      clearSearch.classList.toggle('hidden', !gallerySearch);
-      displayLimit = 16;
-      renderGallery();
-    });
-
-    clearSearch.addEventListener('click', () => {
-      searchInput.value = '';
-      gallerySearch = '';
-      clearSearch.classList.add('hidden');
-      displayLimit = 16;
-      renderGallery();
+      showToast('Saving update...');
+      try {
+        await githubSaveJSON('gallery-data.json', galleryData, `Update capture details: ${item.title}`);
+        showToast('Details updated');
+      } catch (err) {
+        showToast('Updated locally');
+      }
     });
 
     async function deleteCapture(src) {
-      if (!confirm('Are you sure you want to delete this capture?')) return;
-      galleryData = galleryData.filter(i => i.src !== src);
+      if (!confirm('Are you sure you want to delete this capture from Visual Showcase?')) return;
+      galleryData = galleryData.filter(x => x.src !== src);
       renderGallery();
       updateCounts();
       showToast('Deleting capture...');
 
       try {
-        if (isGitHubPages) {
-          await githubSaveJSON('gallery-data.json', galleryData, 'Delete capture');
-        } else {
-          await fetch('/api/admin/gallery/delete', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ src })
-          });
-        }
+        await githubSaveJSON('gallery-data.json', galleryData, `Delete capture ${src}`);
         showToast('Capture removed');
       } catch (e) {
         showToast('Removed from view');
@@ -1147,6 +1185,10 @@
     // ================= RESOURCES MANAGEMENT =================
     const addResourcePanel = document.getElementById('add-resource-panel');
     const editResModal = document.getElementById('edit-res-modal');
+    let stagedBannerData = null;
+    let stagedBannerName = '';
+    let editStagedBannerData = null;
+    let editStagedBannerName = '';
 
     function showAddResourceForm() {
       addResourcePanel.classList.remove('hidden');
@@ -1160,30 +1202,79 @@
       addResourcePanel.classList.add('hidden');
     });
 
+    // Banner file chooser in Add Resource
+    const resBannerFile = document.getElementById('res-banner-file');
+    resBannerFile.addEventListener('change', (e) => {
+      if (!e.target.files.length) return;
+      const file = e.target.files[0];
+      stagedBannerName = file.name;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        stagedBannerData = ev.target.result;
+        const prev = document.getElementById('res-banner-preview');
+        prev.src = stagedBannerData;
+        prev.classList.remove('hidden');
+        document.getElementById('res-banner-filename').textContent = stagedBannerName;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Banner file chooser in Edit Resource
+    const editResBannerFile = document.getElementById('edit-res-banner-file');
+    editResBannerFile.addEventListener('change', (e) => {
+      if (!e.target.files.length) return;
+      const file = e.target.files[0];
+      editStagedBannerName = file.name;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        editStagedBannerData = ev.target.result;
+        const prev = document.getElementById('edit-res-banner-preview');
+        prev.src = editStagedBannerData;
+        prev.classList.remove('hidden');
+        document.getElementById('edit-res-banner-filename').textContent = editStagedBannerName;
+      };
+      reader.readAsDataURL(file);
+    });
+
     function renderResources() {
       const container = document.getElementById('resources-list');
-      container.innerHTML = resourcesData.map(res => `
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
-                ${res.categoryBadge || res.category}
-              </span>
-              <span class="text-[10px] font-mono text-zinc-500">${res.version}</span>
+      container.innerHTML = resourcesData.map(res => {
+        const showcaseCount = galleryData.filter(g => g.category === res.id).length;
+        const bannerSrc = res.banner || './images/runeforged-banner.png';
+
+        return `
+          <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <img src="${bannerSrc}" alt="${escapeHtml(res.title)}" class="w-16 h-12 object-cover rounded-lg border border-zinc-800 shrink-0 bg-zinc-950">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                    ${escapeHtml(res.categoryBadge || res.category)}
+                  </span>
+                  <span class="text-[10px] font-mono text-zinc-500">${escapeHtml(res.version)}</span>
+                </div>
+                <h4 class="text-sm font-semibold text-white">${escapeHtml(res.title)}</h4>
+                <p class="text-xs text-zinc-400 line-clamp-1 max-w-md">${escapeHtml(res.description)}</p>
+              </div>
             </div>
-            <h4 class="text-sm font-semibold text-white">${res.title}</h4>
-            <p class="text-xs text-zinc-400 line-clamp-2 max-w-xl">${res.description}</p>
+
+            <div class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800/80">
+              <!-- Showcase Pictures Button -->
+              <button onclick="openResourceShowcaseModal('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5 transition-colors">
+                <i data-lucide="images" class="w-3.5 h-3.5"></i>
+                <span>Showcase (${showcaseCount})</span>
+              </button>
+
+              <button onclick="openEditResource('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition-colors">
+                Edit
+              </button>
+              <button onclick="deleteResource('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-rose-900/60 text-rose-400 transition-colors">
+                Delete
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800/80">
-            <button onclick="openEditResource('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition-colors">
-              Edit
-            </button>
-            <button onclick="deleteResource('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-rose-900/60 text-rose-400 transition-colors">
-              Delete
-            </button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
       if (window.lucide) lucide.createIcons();
     }
 
@@ -1195,6 +1286,13 @@
       document.getElementById('edit-res-badge').value = res.categoryBadge || '';
       document.getElementById('edit-res-version').value = res.version || '';
       document.getElementById('edit-res-desc').value = res.description || '';
+      
+      const prev = document.getElementById('edit-res-banner-preview');
+      prev.src = res.banner || './images/runeforged-banner.png';
+      prev.classList.remove('hidden');
+      document.getElementById('edit-res-banner-filename').textContent = 'Current banner active';
+      editStagedBannerData = null;
+
       editResModal.classList.remove('hidden');
       editResModal.classList.add('flex');
     }
@@ -1212,59 +1310,94 @@
       e.preventDefault();
       const id = document.getElementById('edit-res-id').value;
       const res = resourcesData.find(r => r.id === id);
-      if (res) {
+      if (!res) return;
+
+      const submitBtn = document.getElementById('btn-submit-edit-res');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      try {
         res.title = document.getElementById('edit-res-title').value.trim();
         res.categoryBadge = document.getElementById('edit-res-badge').value.trim();
         res.version = document.getElementById('edit-res-version').value.trim();
         res.description = document.getElementById('edit-res-desc').value.trim();
-      }
-      editResModal.classList.add('hidden');
-      editResModal.classList.remove('flex');
-      renderResources();
-      showToast('Updating resource...');
-      try {
-        await githubSaveJSON('resources-data.json', resourcesData, `Update resource ${id}`);
+
+        // If user picked a new banner image
+        if (editStagedBannerData) {
+          const safeName = `res_${id}_banner.png`;
+          const gitPath = `images/banners/${safeName}`;
+          const uploaded = await githubUploadImage(gitPath, editStagedBannerData, `Update banner for ${res.title}`, 'banners');
+          res.banner = uploaded.path;
+        }
+
+        editResModal.classList.add('hidden');
+        editResModal.classList.remove('flex');
+        renderResources();
         showToast('Resource updated');
+
+        await githubSaveJSON('resources-data.json', resourcesData, `Update resource ${id}`);
       } catch (err) {
-        showToast('Resource updated locally');
+        showToast(err.message || 'Error updating resource', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Resource';
       }
     });
 
     document.getElementById('form-add-resource').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const submitBtn = document.getElementById('btn-submit-add-resource');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
       const title = document.getElementById('res-title').value.trim();
       const badge = document.getElementById('res-badge').value.trim() || 'Plugin';
       const version = document.getElementById('res-version').value.trim() || 'v1.20+';
       const desc = document.getElementById('res-desc').value.trim();
 
-      const newRes = {
-        id: 'res_' + Date.now(),
-        title: title,
-        category: 'plugins',
-        categoryBadge: badge,
-        version: version,
-        description: desc,
-        banner: './images/runeforged-banner.png',
-        link: '#',
-        active: true
-      };
-
-      resourcesData.unshift(newRes);
-      renderResources();
-      updateCounts();
-      addResourcePanel.classList.add('hidden');
-      document.getElementById('form-add-resource').reset();
+      const newId = title.toLowerCase().replace(/[^a-z0-9]/g, '');
+      let bannerPath = './images/runeforged-banner.png';
 
       try {
+        if (stagedBannerData) {
+          const safeName = `res_${Date.now()}_banner.png`;
+          const gitPath = `images/banners/${safeName}`;
+          const uploaded = await githubUploadImage(gitPath, stagedBannerData, `Upload banner for ${title}`, 'banners');
+          bannerPath = uploaded.path;
+        }
+
+        const newRes = {
+          id: newId || 'res_' + Date.now(),
+          title: title,
+          category: 'plugins',
+          categoryBadge: badge,
+          version: version,
+          description: desc,
+          banner: bannerPath,
+          link: `#`,
+          active: true
+        };
+
+        resourcesData.unshift(newRes);
+        renderResources();
+        updateCounts();
+        addResourcePanel.classList.add('hidden');
+        document.getElementById('form-add-resource').reset();
+        document.getElementById('res-banner-preview').classList.add('hidden');
+        stagedBannerData = null;
+
         await githubSaveJSON('resources-data.json', resourcesData, `Add resource ${title}`);
         showToast('Resource published');
       } catch (err) {
-        showToast('Resource added');
+        showToast(err.message || 'Error adding resource', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Resource Card';
       }
     });
 
     async function deleteResource(id) {
-      if (!confirm('Delete this resource?')) return;
+      if (!confirm('Delete this resource card?')) return;
       resourcesData = resourcesData.filter(r => r.id !== id);
       renderResources();
       updateCounts();
@@ -1276,8 +1409,156 @@
       }
     }
 
-    // ================= REVIEWS MANAGEMENT =================
+    // ================= RESOURCE SHOWCASE MODAL LOGIC =================
+    const resShowcaseModal = document.getElementById('res-showcase-modal');
+    document.getElementById('close-res-showcase-modal').addEventListener('click', () => {
+      resShowcaseModal.classList.add('hidden');
+      resShowcaseModal.classList.remove('flex');
+    });
+
+    let currentShowcaseResourceId = '';
+    let stagedShowcaseFileData = null;
+    let stagedShowcaseFilename = '';
+
+    const resCaptureFileInput = document.getElementById('res-capture-file');
+    resCaptureFileInput.addEventListener('change', (e) => {
+      if (!e.target.files.length) return;
+      const file = e.target.files[0];
+      stagedShowcaseFilename = file.name;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        stagedShowcaseFileData = ev.target.result;
+        document.getElementById('res-capture-preview').src = stagedShowcaseFileData;
+        document.getElementById('res-capture-filename').textContent = stagedShowcaseFilename;
+        document.getElementById('res-capture-preview-box').classList.remove('hidden');
+        document.getElementById('res-capture-file-label').textContent = 'Change Picture';
+        if (!document.getElementById('res-capture-title').value) {
+          document.getElementById('res-capture-title').value = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function openResourceShowcaseModal(resId) {
+      currentShowcaseResourceId = resId;
+      const res = resourcesData.find(r => r.id === resId);
+      document.getElementById('showcase-modal-title').textContent = res ? res.title : resId;
+      document.getElementById('res-showcase-cat-id').value = resId;
+      document.getElementById('form-add-resource-capture').reset();
+      document.getElementById('res-capture-preview-box').classList.add('hidden');
+      document.getElementById('res-capture-file-label').textContent = 'Choose Picture';
+      stagedShowcaseFileData = null;
+
+      renderResourceShowcaseGrid(resId);
+      resShowcaseModal.classList.remove('hidden');
+      resShowcaseModal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderResourceShowcaseGrid(resId) {
+      const captures = galleryData.filter(g => g.category === resId);
+      document.getElementById('showcase-modal-count').textContent = `${captures.length} Captures`;
+
+      const grid = document.getElementById('res-showcase-grid');
+      if (captures.length === 0) {
+        grid.innerHTML = '<div class="p-6 text-center text-xs text-zinc-500 bg-zinc-950 border border-zinc-800 rounded-xl">No pictures in this showcase yet. Add one above!</div>';
+        return;
+      }
+
+      grid.innerHTML = captures.map(item => `
+        <div class="bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 overflow-hidden">
+            <img src="${item.src}" alt="${escapeHtml(item.title)}" class="w-14 h-10 object-cover rounded border border-zinc-800 shrink-0 bg-zinc-900 cursor-pointer" onclick="openLightbox('${item.src}', '${escapeHtml(item.title)}')">
+            <div class="truncate">
+              <span class="text-xs font-semibold text-white block truncate">${escapeHtml(item.title)}</span>
+              <span class="text-[10px] font-mono text-zinc-400 block">${escapeHtml(item.badge || 'Showcase')}</span>
+            </div>
+          </div>
+          <button onclick="deleteResourceCapture('${item.src}')" class="text-rose-400 hover:text-rose-300 p-1.5 rounded-lg hover:bg-zinc-900 transition-colors shrink-0" title="Delete picture">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+      `).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    document.getElementById('form-add-resource-capture').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!stagedShowcaseFileData) {
+        showToast('Please select a picture to upload', true);
+        return;
+      }
+
+      const resId = document.getElementById('res-showcase-cat-id').value;
+      const res = resourcesData.find(r => r.id === resId);
+      const title = document.getElementById('res-capture-title').value.trim() || stagedShowcaseFilename;
+      const badge = res ? (res.categoryBadge || 'Showcase') : 'Showcase';
+
+      const submitBtn = document.getElementById('btn-submit-res-capture');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Uploading...';
+
+      const safeName = Date.now() + '_' + stagedShowcaseFilename.replace(/[^a-zA-Z0-9._-]/g, '_');
+      const gitPath = `images/uploads/${safeName}`;
+
+      try {
+        const uploadResult = await githubUploadImage(gitPath, stagedShowcaseFileData, `Add showcase picture for ${resId}`, 'uploads');
+        const newItem = {
+          category: resId,
+          categoryName: res ? res.title : resId,
+          badge: badge,
+          title: title,
+          src: uploadResult.path
+        };
+
+        galleryData.unshift(newItem);
+        renderResourceShowcaseGrid(resId);
+        renderGallery();
+        renderResources();
+        updateCounts();
+
+        // Reset
+        document.getElementById('form-add-resource-capture').reset();
+        document.getElementById('res-capture-preview-box').classList.add('hidden');
+        document.getElementById('res-capture-file-label').textContent = 'Choose Picture';
+        stagedShowcaseFileData = null;
+
+        await githubSaveJSON('gallery-data.json', galleryData, `Add showcase picture ${title} to ${resId}`);
+        showToast('Picture uploaded to showcase');
+      } catch (err) {
+        showToast(err.message || 'Upload failed', true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload Picture';
+      }
+    });
+
+    async function deleteResourceCapture(src) {
+      if (!confirm('Remove this picture from the showcase?')) return;
+      galleryData = galleryData.filter(g => g.src !== src);
+      renderResourceShowcaseGrid(currentShowcaseResourceId);
+      renderGallery();
+      renderResources();
+      updateCounts();
+      showToast('Deleting picture...');
+      try {
+        await githubSaveJSON('gallery-data.json', galleryData, `Remove picture ${src}`);
+        showToast('Picture removed');
+      } catch (e) {
+        showToast('Removed from view');
+      }
+    }
+
+    // ================= REVIEWS MANAGEMENT (100% IMAGE-BASED) =================
     const addReviewPanel = document.getElementById('add-review-panel');
+    let stagedReviewFileData = null;
+    let stagedReviewFilename = '';
+
+    function showAddReviewForm() {
+      addReviewPanel.classList.remove('hidden');
+      addReviewPanel.scrollIntoView({ behavior: 'smooth' });
+    }
+
     document.getElementById('btn-toggle-add-review').addEventListener('click', () => {
       addReviewPanel.classList.toggle('hidden');
     });
@@ -1285,19 +1566,74 @@
       addReviewPanel.classList.add('hidden');
     });
 
+    const revDropzone = document.getElementById('rev-dropzone');
+    const revFileInput = document.getElementById('rev-file');
+    const revUploadPrompt = document.getElementById('rev-upload-prompt');
+    const revPreviewBox = document.getElementById('rev-preview-box');
+    const revPreviewImg = document.getElementById('rev-preview-img');
+    const revPreviewName = document.getElementById('rev-preview-name');
+
+    revDropzone.addEventListener('click', () => revFileInput.click());
+    revDropzone.addEventListener('dragover', (e) => { e.preventDefault(); revDropzone.classList.add('border-zinc-500'); });
+    revDropzone.addEventListener('dragleave', () => revDropzone.classList.remove('border-zinc-500'));
+    revDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      revDropzone.classList.remove('border-zinc-500');
+      if (e.dataTransfer.files.length) handleReviewFile(e.dataTransfer.files[0]);
+    });
+
+    revFileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleReviewFile(e.target.files[0]);
+    });
+
+    function handleReviewFile(file) {
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select an image file', true);
+        return;
+      }
+      stagedReviewFilename = file.name;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        stagedReviewFileData = e.target.result;
+        revPreviewImg.src = stagedReviewFileData;
+        revPreviewName.textContent = stagedReviewFilename;
+        revUploadPrompt.classList.add('hidden');
+        revPreviewBox.classList.remove('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
     function renderReviews() {
       const container = document.getElementById('reviews-list');
+      if (reviewsData.length === 0) {
+        container.innerHTML = '<div class="p-6 text-center text-xs text-zinc-500 bg-zinc-900 border border-zinc-800 rounded-xl">No reviews added yet.</div>';
+        return;
+      }
+
       container.innerHTML = reviewsData.map(rev => `
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl space-y-2">
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl space-y-3">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold text-white">${rev.author} <span class="text-zinc-500">(${rev.role})</span></span>
-            <span class="text-xs text-amber-400 font-mono">★★★★★ 5.0</span>
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold flex items-center justify-center border border-emerald-500/30">
+                ${(rev.author || 'C').charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <span class="text-xs font-semibold text-white block">${escapeHtml(rev.author)}</span>
+                <span class="text-[10px] text-zinc-400 font-mono">${escapeHtml(rev.role || 'Verified Client')}</span>
+              </div>
+            </div>
+            <span class="text-xs text-amber-400 font-mono font-medium">${Number(rev.rating || 5).toFixed(1)} ★</span>
           </div>
-          <p class="text-xs text-zinc-300 italic leading-relaxed">"${rev.content}"</p>
-          <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
-            <span>${rev.service || 'Service'}</span>
+
+          <!-- Screenshot Image Display -->
+          <div class="rounded-lg overflow-hidden bg-zinc-950 border border-zinc-800 p-2 cursor-pointer group" onclick="openLightbox('${rev.image}', 'Review - ${escapeHtml(rev.author)}')">
+            <img src="${rev.image}" alt="Review Screenshot" class="w-full max-h-48 object-contain rounded mx-auto transition-transform duration-200 group-hover:scale-[1.01]">
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-zinc-800 text-[11px] text-zinc-500">
+            <span>Tap screenshot to zoom</span>
             <button onclick="deleteReview(${rev.id})" class="text-rose-400 hover:text-rose-300 text-xs font-medium">
-              Delete
+              Delete Review
             </button>
           </div>
         </div>
@@ -1307,39 +1643,61 @@
 
     document.getElementById('form-add-review').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!stagedReviewFileData) {
+        showToast('Please select a review screenshot', true);
+        return;
+      }
+
       const author = document.getElementById('rev-author').value.trim();
+      const rating = parseFloat(document.getElementById('rev-rating').value) || 5.0;
       const role = document.getElementById('rev-role').value.trim() || 'Verified Client';
-      const content = document.getElementById('rev-content').value.trim();
 
-      const newRev = {
-        id: Date.now(),
-        author: author,
-        role: role,
-        service: 'Plugins & Setups',
-        rating: 5,
-        content: content,
-        date: 'Recent'
-      };
+      const saveBtn = document.getElementById('btn-save-review');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `<span>Uploading...</span>`;
 
-      reviewsData.unshift(newRev);
-      renderReviews();
-      updateCounts();
-      addReviewPanel.classList.add('hidden');
-      document.getElementById('form-add-review').reset();
+      const safeName = `rev_${Date.now()}_${stagedReviewFilename.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const gitPath = `images/reviews/${safeName}`;
 
       try {
-        await githubSaveJSON('reviews-data.json', reviewsData, `Add review from ${author}`);
-        showToast('Review saved');
+        const uploadResult = await githubUploadImage(gitPath, stagedReviewFileData, `Upload review screenshot from ${author}`, 'reviews');
+
+        const newRev = {
+          id: Date.now(),
+          author: author,
+          role: role,
+          rating: rating,
+          image: uploadResult.path,
+          date: 'Verified Client'
+        };
+
+        reviewsData.unshift(newRev);
+        renderReviews();
+        updateCounts();
+
+        // Reset
+        document.getElementById('form-add-review').reset();
+        revUploadPrompt.classList.remove('hidden');
+        revPreviewBox.classList.add('hidden');
+        stagedReviewFileData = null;
+        addReviewPanel.classList.add('hidden');
+
+        await githubSaveJSON('reviews-data.json', reviewsData, `Add verified review from ${author}`);
+        showToast('Review screenshot saved & published');
       } catch (err) {
-        showToast('Review saved locally');
+        showToast(err.message || 'Error saving review', true);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `<span>Save & Publish Review</span>`;
       }
     });
 
     async function deleteReview(id) {
-      if (!confirm('Delete this review?')) return;
+      if (!confirm('Delete this verified review screenshot?')) return;
       reviewsData = reviewsData.filter(r => r.id !== id);
       renderReviews();
       updateCounts();
+      showToast('Deleting review...');
       try {
         await githubSaveJSON('reviews-data.json', reviewsData, `Delete review ${id}`);
         showToast('Review deleted');
@@ -1348,57 +1706,9 @@
       }
     }
 
-    // ================= INQUIRIES MANAGEMENT =================
-    function renderInquiries() {
-      const container = document.getElementById('inquiries-list');
-      if (inquiriesData.length === 0) {
-        container.innerHTML = '<div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl text-center text-zinc-500 text-xs">No client inquiries received yet.</div>';
-        return;
-      }
-
-      container.innerHTML = inquiriesData.map(inq => `
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl space-y-2">
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-xs text-white">${inq.name}</h4>
-            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300">
-              Budget: ${inq.budget || 'Custom'}
-            </span>
-          </div>
-          <div class="text-xs text-emerald-400 font-mono">
-            Discord: ${inq.discord}
-          </div>
-          <p class="text-xs text-zinc-300 bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80">${inq.details}</p>
-          <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
-            <span>Service: ${inq.service || 'General'}</span>
-            <button onclick="deleteInquiry(${inq.id})" class="text-xs text-rose-400 hover:text-rose-300 font-medium">
-              Delete Lead
-            </button>
-          </div>
-        </div>
-      `).join('');
-      if (window.lucide) lucide.createIcons();
-    }
-
-    async function deleteInquiry(id) {
-      if (!confirm('Delete this lead?')) return;
-      inquiriesData = inquiriesData.filter(i => i.id !== id);
-      renderInquiries();
-      updateCounts();
-      try {
-        await fetch('/api/admin/inquiries/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        });
-        showToast('Lead removed');
-      } catch (e) {
-        showToast('Lead removed');
-      }
-    }
-
     function escapeHtml(str) {
       if (!str) return '';
-      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     // Initialize

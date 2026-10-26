@@ -755,7 +755,7 @@
       </div>
 
       <!-- Bento Grid (High resolution in-game media) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[220px] gap-5 mb-10">
+      <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[220px] gap-5 mb-10">
         
         <!-- Item 1: Survival Spawn -->
         <div class="bento-gallery-item group relative overflow-hidden">
@@ -1437,7 +1437,27 @@
     </div>
   </footer>
 
+  <!-- Generic Image Lightbox for Gallery & Reviews -->
+  <div id="site-lightbox" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-between">
+    <div class="px-4 sm:px-6 py-3.5 flex items-center justify-between border-b border-zinc-800 bg-zinc-950">
+      <div class="flex items-center gap-2">
+        <span id="site-lb-title" class="text-xs font-mono text-emerald-400 font-semibold truncate max-w-xs">Preview</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <a id="site-lb-raw" href="#" target="_blank" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors" title="Open full image">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+        <button id="site-lb-close" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+    <div class="relative flex-1 flex items-center justify-center p-3 sm:p-6 overflow-hidden select-none" id="site-lb-stage">
+      <img id="site-lb-img" src="" alt="Preview" class="max-h-[84vh] max-w-[92vw] object-contain rounded-lg border border-zinc-800 shadow-2xl">
+    </div>
+  </div>
+
   <!-- App Script -->
-  <script src="./app.js?v=12"></script>
+  <script src="./app.js?v=13"></script>
 </body>
 </html>

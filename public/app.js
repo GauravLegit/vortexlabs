@@ -123,7 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function filterResources(category) {
     let count = 0;
     const cat = category.trim().toLowerCase();
-    resourceCards.forEach(card => {
+    const cards = document.querySelectorAll('.resource-card');
+    cards.forEach(card => {
       const cardCat = (card.getAttribute('data-category') || '').trim().toLowerCase();
       if (cat === 'all' || cardCat === cat) {
         card.classList.remove('hidden-card');
@@ -410,4 +411,167 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
+
+  // 9. Generic Image Lightbox
+  window.openSiteLightbox = function(src, title) {
+    const lb = document.getElementById('site-lightbox');
+    const lbImg = document.getElementById('site-lb-img');
+    const lbTitle = document.getElementById('site-lb-title');
+    const lbRaw = document.getElementById('site-lb-raw');
+    if (!lb || !lbImg) return;
+    lbImg.src = src;
+    if (lbTitle) lbTitle.textContent = title || 'Preview';
+    if (lbRaw) lbRaw.href = src;
+    lb.classList.remove('opacity-0', 'pointer-events-none');
+    lb.classList.add('opacity-100', 'pointer-events-auto');
+    document.body.style.overflow = 'hidden';
+    if (window.lucide) lucide.createIcons();
+  };
+
+  window.closeSiteLightbox = function() {
+    const lb = document.getElementById('site-lightbox');
+    if (!lb) return;
+    lb.classList.add('opacity-0', 'pointer-events-none');
+    lb.classList.remove('opacity-100', 'pointer-events-auto');
+    document.body.style.overflow = 'auto';
+  };
+
+  const siteLbClose = document.getElementById('site-lb-close');
+  if (siteLbClose) siteLbClose.addEventListener('click', closeSiteLightbox);
+  const siteLb = document.getElementById('site-lightbox');
+  if (siteLb) {
+    siteLb.addEventListener('click', (e) => {
+      if (e.target === siteLb || e.target.id === 'site-lb-stage') closeSiteLightbox();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSiteLightbox();
+  });
+
+  // 10. Dynamic Data Fetch & Live Rendering (Connected to Admin Panel)
+  async function initDynamicWebsite() {
+    // A. Resources
+    const resourcesGrid = document.getElementById('resources-grid');
+    if (resourcesGrid) {
+      try {
+        const res = await fetch('./resources-data.json?v=' + Date.now());
+        if (res.ok) {
+          const resources = await res.json();
+          if (Array.isArray(resources) && resources.length > 0) {
+            resourcesGrid.innerHTML = resources.map(item => `
+              <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="${item.category}">
+                <div>
+                  <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+                    <img src="${item.banner || './images/runeforged-banner.png'}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
+                      ${item.categoryBadge || item.category}
+                    </span>
+                  </div>
+                  <div class="p-6">
+                    <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                      ${item.title}
+                    </h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                      ${item.description}
+                    </p>
+                  </div>
+                </div>
+                <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+                  <span class="text-xs font-mono text-zinc-500">${item.version || 'v1.20+'}</span>
+                  ${item.link && item.link !== '#' ? `
+                  <a href="${item.link.endsWith('.html') ? item.link : item.link + '.html'}" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+                    <span>View Showcase</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </a>
+                  ` : `
+                  <span class="text-xs font-mono text-zinc-500">Coming Soon</span>
+                  `}
+                </div>
+              </div>
+            `).join('');
+
+            const counter = document.getElementById('resources-count');
+            if (counter) counter.textContent = `Showing ${resources.length} resources`;
+            if (window.lucide) lucide.createIcons();
+          }
+        }
+      } catch (e) {
+        console.warn('Fallback to static resources');
+      }
+    }
+
+    // B. Gallery Showcase
+    const galleryContainer = document.getElementById('gallery-container');
+    if (galleryContainer) {
+      try {
+        const res = await fetch('./gallery-data.json?v=' + Date.now());
+        if (res.ok) {
+          const captures = await res.json();
+          if (Array.isArray(captures) && captures.length > 0) {
+            const topCaptures = captures.slice(0, 8);
+            galleryContainer.innerHTML = topCaptures.map((item, idx) => {
+              const isWide = idx === 1 || idx === 6;
+              const isTall = idx === 3;
+              return `
+                <div class="bento-gallery-item group relative overflow-hidden rounded-2xl cursor-pointer ${isWide ? 'sm:col-span-2' : ''} ${isTall ? 'lg:row-span-2' : ''}" onclick="openSiteLightbox('${item.src}', '${item.title.replace(/'/g, "\\'")}')">
+                  <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                  <div class="gallery-overlay absolute inset-0 flex items-end justify-between p-4 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                    <span class="text-xs font-semibold text-white drop-shadow truncate max-w-[80%]">${item.title}</span>
+                    <span class="text-[10px] font-mono uppercase bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">${item.badge || 'Showcase'}</span>
+                  </div>
+                </div>
+              `;
+            }).join('');
+            if (window.lucide) lucide.createIcons();
+          }
+        }
+      } catch (e) {
+        console.warn('Fallback to static gallery');
+      }
+    }
+
+    // C. Image-Based Reviews
+    const reviewsContainer = document.getElementById('reviews-container');
+    if (reviewsContainer) {
+      try {
+        const res = await fetch('./reviews-data.json?v=' + Date.now());
+        if (res.ok) {
+          const reviews = await res.json();
+          if (Array.isArray(reviews) && reviews.length > 0) {
+            reviewsContainer.innerHTML = reviews.map(rev => `
+              <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 relative">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                      ${(rev.author || 'C').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                        ${rev.author}
+                        <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400"></i>
+                      </h4>
+                      <span class="text-[11px] text-zinc-400">${rev.role || 'Verified Client'}</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1 text-amber-400 bg-dark-950 px-3 py-1 rounded-full border border-emerald-500/20 text-xs font-bold">
+                    <span>${Number(rev.rating || 5).toFixed(1)}</span>
+                    <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  </div>
+                </div>
+                <div class="rounded-2xl overflow-hidden bg-dark-950 border border-emerald-500/15 p-2 cursor-pointer group" onclick="openSiteLightbox('${rev.image}', 'Client Review - ${rev.author.replace(/'/g, "\\'")}')">
+                  <img src="${rev.image}" alt="Client Review - ${rev.author}" class="w-full h-auto object-contain rounded-xl max-h-56 mx-auto transition-transform duration-300 group-hover:scale-[1.02]">
+                </div>
+              </div>
+            `).join('');
+            if (window.lucide) lucide.createIcons();
+          }
+        }
+      } catch (e) {
+        console.warn('Fallback to static reviews');
+      }
+    }
+  }
+
+  // Trigger dynamic data loader
+  initDynamicWebsite();
 });

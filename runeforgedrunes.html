@@ -168,7 +168,7 @@
   </footer>
 
   <script>
-    const IMAGES = ["./images/runeforgedrunes/Screenshot%202026-09-13%20172412%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172433%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172453%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172510%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172525%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172540%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172604%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172604.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172650%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172659%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172711%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172736%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172749%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172759%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172759.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172809%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172823%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172841%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172849%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172900%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172956%20-%20Copy.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173014%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173033%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173053.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173103.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173111.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173125.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173133.png"];
+    let IMAGES = ["./images/runeforgedrunes/Screenshot%202026-09-13%20172412%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172433%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172453%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172510%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172525%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172540%20-%20Copy%20%283%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172604%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172604.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172650%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172659%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172711%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172736%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172749%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172759%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172759.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172809%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172823%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172841%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172849%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172900%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20172956%20-%20Copy.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173014%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173033%20-%20Copy%20%282%29.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173053.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173103.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173111.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173125.png", "./images/runeforgedrunes/Screenshot%202026-09-13%20173133.png"];
     let currentIndex = 0;
 
     const container = document.getElementById('grid-container');
@@ -257,6 +257,23 @@
     }, { passive: true });
 
     render();
+
+    // Live Dynamic Sync with gallery-data.json
+    async function syncShowcaseData() {
+      try {
+        const res = await fetch('./gallery-data.json?v=' + Date.now());
+        if (res.ok) {
+          const all = await res.json();
+          const filtered = all.filter(it => it.category === 'runeforgedrunes');
+          if (filtered.length > 0) {
+            IMAGES = filtered.map(x => x.src);
+            render();
+          }
+        }
+      } catch (e) {}
+    }
+    syncShowcaseData();
+
   </script>
 </body>
 </html>

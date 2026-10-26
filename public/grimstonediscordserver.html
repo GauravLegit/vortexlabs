@@ -168,7 +168,7 @@
   </footer>
 
   <script>
-    const IMAGES = ["./images/grimstonediscord/Screenshot%202026-10-13%20093758.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093813.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093827.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093836.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093859.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093941.png"];
+    let IMAGES = ["./images/grimstonediscord/Screenshot%202026-10-13%20093758.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093813.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093827.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093836.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093859.png", "./images/grimstonediscord/Screenshot%202026-10-13%20093941.png"];
     let currentIndex = 0;
 
     const container = document.getElementById('grid-container');
@@ -257,6 +257,23 @@
     }, { passive: true });
 
     render();
+
+    // Live Dynamic Sync with gallery-data.json
+    async function syncShowcaseData() {
+      try {
+        const res = await fetch('./gallery-data.json?v=' + Date.now());
+        if (res.ok) {
+          const all = await res.json();
+          const filtered = all.filter(it => it.category === 'grimstonediscord');
+          if (filtered.length > 0) {
+            IMAGES = filtered.map(x => x.src);
+            render();
+          }
+        }
+      } catch (e) {}
+    }
+    syncShowcaseData();
+
   </script>
 </body>
 </html>

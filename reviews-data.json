@@ -1,29 +1,34 @@
 [
   {
     "id": 1,
-    "author": "Alex K.",
-    "role": "Owner, CraftRealms Network",
-    "service": "Plugins",
-    "rating": 5,
-    "content": "Gaurav coded a custom duel & matchmaking plugin for our network in just 4 days. Zero bugs, clean Java 21 codebase, and our TPS never dipped below 20.0 with 350 players online. Truly high tier!",
-    "date": "2 days ago"
+    "author": "Rana",
+    "role": "Verified Client",
+    "rating": 4.2,
+    "image": "./images/reviews/review1.png",
+    "date": "Verified Client"
   },
   {
     "id": 2,
-    "author": "Sarah M.",
-    "role": "Community Lead, Apex Legends Hub",
-    "service": "Discord bots",
-    "rating": 5,
-    "content": "VortexLabs completely revamped our community Discord. The custom ticket bot with transcript saving and automated store role sync saved our staff team 20+ hours every week. Worth every penny.",
-    "date": "1 week ago"
+    "author": "SugoiKenny",
+    "role": "Verified Client",
+    "rating": 5.0,
+    "image": "./images/reviews/review2.png",
+    "date": "Verified Client"
   },
   {
     "id": 3,
-    "author": "Marcus T.",
-    "role": "Founder, PixelSurvive SMP",
-    "service": "Survival & Configs",
-    "rating": 5,
-    "content": "Ordered the Survival setup with custom DeluxeMenus configs. The layout, RGB messages, and economy balance are sublime. Gaurav answered every question immediately on Discord. 10/10 service!",
-    "date": "2 weeks ago"
+    "author": "maybe_itsme282",
+    "role": "Verified Client",
+    "rating": 4.0,
+    "image": "./images/reviews/review3.png",
+    "date": "Verified Client"
+  },
+  {
+    "id": 4,
+    "author": "SerbanKitty",
+    "role": "Verified Client",
+    "rating": 5.0,
+    "image": "./images/reviews/review4.png",
+    "date": "Verified Client"
   }
 ]
