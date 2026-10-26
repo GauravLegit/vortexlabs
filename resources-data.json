@@ -1,16 +1,5 @@
 [
   {
-    "id": "res_1793017497493",
-    "title": "Bruh",
-    "category": "plugins",
-    "categoryBadge": "Bruh",
-    "version": "V120",
-    "description": "Bruh",
-    "banner": "./images/runeforged-banner.png",
-    "link": "#",
-    "active": true
-  },
-  {
     "id": "runeforged",
     "title": "RuneForged Survival",
     "category": "setups",
