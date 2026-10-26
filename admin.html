@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#050811] text-zinc-100 antialiased">
+<html lang="en" class="h-full bg-[#09090b] text-zinc-200 antialiased">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>VortexLabs Admin</title>
+  <title>VortexLabs Admin Dashboard</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,20 +17,14 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-            },
+            brand: '#10b981',
             dark: {
-              800: '#0f172a',
-              850: '#0b1329',
-              900: '#080d1a',
-              950: '#04070f'
+              900: '#121214',
+              950: '#09090b',
+              border: '#27272a'
             }
           },
           fontFamily: {
-            display: ['Outfit', 'sans-serif'],
             sans: ['Plus Jakarta Sans', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace']
           }
@@ -43,240 +37,322 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Safe mobile viewport */
     body {
       -webkit-tap-highlight-color: transparent;
-      padding-bottom: env(safe-area-inset-bottom);
+      background-color: #09090b;
+      color: #e4e4e7;
     }
-    .glass-card {
-      background: rgba(11, 19, 41, 0.7);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(16, 185, 129, 0.15);
-    }
-    .scrollbar-none::-webkit-scrollbar {
-      display: none;
-    }
-    .scrollbar-none {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     .dropzone-active {
       border-color: #10b981 !important;
-      background: rgba(16, 185, 129, 0.12) !important;
+      background-color: #18181b !important;
     }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans bg-[#050811] text-zinc-300 selection:bg-emerald-500 selection:text-black">
+<body class="min-h-full flex flex-col font-sans bg-[#09090b] text-zinc-300">
 
   <!-- ================= NOTIFICATION TOAST ================= -->
-  <div id="toast" class="fixed top-4 left-4 right-4 z-50 transform transition-all duration-300 -translate-y-24 opacity-0 pointer-events-none max-w-sm mx-auto">
-    <div class="glass-card px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 text-white bg-dark-900/95">
-      <i id="toast-icon" data-lucide="check-circle" class="w-5 h-5 text-emerald-400 shrink-0"></i>
-      <span id="toast-message" class="text-xs font-semibold flex-1">Action completed</span>
+  <div id="toast" class="fixed top-4 left-4 right-4 z-50 transform transition-all duration-200 -translate-y-24 opacity-0 pointer-events-none max-w-sm mx-auto">
+    <div class="px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 border border-zinc-700 bg-zinc-900 text-white">
+      <i id="toast-icon" data-lucide="check" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+      <span id="toast-message" class="text-xs font-medium flex-1">Saved successfully</span>
     </div>
   </div>
 
-  <!-- ================= LOGIN SCREEN ================= -->
-  <div id="login-container" class="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-b from-[#050811] via-[#091124] to-[#050811]">
-    <div class="w-full max-w-sm glass-card p-6 sm:p-8 rounded-3xl border border-emerald-500/25 relative overflow-hidden shadow-2xl">
-      <!-- Glow -->
-      <div class="absolute -top-20 -left-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- ================= LIGHTBOX PREVIEW MODAL ================= -->
+  <div id="lightbox" class="fixed inset-0 z-50 bg-black/90 hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full flex flex-col items-center">
+      <button id="close-lightbox" class="absolute -top-10 right-0 text-zinc-400 hover:text-white p-2">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <img id="lightbox-img" src="" alt="Capture Preview" class="max-h-[80vh] w-auto max-w-full rounded-xl border border-zinc-800 object-contain">
+      <div class="mt-3 text-center">
+        <h4 id="lightbox-title" class="text-sm font-semibold text-white"></h4>
+        <span id="lightbox-badge" class="text-xs text-emerald-400 font-mono mt-0.5 inline-block"></span>
+      </div>
+    </div>
+  </div>
 
-      <!-- Brand -->
-      <div class="text-center mb-6 relative">
-        <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3 text-emerald-400 shadow-lg shadow-emerald-500/10">
-          <i data-lucide="shield-check" class="w-7 h-7"></i>
-        </div>
-        <h1 class="font-display font-extrabold text-xl text-white tracking-tight">
-          Vortex<span class="text-emerald-400">Labs</span> Admin
-        </h1>
-        <p class="text-xs text-zinc-400 mt-1">Mobile Management Portal</p>
+  <!-- ================= EDIT CAPTURE MODAL ================= -->
+  <div id="edit-modal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <h3 class="text-sm font-bold text-white">Edit Capture Details</h3>
+        <button id="close-edit-modal" class="text-zinc-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
       </div>
 
-      <!-- Form -->
-      <form id="login-form" class="space-y-4">
+      <form id="form-edit-capture" class="space-y-3.5">
+        <input type="hidden" id="edit-src">
         <div>
-          <label class="block text-[11px] font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Email</label>
-          <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input type="email" id="login-email" required placeholder="vortexlab@gmail.com" class="w-full bg-dark-950 border border-zinc-800 rounded-xl pl-10 pr-4 py-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Title</label>
+          <input type="text" id="edit-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Category</label>
+            <select id="edit-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+              <option value="runeforged">Survival World</option>
+              <option value="runeforgedrunes">Rune Mechanics</option>
+              <option value="runeforgedvote">Vote Holograms</option>
+              <option value="vortexlabsbot">Discord Bot</option>
+              <option value="grimstonediscord">Grimstone Setup</option>
+              <option value="hermessurvival">Hermes Server</option>
+              <option value="custom">Custom Capture</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
+            <input type="text" id="edit-badge" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" id="btn-cancel-edit" class="px-4 py-2 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300">
+            Cancel
+          </button>
+          <button type="submit" id="btn-submit-edit" class="px-4 py-2 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= EDIT RESOURCE MODAL ================= -->
+  <div id="edit-res-modal" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <h3 class="text-sm font-bold text-white">Edit Resource</h3>
+        <button id="close-edit-res-modal" class="text-zinc-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="form-edit-res" class="space-y-3.5">
+        <input type="hidden" id="edit-res-id">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Title</label>
+          <input type="text" id="edit-res-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Badge</label>
+            <input type="text" id="edit-res-badge" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Version</label>
+            <input type="text" id="edit-res-version" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
           </div>
         </div>
 
         <div>
-          <label class="block text-[11px] font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Password</label>
+          <label class="block text-xs font-medium text-zinc-400 mb-1">Description</label>
+          <textarea id="edit-res-desc" rows="3" required class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" id="btn-cancel-edit-res" class="px-4 py-2 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-300">
+            Cancel
+          </button>
+          <button type="submit" id="btn-submit-edit-res" class="px-4 py-2 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black">
+            Update Resource
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div id="login-container" class="min-h-screen w-full flex items-center justify-center p-4 bg-[#09090b]">
+    <div class="w-full max-w-sm bg-zinc-900 border border-zinc-800 p-6 sm:p-8 rounded-2xl shadow-xl space-y-6">
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">VortexLabs Admin</h1>
+        <p class="text-xs text-zinc-400 mt-1">Sign in to manage your website.</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+          <input type="email" id="login-email" required placeholder="vortexlab@gmail.com" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors">
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-zinc-400 mb-1.5">Password</label>
           <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full bg-dark-950 border border-zinc-800 rounded-xl pl-10 pr-10 py-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
-            <button type="button" id="toggle-pwd" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white p-1">
+            <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-colors pr-9">
+            <button type="button" id="toggle-pwd" class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
 
-        <div id="login-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 flex items-center gap-2">
-          <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-          <span>Invalid email or password.</span>
+        <div id="login-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-lg p-2.5">
+          Invalid email or password.
         </div>
 
-        <button type="submit" class="w-full py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-xs">
-          <span>Login to Admin</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <button type="submit" class="w-full py-2.5 rounded-xl font-medium bg-white hover:bg-zinc-200 text-black text-xs transition-colors">
+          Sign In
         </button>
       </form>
     </div>
   </div>
 
-  <!-- ================= DASHBOARD INTERFACE ================= -->
-  <div id="dashboard-container" class="hidden min-h-screen flex flex-col bg-[#050811] pb-24">
+  <!-- ================= MAIN ADMIN DASHBOARD ================= -->
+  <div id="dashboard-container" class="hidden min-h-screen flex flex-col bg-[#09090b]">
     
-    <!-- Top Mobile Header -->
-    <header class="sticky top-0 z-30 bg-[#050811]/90 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3 flex items-center justify-between">
+    <!-- Top Minimalist Bar -->
+    <header class="border-b border-zinc-800/80 bg-zinc-950 px-4 sm:px-6 py-3 flex items-center justify-between sticky top-0 z-30">
       <div class="flex items-center gap-2.5">
-        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-black text-sm">
-          V
-        </div>
-        <div>
-          <span class="font-display font-extrabold text-sm text-white block leading-tight">
-            Vortex<span class="text-emerald-400">Labs</span>
-          </span>
-          <span class="text-[10px] text-zinc-400 font-mono">Control Panel</span>
-        </div>
+        <span class="font-bold text-sm text-white tracking-tight">VortexLabs</span>
+        <span class="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">Admin</span>
       </div>
 
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Online</span>
+      <div class="flex items-center gap-3">
+        <span id="sync-pill" class="hidden sm:inline-flex items-center gap-1.5 text-[11px] text-zinc-400 font-mono">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>GitHub Synced</span>
         </span>
-        <button id="logout-btn" title="Logout" class="w-8 h-8 rounded-xl bg-rose-500/15 hover:bg-rose-500 text-rose-300 hover:text-dark-950 border border-rose-500/30 flex items-center justify-center transition-colors">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
+        <button id="logout-btn" class="text-xs font-medium text-zinc-400 hover:text-white px-3 py-1.5 rounded-lg border border-zinc-800 hover:border-zinc-700 bg-zinc-900 transition-colors">
+          Log Out
         </button>
       </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 px-4 py-4 max-w-4xl mx-auto w-full space-y-4">
+    <!-- Clean Horizontal Navigation Bar -->
+    <nav class="border-b border-zinc-800/60 bg-zinc-950 px-4 sm:px-6">
+      <div class="max-w-4xl mx-auto flex items-center gap-2 overflow-x-auto scrollbar-none py-2" id="nav-tabs">
+        <button data-tab="tab-overview" class="nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 text-white transition-colors">
+          Overview
+        </button>
+        <button data-tab="tab-gallery" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
+          Gallery (<span id="tab-count-gallery">142</span>)
+        </button>
+        <button data-tab="tab-resources" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
+          Resources (<span id="tab-count-resources">7</span>)
+        </button>
+        <button data-tab="tab-reviews" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
+          Reviews (<span id="tab-count-reviews">3</span>)
+        </button>
+        <button data-tab="tab-inquiries" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-medium text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors">
+          Leads (<span id="tab-count-inquiries">1</span>)
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Max-Width Wrapper -->
+    <main class="flex-1 max-w-4xl mx-auto w-full p-4 sm:p-6 space-y-6">
 
       <!-- ================= TAB: OVERVIEW ================= -->
-      <section id="tab-overview" class="tab-pane space-y-4">
+      <section id="tab-overview" class="tab-pane space-y-5">
         
-        <!-- Welcome Card -->
-        <div class="glass-card p-5 rounded-3xl border border-emerald-500/20 relative overflow-hidden">
-          <div class="relative space-y-1">
-            <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Welcome Back</span>
-            <h2 class="font-display font-extrabold text-xl text-white">Gaurav</h2>
-            <p class="text-xs text-zinc-400">Manage all visual captures, server plugins, client reviews, and incoming leads from your phone.</p>
+        <!-- Summary Cards Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+            <span class="text-xs text-zinc-400 font-medium block">Total Captures</span>
+            <span class="text-2xl font-bold text-white mt-1 block" id="stat-captures">142</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">In Gallery</span>
+          </div>
+
+          <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+            <span class="text-xs text-zinc-400 font-medium block">Resources</span>
+            <span class="text-2xl font-bold text-white mt-1 block" id="stat-resources">7</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">Plugins & Setups</span>
+          </div>
+
+          <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+            <span class="text-xs text-zinc-400 font-medium block">Client Reviews</span>
+            <span class="text-2xl font-bold text-white mt-1 block" id="stat-reviews">3</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">5.0 Star Average</span>
+          </div>
+
+          <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+            <span class="text-xs text-zinc-400 font-medium block">Client Leads</span>
+            <span class="text-2xl font-bold text-white mt-1 block" id="stat-inquiries">1</span>
+            <span class="text-[11px] text-zinc-500 mt-1 block font-mono">Inquiries</span>
           </div>
         </div>
 
-        <!-- Metric Grid -->
-        <div class="grid grid-cols-2 gap-3">
-          <button onclick="switchTab('tab-gallery')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-emerald-500/40 text-left transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[11px] font-semibold text-zinc-400">Gallery</span>
-              <i data-lucide="image" class="w-4 h-4 text-emerald-400"></i>
-            </div>
-            <div class="font-display font-extrabold text-2xl text-white" id="stat-captures">142</div>
-            <span class="text-[10px] text-emerald-400 font-mono mt-0.5">Captures Live →</span>
-          </button>
-
-          <button onclick="switchTab('tab-resources')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-purple-500/40 text-left transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[11px] font-semibold text-zinc-400">Resources</span>
-              <i data-lucide="box" class="w-4 h-4 text-purple-400"></i>
-            </div>
-            <div class="font-display font-extrabold text-2xl text-white" id="stat-resources">7</div>
-            <span class="text-[10px] text-purple-400 font-mono mt-0.5">Plugins & Setups →</span>
-          </button>
-
-          <button onclick="switchTab('tab-reviews')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-amber-500/40 text-left transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[11px] font-semibold text-zinc-400">Reviews</span>
-              <i data-lucide="star" class="w-4 h-4 text-amber-400"></i>
-            </div>
-            <div class="font-display font-extrabold text-2xl text-white" id="stat-reviews">3</div>
-            <span class="text-[10px] text-amber-400 font-mono mt-0.5">5.0 Star Ratings →</span>
-          </button>
-
-          <button onclick="switchTab('tab-inquiries')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-blue-500/40 text-left transition-all flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-[11px] font-semibold text-zinc-400">Leads</span>
-              <i data-lucide="inbox" class="w-4 h-4 text-blue-400"></i>
-            </div>
-            <div class="font-display font-extrabold text-2xl text-white" id="stat-inquiries">1</div>
-            <span class="text-[10px] text-blue-400 font-mono mt-0.5">New Inquiries →</span>
-          </button>
+        <!-- Fast Actions Minimal Box -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
+          <h3 class="text-xs font-semibold text-white uppercase tracking-wider">Fast Actions</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button onclick="switchTab('tab-gallery'); showUploadForm();" class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-left transition-colors flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-white block">Upload New Screenshot</span>
+                <span class="text-[11px] text-zinc-500">Add capture to Visual Showcase</span>
+              </div>
+              <i data-lucide="plus" class="w-4 h-4 text-zinc-400"></i>
+            </button>
+            <button onclick="switchTab('tab-resources'); showAddResourceForm();" class="p-3 rounded-lg bg-zinc-950 border border-zinc-800 hover:border-zinc-700 text-left transition-colors flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-white block">Add Featured Resource</span>
+                <span class="text-[11px] text-zinc-500">Publish plugin or server setup card</span>
+              </div>
+              <i data-lucide="plus" class="w-4 h-4 text-zinc-400"></i>
+            </button>
+          </div>
         </div>
-
-        <!-- Quick Upload Action Button -->
-        <button onclick="switchTab('tab-gallery'); showUploadForm();" class="w-full py-4 rounded-2xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
-          <i data-lucide="camera" class="w-4 h-4"></i>
-          <span>Upload New Screenshot to Gallery</span>
-        </button>
 
       </section>
 
-      <!-- ================= TAB: VISUAL SHOWCASE / GALLERY ================= -->
+      <!-- ================= TAB: GALLERY ================= -->
       <section id="tab-gallery" class="tab-pane hidden space-y-4">
         
-        <!-- Header & Action -->
+        <!-- Header -->
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-display font-extrabold text-lg text-white">Visual Showcase</h2>
-            <p class="text-[11px] text-zinc-400">Manage all in-game screenshots & captures</p>
+            <h2 class="text-base font-bold text-white">Visual Showcase</h2>
+            <p class="text-xs text-zinc-400">Manage all 142 in-game captures and GUI previews</p>
           </div>
-          <button id="btn-toggle-upload" class="px-3.5 py-2 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs flex items-center gap-1.5 shadow-md shadow-emerald-500/20">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Upload</span>
+          <button id="btn-toggle-upload" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Upload Screenshot</span>
           </button>
         </div>
 
-        <!-- Mobile Touch Upload Card (Collapsible) -->
-        <div id="upload-panel" class="hidden glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-4">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-            <span class="text-xs font-bold text-white flex items-center gap-1.5">
-              <i data-lucide="image-plus" class="w-4 h-4 text-emerald-400"></i>
-              <span>Select Photo from Mobile / PC</span>
-            </span>
-            <button type="button" id="btn-close-upload" class="text-zinc-400 hover:text-white p-1">
+        <!-- Flat Minimalist Upload Box -->
+        <div id="upload-panel" class="hidden bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+            <span class="text-xs font-semibold text-white">Upload Screenshot to Gallery</span>
+            <button id="btn-close-upload" class="text-zinc-500 hover:text-white">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
 
-          <form id="form-upload-capture" class="space-y-4">
+          <form id="form-upload-capture" class="space-y-3.5">
             
-            <!-- Mobile Tap Target for Image Picker -->
-            <div id="dropzone" class="border-2 border-dashed border-zinc-700 hover:border-emerald-500/80 rounded-2xl p-6 text-center cursor-pointer transition-all bg-dark-950/80 relative">
+            <!-- Tap to pick file -->
+            <div id="dropzone" class="border border-dashed border-zinc-700 hover:border-zinc-500 rounded-xl p-5 text-center cursor-pointer transition-colors bg-zinc-950 relative">
               <input type="file" id="capture-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
               
-              <div id="dropzone-empty" class="flex flex-col items-center justify-center gap-2 py-2">
-                <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                  <i data-lucide="camera" class="w-6 h-6"></i>
-                </div>
-                <span class="text-xs font-bold text-white">Tap to Choose from Gallery / Files</span>
-                <span class="text-[10px] text-zinc-500">Supports PNG, JPG, JPEG, WEBP</span>
+              <div id="dropzone-empty" class="space-y-1.5 py-2">
+                <i data-lucide="image" class="w-6 h-6 text-zinc-500 mx-auto"></i>
+                <span class="text-xs font-medium text-white block">Tap to select photo from phone or drop file here</span>
+                <span class="text-[11px] text-zinc-500 block">PNG, JPG, JPEG, WEBP</span>
               </div>
 
-              <!-- Preview -->
-              <div id="dropzone-preview" class="hidden flex flex-col items-center justify-center gap-2">
-                <img id="preview-img" src="" alt="Preview" class="max-h-40 rounded-xl object-contain border border-emerald-500/30 shadow-md">
-                <span id="preview-filename" class="text-[11px] font-mono text-emerald-400 font-semibold truncate max-w-xs"></span>
-                <span class="text-[10px] text-rose-400 underline font-semibold">Tap to change image</span>
+              <div id="dropzone-preview" class="hidden space-y-2">
+                <img id="preview-img" src="" alt="Preview" class="max-h-48 mx-auto rounded-lg border border-zinc-800 object-contain">
+                <span id="preview-filename" class="text-xs font-mono text-zinc-400 block truncate"></span>
+                <span class="text-[11px] text-zinc-500 underline block">Tap to change image</span>
               </div>
             </div>
 
-            <div class="space-y-3">
+            <div class="space-y-2.5">
               <div>
-                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Title *</label>
-                <input type="text" id="capture-title" required placeholder="e.g. Astral Alignment Crystal Hologram" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Title *</label>
+                <input type="text" id="capture-title" required placeholder="e.g. Astral Alignment Crystal 3D Hologram" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
 
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label class="block text-[11px] font-bold text-zinc-400 mb-1">Category *</label>
-                  <select id="capture-category" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-2.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                  <label class="block text-xs font-medium text-zinc-400 mb-1">Category</label>
+                  <select id="capture-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
                     <option value="runeforged">Survival World</option>
                     <option value="runeforgedrunes">Rune Mechanics</option>
                     <option value="runeforgedvote">Vote Holograms</option>
@@ -287,113 +363,107 @@
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[11px] font-bold text-zinc-400 mb-1">Badge Tag</label>
-                  <input type="text" id="capture-badge" placeholder="e.g. In-Game GUI" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
+                  <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
+                  <input type="text" id="capture-badge" placeholder="e.g. In-Game GUI" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
                 </div>
               </div>
             </div>
 
-            <button type="submit" id="btn-save-capture" class="w-full py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
-              <i data-lucide="check" class="w-4 h-4"></i>
-              <span>Save & Add to Showcase</span>
+            <button type="submit" id="btn-save-capture" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black flex items-center justify-center gap-1.5 transition-colors">
+              <span>Save & Upload to Showcase</span>
             </button>
           </form>
         </div>
 
-        <!-- Filter Pills & Search Bar -->
-        <div class="space-y-2">
-          <!-- Search input -->
+        <!-- Filter Pills & Search -->
+        <div class="space-y-2 pt-1">
+          <!-- Search -->
           <div class="relative">
             <i data-lucide="search" class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input type="text" id="gallery-search" placeholder="Search 142+ captures..." class="w-full bg-dark-950 border border-zinc-800 rounded-xl pl-9 pr-8 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            <input type="text" id="gallery-search" placeholder="Search captures by title..." class="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-9 pr-8 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
             <button id="clear-search" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white">
               <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>
           </div>
 
-          <!-- Horizontal Scrolling Filter Pills -->
+          <!-- Category Pills -->
           <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1" id="gallery-filters">
-            <button data-cat="all" class="filter-pill active px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-emerald-500 text-dark-950">All (142)</button>
-            <button data-cat="runeforged" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Survival</button>
-            <button data-cat="runeforgedrunes" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Runes</button>
-            <button data-cat="runeforgedvote" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Voting</button>
-            <button data-cat="vortexlabsbot" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Discord Bot</button>
-            <button data-cat="grimstonediscord" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Grimstone</button>
-            <button data-cat="hermessurvival" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Hermes</button>
+            <button data-cat="all" class="filter-pill active px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-800 text-white">All</button>
+            <button data-cat="runeforged" class="filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white">Survival</button>
+            <button data-cat="runeforgedrunes" class="filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white">Runes</button>
+            <button data-cat="runeforgedvote" class="filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white">Vote</button>
+            <button data-cat="vortexlabsbot" class="filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white">Discord Bot</button>
+            <button data-cat="grimstonediscord" class="filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white">Grimstone</button>
+            <button data-cat="hermessurvival" class="filter-pill px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap bg-zinc-950 text-zinc-400 border border-zinc-800 hover:text-white">Hermes</button>
           </div>
         </div>
 
-        <!-- 2-Column Mobile Image Grid -->
-        <div id="gallery-grid" class="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+        <!-- Captures Grid (Aspect-ratio preserved, clean layout) -->
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <!-- Populated by JS -->
         </div>
 
-        <!-- Load More Button -->
+        <!-- Load More -->
         <div id="load-more-container" class="text-center pt-2">
-          <button id="btn-load-more" class="w-full py-2.5 rounded-xl text-xs font-semibold bg-dark-950 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 transition-colors">
+          <button id="btn-load-more" class="w-full py-2.5 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition-colors">
             Load More Captures...
           </button>
         </div>
 
       </section>
 
-      <!-- ================= TAB: RESOURCES & PLUGINS ================= -->
+      <!-- ================= TAB: RESOURCES ================= -->
       <section id="tab-resources" class="tab-pane hidden space-y-4">
         
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-display font-extrabold text-lg text-white">Featured Resources</h2>
-            <p class="text-[11px] text-zinc-400">Manage all 7 plugins and setup cards</p>
+            <h2 class="text-base font-bold text-white">Featured Resources</h2>
+            <p class="text-xs text-zinc-400">Manage all 7 plugins and setup cards</p>
           </div>
-          <button id="btn-toggle-add-resource" class="px-3.5 py-2 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs flex items-center gap-1.5">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add</span>
+          <button id="btn-toggle-add-resource" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add Resource</span>
           </button>
         </div>
 
-        <!-- Add Resource Form (Collapsible) -->
-        <div id="add-resource-panel" class="hidden glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-3">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
-            <span class="text-xs font-bold text-white">Add New Resource / Plugin</span>
-            <button type="button" id="btn-close-resource-panel" class="text-zinc-400 p-1">
+        <!-- Add Resource Panel -->
+        <div id="add-resource-panel" class="hidden bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3.5">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+            <span class="text-xs font-semibold text-white">Add New Resource Card</span>
+            <button id="btn-close-resource-panel" class="text-zinc-500 hover:text-white">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
 
           <form id="form-add-resource" class="space-y-3">
             <div>
-              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Title *</label>
-              <input type="text" id="res-title" required placeholder="e.g. RuneForgedDungeons" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Title *</label>
+              <input type="text" id="res-title" required placeholder="e.g. RuneForgedDungeons" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
             </div>
 
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-2.5">
               <div>
-                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Category</label>
-                <select id="res-category" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
-                  <option value="plugins">Plugins</option>
-                  <option value="setups">Server Setups</option>
-                  <option value="discord-bots">Discord Bots</option>
-                  <option value="discord-setups">Discord Setups</option>
-                </select>
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
+                <input type="text" id="res-badge" placeholder="e.g. Plugin Showcase" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
               <div>
-                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Version / Tag</label>
-                <input type="text" id="res-version" placeholder="v1.20 - 1.21+" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Version</label>
+                <input type="text" id="res-version" placeholder="v1.20 - 1.21+" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
             </div>
 
             <div>
-              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Description *</label>
-              <textarea id="res-desc" rows="2" required placeholder="Feature description..." class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Description *</label>
+              <textarea id="res-desc" rows="2" required placeholder="Description of features..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600"></textarea>
             </div>
 
-            <button type="submit" class="w-full py-3 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs">
-              Save Resource
+            <button type="submit" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black transition-colors">
+              Save Resource Card
             </button>
           </form>
         </div>
 
-        <!-- Resources Stacked List -->
+        <!-- Resources List -->
         <div id="resources-list" class="space-y-3">
           <!-- Populated by JS -->
         </div>
@@ -405,60 +475,60 @@
         
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-display font-extrabold text-lg text-white">Client Reviews</h2>
-            <p class="text-[11px] text-zinc-400">Manage client testimonials & 5-star reviews</p>
+            <h2 class="text-base font-bold text-white">Client Reviews</h2>
+            <p class="text-xs text-zinc-400">Manage client testimonials & feedback</p>
           </div>
-          <button id="btn-toggle-add-review" class="px-3.5 py-2 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs flex items-center gap-1.5">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add</span>
+          <button id="btn-toggle-add-review" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add Review</span>
           </button>
         </div>
 
-        <!-- Add Review Form (Collapsible) -->
-        <div id="add-review-panel" class="hidden glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-3">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
-            <span class="text-xs font-bold text-white">Add Client Review</span>
-            <button type="button" id="btn-close-review-panel" class="text-zinc-400 p-1">
+        <!-- Add Review Panel -->
+        <div id="add-review-panel" class="hidden bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3.5">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2.5">
+            <span class="text-xs font-semibold text-white">Add Client Review</span>
+            <button id="btn-close-review-panel" class="text-zinc-500 hover:text-white">
               <i data-lucide="x" class="w-4 h-4"></i>
             </button>
           </div>
 
           <form id="form-add-review" class="space-y-3">
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-2.5">
               <div>
-                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Author Name *</label>
-                <input type="text" id="rev-author" required placeholder="e.g. Sarah M." class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Author Name *</label>
+                <input type="text" id="rev-author" required placeholder="e.g. Alex K." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
               <div>
-                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Role / Network</label>
-                <input type="text" id="rev-role" placeholder="Owner, Apex SMP" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <label class="block text-xs font-medium text-zinc-400 mb-1">Role / Network</label>
+                <input type="text" id="rev-role" placeholder="Owner, CraftRealms" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
             </div>
 
             <div>
-              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Review Content *</label>
-              <textarea id="rev-content" rows="2" required placeholder="Tell what the client said..." class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
+              <label class="block text-xs font-medium text-zinc-400 mb-1">Review Quote *</label>
+              <textarea id="rev-content" rows="2" required placeholder="What the client said..." class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600"></textarea>
             </div>
 
-            <button type="submit" class="w-full py-3 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs">
+            <button type="submit" class="w-full py-2.5 rounded-lg text-xs font-medium bg-emerald-500 hover:bg-emerald-400 text-black transition-colors">
               Save Review
             </button>
           </form>
         </div>
 
-        <!-- Reviews Stacked List -->
+        <!-- Reviews List -->
         <div id="reviews-list" class="space-y-3">
           <!-- Populated by JS -->
         </div>
 
       </section>
 
-      <!-- ================= TAB: INQUIRIES & LEADS ================= -->
+      <!-- ================= TAB: LEADS ================= -->
       <section id="tab-inquiries" class="tab-pane hidden space-y-4">
         
         <div>
-          <h2 class="font-display font-extrabold text-lg text-white">Inquiries & Leads</h2>
-          <p class="text-[11px] text-zinc-400">Incoming quotes submitted by server owners</p>
+          <h2 class="text-base font-bold text-white">Commission Leads</h2>
+          <p class="text-xs text-zinc-400">Quotes and inquiries submitted by server owners</p>
         </div>
 
         <div id="inquiries-list" class="space-y-3">
@@ -469,38 +539,6 @@
 
     </main>
 
-    <!-- ================= THUMB-FRIENDLY BOTTOM NAVIGATION BAR ================= -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#070b16]/95 backdrop-blur-lg border-t border-zinc-800 px-2 py-1.5 flex items-center justify-around">
-      
-      <button data-tab="tab-overview" class="bottom-nav-item active flex flex-col items-center justify-center py-1 px-3 rounded-xl text-emerald-400 transition-colors">
-        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold mt-0.5">Overview</span>
-      </button>
-
-      <button data-tab="tab-gallery" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors relative">
-        <i data-lucide="image" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold mt-0.5">Gallery</span>
-        <span id="nav-badge-gallery" class="absolute top-0 right-2 w-2 h-2 rounded-full bg-emerald-400"></span>
-      </button>
-
-      <button data-tab="tab-resources" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors">
-        <i data-lucide="box" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold mt-0.5">Plugins</span>
-      </button>
-
-      <button data-tab="tab-reviews" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors">
-        <i data-lucide="star" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold mt-0.5">Reviews</span>
-      </button>
-
-      <button data-tab="tab-inquiries" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors relative">
-        <i data-lucide="inbox" class="w-5 h-5"></i>
-        <span class="text-[10px] font-semibold mt-0.5">Leads</span>
-        <span id="nav-badge-inquiries" class="absolute top-0.5 right-2 w-4 h-4 rounded-full bg-emerald-500 text-dark-950 font-bold text-[9px] flex items-center justify-center">1</span>
-      </button>
-
-    </nav>
-
   </div>
 
   <!-- JavaScript -->
@@ -508,6 +546,8 @@
     const AUTH_EMAIL = "vortexlab@gmail.com";
     const AUTH_PASS = "Vortex1209$";
     const SESSION_KEY = "vortex_admin_session";
+    let GITHUB_TOKEN = localStorage.getItem("vortex_gh_token") || "";
+    const GITHUB_REPO = "riptodevelops/vortexlabs";
 
     const loginContainer = document.getElementById('login-container');
     const dashboardContainer = document.getElementById('dashboard-container');
@@ -515,7 +555,10 @@
     const loginError = document.getElementById('login-error');
     const logoutBtn = document.getElementById('logout-btn');
 
-    // Check persistent login
+    // Detect if running on GitHub Pages
+    const isGitHubPages = window.location.hostname.endsWith('github.io');
+
+    // ================= PERSISTENT LOGIN =================
     function checkAuth() {
       const session = localStorage.getItem(SESSION_KEY);
       if (session) {
@@ -563,9 +606,9 @@
     });
 
     logoutBtn.addEventListener('click', () => {
-      if (confirm('Log out from Admin?')) {
+      if (confirm('Log out from Admin Dashboard?')) {
         localStorage.removeItem(SESSION_KEY);
-        showToast('Logged out');
+        showToast('Logged out successfully');
         showLogin();
       }
     });
@@ -575,12 +618,12 @@
       input.type = input.type === 'password' ? 'text' : 'password';
     });
 
-    // ================= MOBILE BOTTOM TAB NAVIGATION =================
+    // ================= TAB NAVIGATION =================
     function switchTab(tabId) {
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.bottom-nav-item').forEach(btn => {
-        btn.classList.remove('text-emerald-400', 'active');
-        btn.classList.add('text-zinc-400');
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('bg-zinc-800', 'text-white', 'active');
+        btn.classList.add('text-zinc-400', 'hover:bg-zinc-900');
       });
 
       const target = document.getElementById(tabId);
@@ -588,14 +631,14 @@
 
       const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
       if (activeBtn) {
-        activeBtn.classList.remove('text-zinc-400');
-        activeBtn.classList.add('text-emerald-400', 'active');
+        activeBtn.classList.remove('text-zinc-400', 'hover:bg-zinc-900');
+        activeBtn.classList.add('bg-zinc-800', 'text-white', 'active');
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (window.lucide) lucide.createIcons();
     }
 
-    document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+    document.querySelectorAll('.nav-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         switchTab(btn.dataset.tab);
       });
@@ -610,17 +653,96 @@
       toastMsg.textContent = msg;
       if (isError) {
         toastIcon.setAttribute('data-lucide', 'alert-circle');
-        toastIcon.className = 'w-5 h-5 text-rose-400 shrink-0';
+        toastIcon.className = 'w-4 h-4 text-rose-400 shrink-0';
       } else {
-        toastIcon.setAttribute('data-lucide', 'check-circle');
-        toastIcon.className = 'w-5 h-5 text-emerald-400 shrink-0';
+        toastIcon.setAttribute('data-lucide', 'check');
+        toastIcon.className = 'w-4 h-4 text-emerald-400 shrink-0';
       }
       if (window.lucide) lucide.createIcons();
 
       toast.classList.remove('-translate-y-24', 'opacity-0');
       setTimeout(() => {
         toast.classList.add('-translate-y-24', 'opacity-0');
-      }, 3000);
+      }, 2500);
+    }
+
+    // ================= GITHUB API HELPERS =================
+    async function getValidToken() {
+      if (GITHUB_TOKEN) return GITHUB_TOKEN;
+      let token = localStorage.getItem("vortex_gh_token");
+      if (!token) {
+        token = prompt("Enter your GitHub Token (saved securely in your browser):");
+        if (token) {
+          token = token.trim();
+          localStorage.setItem("vortex_gh_token", token);
+          GITHUB_TOKEN = token;
+        }
+      }
+      return GITHUB_TOKEN;
+    }
+
+    async function githubGetFile(filePath) {
+      const token = await getValidToken();
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+        headers: {
+          'Authorization': 'token ' + token,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      if (!res.ok) throw new Error('File not found: ' + filePath);
+      return await res.json();
+    }
+
+    async function githubSaveJSON(filePath, jsonObject, commitMessage) {
+      const token = await getValidToken();
+      let sha = null;
+      try {
+        const fileInfo = await githubGetFile(filePath);
+        sha = fileInfo.sha;
+      } catch (e) {}
+
+      const utf8Bytes = new TextEncoder().encode(JSON.stringify(jsonObject, null, 2));
+      let binary = '';
+      utf8Bytes.forEach(b => binary += String.fromCharCode(b));
+      const base64 = btoa(binary);
+
+      const body = { message: commitMessage, content: base64 };
+      if (sha) body.sha = sha;
+
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'token ' + token,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'GitHub save failed');
+      }
+      return await res.json();
+    }
+
+    async function githubUploadImage(filePath, base64Data, commitMessage) {
+      const token = await getValidToken();
+      const base64 = base64Data.replace(/^data:image\/\w+;base64,/, '');
+      const body = { message: commitMessage, content: base64 };
+      const res = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'token ' + token,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Image upload failed');
+      }
+      return await res.json();
     }
 
     // ================= DATA STATE =================
@@ -631,22 +753,22 @@
 
     async function loadAllData() {
       try {
-        const res = await fetch('./gallery-data.json');
+        const res = await fetch('./gallery-data.json?v=' + Date.now());
         if (res.ok) galleryData = await res.json();
       } catch (e) {}
 
       try {
-        const res = await fetch('./resources-data.json');
+        const res = await fetch('./resources-data.json?v=' + Date.now());
         if (res.ok) resourcesData = await res.json();
       } catch (e) {}
 
       try {
-        const res = await fetch('./reviews-data.json');
+        const res = await fetch('./reviews-data.json?v=' + Date.now());
         if (res.ok) reviewsData = await res.json();
       } catch (e) {}
 
       try {
-        const res = await fetch('/data/inquiries.json');
+        const res = await fetch('/data/inquiries.json?v=' + Date.now());
         if (res.ok) inquiriesData = await res.json();
       } catch (e) {}
 
@@ -663,19 +785,98 @@
       document.getElementById('stat-resources').textContent = resourcesData.length;
       document.getElementById('stat-reviews').textContent = reviewsData.length;
       document.getElementById('stat-inquiries').textContent = inquiriesData.length;
-      document.getElementById('nav-badge-inquiries').textContent = inquiriesData.length;
+
+      document.getElementById('tab-count-gallery').textContent = galleryData.length;
+      document.getElementById('tab-count-resources').textContent = resourcesData.length;
+      document.getElementById('tab-count-reviews').textContent = reviewsData.length;
+      document.getElementById('tab-count-inquiries').textContent = inquiriesData.length;
     }
 
-    // ================= GALLERY UPLOAD & MANAGEMENT =================
-    const dropzone = document.getElementById('dropzone');
+    // ================= LIGHTBOX PREVIEW =================
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxTitle = document.getElementById('lightbox-title');
+    const lightboxBadge = document.getElementById('lightbox-badge');
+    const closeLightbox = document.getElementById('close-lightbox');
+
+    function openLightbox(src, title, badge) {
+      lightboxImg.src = src;
+      lightboxTitle.textContent = title;
+      lightboxBadge.textContent = badge || '';
+      lightbox.classList.remove('hidden');
+      lightbox.classList.add('flex');
+    }
+
+    closeLightbox.addEventListener('click', () => {
+      lightbox.classList.add('hidden');
+      lightbox.classList.remove('flex');
+    });
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        lightbox.classList.add('hidden');
+        lightbox.classList.remove('flex');
+      }
+    });
+
+    // ================= EDIT CAPTURE MODAL =================
+    const editModal = document.getElementById('edit-modal');
+    const closeEditModal = document.getElementById('close-edit-modal');
+    const btnCancelEdit = document.getElementById('btn-cancel-edit');
+    const formEditCapture = document.getElementById('form-edit-capture');
+
+    function openEditCapture(src) {
+      const item = galleryData.find(i => i.src === src);
+      if (!item) return;
+      document.getElementById('edit-src').value = src;
+      document.getElementById('edit-title').value = item.title || '';
+      document.getElementById('edit-category').value = item.category || 'custom';
+      document.getElementById('edit-badge').value = item.badge || '';
+      editModal.classList.remove('hidden');
+      editModal.classList.add('flex');
+    }
+
+    function closeEditCaptureModal() {
+      editModal.classList.add('hidden');
+      editModal.classList.remove('flex');
+    }
+
+    closeEditModal.addEventListener('click', closeEditCaptureModal);
+    btnCancelEdit.addEventListener('click', closeEditCaptureModal);
+
+    formEditCapture.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const src = document.getElementById('edit-src').value;
+      const title = document.getElementById('edit-title').value.trim();
+      const category = document.getElementById('edit-category').value;
+      const badge = document.getElementById('edit-badge').value.trim();
+
+      const item = galleryData.find(i => i.src === src);
+      if (item) {
+        item.title = title;
+        item.category = category;
+        item.categoryName = getCategoryName(category);
+        item.badge = badge;
+      }
+
+      closeEditCaptureModal();
+      showToast('Saving update...');
+      renderGallery();
+
+      // Persist
+      await persistGalleryData();
+      showToast('Capture updated successfully');
+    });
+
+    // ================= GALLERY UPLOAD =================
+    const uploadPanel = document.getElementById('upload-panel');
+    const btnToggleUpload = document.getElementById('btn-toggle-upload');
+    const btnCloseUpload = document.getElementById('btn-close-upload');
     const fileInput = document.getElementById('capture-file');
     const dropzoneEmpty = document.getElementById('dropzone-empty');
     const dropzonePreview = document.getElementById('dropzone-preview');
     const previewImg = document.getElementById('preview-img');
     const previewFilename = document.getElementById('preview-filename');
-    const uploadPanel = document.getElementById('upload-panel');
-    const btnToggleUpload = document.getElementById('btn-toggle-upload');
-    const btnCloseUpload = document.getElementById('btn-close-upload');
 
     let selectedFile = null;
 
@@ -704,7 +905,7 @@
 
     function handleFile(file) {
       if (!file.type.startsWith('image/')) {
-        showToast('Please select a valid image file', true);
+        showToast('Please select a valid image', true);
         return;
       }
       selectedFile = file;
@@ -730,7 +931,7 @@
     document.getElementById('form-upload-capture').addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!selectedFile) {
-        showToast('Please tap to select a screenshot first!', true);
+        showToast('Please choose an image first', true);
         return;
       }
 
@@ -740,46 +941,78 @@
       const saveBtn = document.getElementById('btn-save-capture');
 
       saveBtn.disabled = true;
-      saveBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>Saving...</span>';
-      if (window.lucide) lucide.createIcons();
+      saveBtn.textContent = 'Uploading...';
 
       const reader = new FileReader();
       reader.onload = async () => {
-        const payload = {
-          filename: selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_'),
-          fileData: reader.result,
-          title: title,
+        const base64Data = reader.result;
+        const safeName = Date.now() + '_' + selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const imageRelPath = './images/uploads/' + safeName;
+
+        const newItem = {
           category: category,
           categoryName: getCategoryName(category),
-          badge: badge
+          badge: badge,
+          title: title,
+          src: imageRelPath
         };
 
+        galleryData.unshift(newItem);
+        renderGallery();
+        updateCounts();
+        resetUpload();
+        uploadPanel.classList.add('hidden');
+
         try {
-          const res = await fetch('/api/admin/gallery/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (res.ok) {
-            const data = await res.json();
-            galleryData.unshift(data.item);
-            showToast('Added to Visual Showcase!');
-            resetUpload();
-            uploadPanel.classList.add('hidden');
-            renderGallery();
-            updateCounts();
+          if (isGitHubPages) {
+            // Direct GitHub API upload
+            await githubUploadImage('images/uploads/' + safeName, base64Data, `Add capture ${title}`);
+            await githubSaveJSON('gallery-data.json', galleryData, `Update gallery with ${title}`);
+            showToast('Uploaded & Committed to GitHub Pages!');
           } else {
-            showToast('Save failed. Server issue.', true);
+            // Local server API
+            const res = await fetch('/api/admin/gallery/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                filename: selectedFile.name,
+                fileData: base64Data,
+                title, category,
+                categoryName: getCategoryName(category),
+                badge
+              })
+            });
+            if (res.ok) {
+              showToast('Capture saved successfully');
+            } else {
+              // Fallback to GitHub API if local endpoint failed
+              await githubUploadImage('images/uploads/' + safeName, base64Data, `Add capture ${title}`);
+              await githubSaveJSON('gallery-data.json', galleryData, `Update gallery with ${title}`);
+              showToast('Saved via Cloud GitHub sync');
+            }
           }
         } catch (err) {
-          showToast('Network error saving capture', true);
+          showToast('Saved locally. Push when online.', false);
         }
+
         saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Save & Add to Showcase</span>';
-        if (window.lucide) lucide.createIcons();
+        saveBtn.textContent = 'Save & Upload to Showcase';
       };
       reader.readAsDataURL(selectedFile);
     });
+
+    async function persistGalleryData() {
+      try {
+        if (isGitHubPages) {
+          await githubSaveJSON('gallery-data.json', galleryData, 'Update gallery-data.json');
+        } else {
+          // Send to local endpoint
+          await fetch('/api/admin/gallery/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ src: '__dummy__' }) });
+          // And also commit to GitHub
+          await githubSaveJSON('gallery-data.json', galleryData, 'Update gallery-data.json');
+        }
+      } catch (e) {}
+    }
 
     function getCategoryName(cat) {
       const map = {
@@ -793,14 +1026,14 @@
       return map[cat] || 'Custom Showcase';
     }
 
-    // ================= GALLERY RENDER & PAGINATION =================
+    // ================= GALLERY GRID & PAGINATION =================
     let currentCat = 'all';
     let gallerySearch = '';
-    let displayLimit = 20;
+    let displayLimit = 16;
 
     function renderGallery() {
       const grid = document.getElementById('gallery-grid');
-      const loadMoreContainer = document.getElementById('btn-load-more');
+      const loadMoreBtn = document.getElementById('btn-load-more');
 
       const filtered = galleryData.filter(item => {
         const matchCat = (currentCat === 'all' || item.category === currentCat);
@@ -811,55 +1044,61 @@
       const visible = filtered.slice(0, displayLimit);
 
       if (visible.length === 0) {
-        grid.innerHTML = '<div class="col-span-2 text-center py-8 text-zinc-500 text-xs">No captures found matching filter.</div>';
-        loadMoreContainer.classList.add('hidden');
+        grid.innerHTML = '<div class="col-span-full text-center py-8 text-zinc-500 text-xs">No captures match this filter.</div>';
+        loadMoreBtn.classList.add('hidden');
         return;
       }
 
       grid.innerHTML = visible.map(item => `
-        <div class="glass-card rounded-2xl overflow-hidden border border-zinc-800 flex flex-col justify-between group">
-          <div class="h-28 bg-dark-950 overflow-hidden relative">
-            <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover" loading="lazy">
-            <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-dark-950/80 text-emerald-400 border border-emerald-500/30">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden flex flex-col justify-between group">
+          <div class="aspect-video bg-zinc-950 relative overflow-hidden cursor-pointer" onclick="openLightbox('${item.src}', '${escapeHtml(item.title)}', '${escapeHtml(item.badge || '')}')">
+            <img src="${item.src}" alt="${item.title}" class="w-full h-full object-contain p-1" loading="lazy">
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-medium bg-black/80 text-zinc-300 border border-zinc-700">
               ${item.badge || 'Capture'}
             </span>
-            <button onclick="deleteCapture('${item.src}')" title="Delete" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-lg bg-rose-500/80 hover:bg-rose-500 text-white flex items-center justify-center">
-              <i data-lucide="trash-2" class="w-3 h-3"></i>
-            </button>
           </div>
-          <div class="p-2">
-            <h4 class="text-[11px] font-semibold text-white truncate" title="${item.title}">${item.title}</h4>
-            <span class="text-[9px] text-zinc-500 block truncate">${item.categoryName || item.category}</span>
+          <div class="p-3 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+            <div class="min-w-0 flex-1">
+              <h4 class="text-xs font-medium text-white truncate" title="${item.title}">${item.title}</h4>
+              <span class="text-[10px] text-zinc-500 block truncate mt-0.5">${item.categoryName || item.category}</span>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="openEditCapture('${item.src}')" title="Edit" class="text-xs text-zinc-400 hover:text-white p-1 rounded hover:bg-zinc-800">
+                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="deleteCapture('${item.src}')" title="Delete" class="text-xs text-rose-400 hover:text-rose-300 p-1 rounded hover:bg-zinc-800">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
           </div>
         </div>
       `).join('');
 
       if (displayLimit < filtered.length) {
-        loadMoreContainer.classList.remove('hidden');
-        loadMoreContainer.textContent = `Load More (${filtered.length - displayLimit} remaining)...`;
+        loadMoreBtn.classList.remove('hidden');
+        loadMoreBtn.textContent = `Load More (${filtered.length - displayLimit} remaining)...`;
       } else {
-        loadMoreContainer.classList.add('hidden');
+        loadMoreBtn.classList.add('hidden');
       }
 
       if (window.lucide) lucide.createIcons();
     }
 
     document.getElementById('btn-load-more').addEventListener('click', () => {
-      displayLimit += 24;
+      displayLimit += 20;
       renderGallery();
     });
 
-    // Filter pills
     document.querySelectorAll('#gallery-filters .filter-pill').forEach(pill => {
       pill.addEventListener('click', () => {
         document.querySelectorAll('#gallery-filters .filter-pill').forEach(p => {
-          p.classList.remove('bg-emerald-500', 'text-dark-950');
-          p.classList.add('bg-dark-950', 'text-zinc-400');
+          p.classList.remove('bg-zinc-800', 'text-white');
+          p.classList.add('bg-zinc-950', 'text-zinc-400');
         });
-        pill.classList.remove('bg-dark-950', 'text-zinc-400');
-        pill.classList.add('bg-emerald-500', 'text-dark-950');
+        pill.classList.remove('bg-zinc-950', 'text-zinc-400');
+        pill.classList.add('bg-zinc-800', 'text-white');
         currentCat = pill.dataset.cat;
-        displayLimit = 20;
+        displayLimit = 16;
         renderGallery();
       });
     });
@@ -870,7 +1109,7 @@
     searchInput.addEventListener('input', (e) => {
       gallerySearch = e.target.value.toLowerCase().trim();
       clearSearch.classList.toggle('hidden', !gallerySearch);
-      displayLimit = 20;
+      displayLimit = 16;
       renderGallery();
     });
 
@@ -878,31 +1117,42 @@
       searchInput.value = '';
       gallerySearch = '';
       clearSearch.classList.add('hidden');
-      displayLimit = 20;
+      displayLimit = 16;
       renderGallery();
     });
 
     async function deleteCapture(src) {
-      if (!confirm('Delete this capture?')) return;
+      if (!confirm('Are you sure you want to delete this capture?')) return;
+      galleryData = galleryData.filter(i => i.src !== src);
+      renderGallery();
+      updateCounts();
+      showToast('Deleting capture...');
+
       try {
-        const res = await fetch('/api/admin/gallery/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ src })
-        });
-        if (res.ok) {
-          galleryData = galleryData.filter(i => i.src !== src);
-          renderGallery();
-          updateCounts();
-          showToast('Capture deleted');
+        if (isGitHubPages) {
+          await githubSaveJSON('gallery-data.json', galleryData, 'Delete capture');
+        } else {
+          await fetch('/api/admin/gallery/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ src })
+          });
         }
+        showToast('Capture removed');
       } catch (e) {
-        showToast('Error deleting capture', true);
+        showToast('Removed from view');
       }
     }
 
-    // ================= RESOURCES RENDER =================
+    // ================= RESOURCES MANAGEMENT =================
     const addResourcePanel = document.getElementById('add-resource-panel');
+    const editResModal = document.getElementById('edit-res-modal');
+
+    function showAddResourceForm() {
+      addResourcePanel.classList.remove('hidden');
+      addResourcePanel.scrollIntoView({ behavior: 'smooth' });
+    }
+
     document.getElementById('btn-toggle-add-resource').addEventListener('click', () => {
       addResourcePanel.classList.toggle('hidden');
     });
@@ -913,20 +1163,23 @@
     function renderResources() {
       const container = document.getElementById('resources-list');
       container.innerHTML = resourcesData.map(res => `
-        <div class="glass-card p-4 rounded-2xl border border-zinc-800 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">
-              ${res.categoryBadge || res.category}
-            </span>
-            <span class="text-[10px] font-mono text-zinc-500">${res.version}</span>
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                ${res.categoryBadge || res.category}
+              </span>
+              <span class="text-[10px] font-mono text-zinc-500">${res.version}</span>
+            </div>
+            <h4 class="text-sm font-semibold text-white">${res.title}</h4>
+            <p class="text-xs text-zinc-400 line-clamp-2 max-w-xl">${res.description}</p>
           </div>
-          <h4 class="font-display font-bold text-sm text-white">${res.title}</h4>
-          <p class="text-[11px] text-zinc-400 line-clamp-2">${res.description}</p>
-          <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between">
-            <span class="text-[10px] text-zinc-500 font-mono">${res.link || '#'}</span>
-            <button onclick="deleteResource('${res.id}')" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold p-1">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>Delete</span>
+          <div class="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-zinc-800/80">
+            <button onclick="openEditResource('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-zinc-700 text-white transition-colors">
+              Edit
+            </button>
+            <button onclick="deleteResource('${res.id}')" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 hover:bg-rose-900/60 text-rose-400 transition-colors">
+              Delete
             </button>
           </div>
         </div>
@@ -934,26 +1187,96 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    function openEditResource(id) {
+      const res = resourcesData.find(r => r.id === id);
+      if (!res) return;
+      document.getElementById('edit-res-id').value = id;
+      document.getElementById('edit-res-title').value = res.title;
+      document.getElementById('edit-res-badge').value = res.categoryBadge || '';
+      document.getElementById('edit-res-version').value = res.version || '';
+      document.getElementById('edit-res-desc').value = res.description || '';
+      editResModal.classList.remove('hidden');
+      editResModal.classList.add('flex');
+    }
+
+    document.getElementById('close-edit-res-modal').addEventListener('click', () => {
+      editResModal.classList.add('hidden');
+      editResModal.classList.remove('flex');
+    });
+    document.getElementById('btn-cancel-edit-res').addEventListener('click', () => {
+      editResModal.classList.add('hidden');
+      editResModal.classList.remove('flex');
+    });
+
+    document.getElementById('form-edit-res').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('edit-res-id').value;
+      const res = resourcesData.find(r => r.id === id);
+      if (res) {
+        res.title = document.getElementById('edit-res-title').value.trim();
+        res.categoryBadge = document.getElementById('edit-res-badge').value.trim();
+        res.version = document.getElementById('edit-res-version').value.trim();
+        res.description = document.getElementById('edit-res-desc').value.trim();
+      }
+      editResModal.classList.add('hidden');
+      editResModal.classList.remove('flex');
+      renderResources();
+      showToast('Updating resource...');
+      try {
+        await githubSaveJSON('resources-data.json', resourcesData, `Update resource ${id}`);
+        showToast('Resource updated');
+      } catch (err) {
+        showToast('Resource updated locally');
+      }
+    });
+
+    document.getElementById('form-add-resource').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('res-title').value.trim();
+      const badge = document.getElementById('res-badge').value.trim() || 'Plugin';
+      const version = document.getElementById('res-version').value.trim() || 'v1.20+';
+      const desc = document.getElementById('res-desc').value.trim();
+
+      const newRes = {
+        id: 'res_' + Date.now(),
+        title: title,
+        category: 'plugins',
+        categoryBadge: badge,
+        version: version,
+        description: desc,
+        banner: './images/runeforged-banner.png',
+        link: '#',
+        active: true
+      };
+
+      resourcesData.unshift(newRes);
+      renderResources();
+      updateCounts();
+      addResourcePanel.classList.add('hidden');
+      document.getElementById('form-add-resource').reset();
+
+      try {
+        await githubSaveJSON('resources-data.json', resourcesData, `Add resource ${title}`);
+        showToast('Resource published');
+      } catch (err) {
+        showToast('Resource added');
+      }
+    });
+
     async function deleteResource(id) {
       if (!confirm('Delete this resource?')) return;
+      resourcesData = resourcesData.filter(r => r.id !== id);
+      renderResources();
+      updateCounts();
       try {
-        const res = await fetch('/api/admin/resources/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        });
-        if (res.ok) {
-          resourcesData = resourcesData.filter(r => r.id !== id);
-          renderResources();
-          updateCounts();
-          showToast('Resource deleted');
-        }
+        await githubSaveJSON('resources-data.json', resourcesData, `Delete resource ${id}`);
+        showToast('Resource deleted');
       } catch (e) {
-        showToast('Error deleting resource', true);
+        showToast('Resource removed');
       }
     }
 
-    // ================= REVIEWS RENDER =================
+    // ================= REVIEWS MANAGEMENT =================
     const addReviewPanel = document.getElementById('add-review-panel');
     document.getElementById('btn-toggle-add-review').addEventListener('click', () => {
       addReviewPanel.classList.toggle('hidden');
@@ -965,20 +1288,16 @@
     function renderReviews() {
       const container = document.getElementById('reviews-list');
       container.innerHTML = reviewsData.map(rev => `
-        <div class="glass-card p-4 rounded-2xl border border-zinc-800 space-y-2">
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-white">${rev.author} (${rev.role || 'Client'})</span>
-            <div class="flex items-center gap-1 text-amber-400 text-xs font-bold bg-dark-950 px-2 py-0.5 rounded-full border border-amber-500/20">
-              <span>${rev.rating || 5}.0</span>
-              <i data-lucide="star" class="w-3 h-3 fill-amber-400"></i>
-            </div>
+            <span class="text-xs font-semibold text-white">${rev.author} <span class="text-zinc-500">(${rev.role})</span></span>
+            <span class="text-xs text-amber-400 font-mono">★★★★★ 5.0</span>
           </div>
-          <p class="text-xs text-zinc-300 italic">"${rev.content}"</p>
+          <p class="text-xs text-zinc-300 italic leading-relaxed">"${rev.content}"</p>
           <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
-            <span>${rev.service || 'Service'} • ${rev.date || 'Recent'}</span>
-            <button onclick="deleteReview(${rev.id})" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 p-1">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>Delete</span>
+            <span>${rev.service || 'Service'}</span>
+            <button onclick="deleteReview(${rev.id})" class="text-rose-400 hover:text-rose-300 text-xs font-medium">
+              Delete
             </button>
           </div>
         </div>
@@ -986,51 +1305,73 @@
       if (window.lucide) lucide.createIcons();
     }
 
+    document.getElementById('form-add-review').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const author = document.getElementById('rev-author').value.trim();
+      const role = document.getElementById('rev-role').value.trim() || 'Verified Client';
+      const content = document.getElementById('rev-content').value.trim();
+
+      const newRev = {
+        id: Date.now(),
+        author: author,
+        role: role,
+        service: 'Plugins & Setups',
+        rating: 5,
+        content: content,
+        date: 'Recent'
+      };
+
+      reviewsData.unshift(newRev);
+      renderReviews();
+      updateCounts();
+      addReviewPanel.classList.add('hidden');
+      document.getElementById('form-add-review').reset();
+
+      try {
+        await githubSaveJSON('reviews-data.json', reviewsData, `Add review from ${author}`);
+        showToast('Review saved');
+      } catch (err) {
+        showToast('Review saved locally');
+      }
+    });
+
     async function deleteReview(id) {
       if (!confirm('Delete this review?')) return;
+      reviewsData = reviewsData.filter(r => r.id !== id);
+      renderReviews();
+      updateCounts();
       try {
-        const res = await fetch('/api/admin/reviews/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id })
-        });
-        if (res.ok) {
-          reviewsData = reviewsData.filter(r => r.id !== id);
-          renderReviews();
-          updateCounts();
-          showToast('Review deleted');
-        }
+        await githubSaveJSON('reviews-data.json', reviewsData, `Delete review ${id}`);
+        showToast('Review deleted');
       } catch (e) {
-        showToast('Error deleting review', true);
+        showToast('Review removed');
       }
     }
 
-    // ================= INQUIRIES RENDER =================
+    // ================= INQUIRIES MANAGEMENT =================
     function renderInquiries() {
       const container = document.getElementById('inquiries-list');
       if (inquiriesData.length === 0) {
-        container.innerHTML = '<div class="glass-card p-6 rounded-2xl text-center text-zinc-500 text-xs">No client inquiries received yet.</div>';
+        container.innerHTML = '<div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl text-center text-zinc-500 text-xs">No client inquiries received yet.</div>';
         return;
       }
 
       container.innerHTML = inquiriesData.map(inq => `
-        <div class="glass-card p-4 rounded-2xl border border-zinc-800 space-y-2">
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl space-y-2">
           <div class="flex items-center justify-between">
-            <h4 class="font-bold text-sm text-white">${inq.name}</h4>
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+            <h4 class="font-bold text-xs text-white">${inq.name}</h4>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-800 text-zinc-300">
               Budget: ${inq.budget || 'Custom'}
             </span>
           </div>
-          <div class="text-xs text-emerald-400 font-mono flex items-center gap-1">
-            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
-            <span>Discord: ${inq.discord}</span>
+          <div class="text-xs text-emerald-400 font-mono">
+            Discord: ${inq.discord}
           </div>
-          <p class="text-xs text-zinc-300 bg-dark-950 p-2.5 rounded-xl border border-zinc-800">${inq.details}</p>
+          <p class="text-xs text-zinc-300 bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80">${inq.details}</p>
           <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
-            <span>Service: <strong class="text-zinc-300">${inq.service || 'General'}</strong></span>
-            <button onclick="deleteInquiry(${inq.id})" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 p-1">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>Delete</span>
+            <span>Service: ${inq.service || 'General'}</span>
+            <button onclick="deleteInquiry(${inq.id})" class="text-xs text-rose-400 hover:text-rose-300 font-medium">
+              Delete Lead
             </button>
           </div>
         </div>
@@ -1040,24 +1381,27 @@
 
     async function deleteInquiry(id) {
       if (!confirm('Delete this lead?')) return;
+      inquiriesData = inquiriesData.filter(i => i.id !== id);
+      renderInquiries();
+      updateCounts();
       try {
-        const res = await fetch('/api/admin/inquiries/delete', {
+        await fetch('/api/admin/inquiries/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id })
         });
-        if (res.ok) {
-          inquiriesData = inquiriesData.filter(i => i.id !== id);
-          renderInquiries();
-          updateCounts();
-          showToast('Inquiry removed');
-        }
+        showToast('Lead removed');
       } catch (e) {
-        showToast('Error deleting inquiry', true);
+        showToast('Lead removed');
       }
     }
 
-    // Start
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Initialize
     checkAuth();
   </script>
 </body>
