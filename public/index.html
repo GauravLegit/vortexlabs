@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VortexLabs | Portfolio</title>
+  <meta name="description" content="VortexLabs - Engineering Elite Server Mechanics. Specializing in custom Paper/Spigot plugins, advanced Maven/Gradle architecture, and fully optimized server setups.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              950: '#052e16',
+            },
+            dark: {
+              950: '#080b09',
+              900: '#0e1411',
+              850: '#121a16',
+              800: '#18231e',
+              700: '#23322b',
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/styles.css?v=12">
+</head>
+<body class="bg-[#080b09] text-zinc-100 min-h-screen selection:bg-emerald-500 selection:text-zinc-950 relative overflow-x-hidden">
+
+  <!-- Ambient Background Glows -->
+  <div class="fixed top-[-10%] right-[-5%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-glow"></div>
+  <div class="fixed bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[130px] pointer-events-none -z-10 animate-pulse-glow" style="animation-delay: 2s;"></div>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="sticky top-0 z-40 w-full glass-panel-deep border-b border-emerald-500/15">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Name -->
+      <a href="#home" class="flex items-center group">
+        <span class="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-white group-hover:text-emerald-400 transition-colors">
+          Vortex<span class="text-emerald-400">Labs</span>
+        </span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-zinc-300">
+        <a href="#home" class="nav-link text-emerald-400 font-semibold hover:text-emerald-400 transition-colors">Home</a>
+        <a href="#about" class="nav-link hover:text-emerald-400 transition-colors">About</a>
+        <a href="#resources" class="nav-link hover:text-emerald-400 transition-colors">Resources</a>
+        <a href="#gallery" class="nav-link hover:text-emerald-400 transition-colors">Gallery</a>
+        <a href="#services" class="nav-link hover:text-emerald-400 transition-colors">Services</a>
+        <a href="#reviews" class="nav-link hover:text-emerald-400 transition-colors">Reviews</a>
+        <a href="#contact" class="nav-link hover:text-emerald-400 transition-colors">Contact</a>
+      </nav>
+
+      <!-- Desktop CTA Button -->
+      <div class="hidden md:flex items-center">
+        <a href="#contact" class="px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 border border-emerald-400/40 text-emerald-300 hover:text-zinc-950 hover:bg-emerald-400 hover:border-emerald-400 shadow-lg shadow-emerald-500/15 hover:shadow-emerald-500/35">
+          Contact Us
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-zinc-300 hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors" aria-label="Open navigation menu">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Drawer (Strictly md:hidden so it never shows in desktop mode) -->
+  <div id="mobile-menu-drawer" class="fixed inset-0 z-50 pointer-events-none transition-all duration-300 md:hidden">
+    
+    <!-- Dimmed Backdrop (Closes on click) -->
+    <div id="mobile-menu-backdrop" class="absolute inset-0 bg-black/75 backdrop-blur-md opacity-0 transition-opacity duration-300 pointer-events-none"></div>
+
+    <!-- Right-aligned Slide-in Drawer Sheet (Clean, flat dark theme without extra glows/gradients) -->
+    <div id="mobile-menu-panel" class="absolute top-0 right-0 bottom-0 w-[85%] sm:w-[360px] max-w-full bg-[#0d100e] border-l border-zinc-800 shadow-2xl flex flex-col justify-between p-6 transform translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-auto overflow-y-auto">
+      
+      <!-- Top Header in Drawer -->
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-zinc-800">
+          <div class="flex items-center gap-2">
+            <span class="font-display font-extrabold text-2xl text-white">Vortex<span class="text-emerald-400">Labs</span></span>
+          </div>
+          <button id="close-mobile-menu-btn" class="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors" aria-label="Close menu">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+        <!-- Clean Top-Down Navigation Cards (No extra glow/gradients) -->
+        <nav class="flex flex-col gap-2 mt-6">
+          
+          <a href="#home" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-emerald-400 flex items-center justify-center">
+                <i data-lucide="home" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">Home</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors"></i>
+          </a>
+
+          <a href="#about" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">About VortexLabs</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors"></i>
+          </a>
+
+          <a href="#resources" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+                <i data-lucide="box" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">Featured Resources</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors"></i>
+          </a>
+
+          <a href="#gallery" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+                <i data-lucide="image" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">Visual Showcase</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors"></i>
+          </a>
+
+          <a href="#services" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">Services</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors"></i>
+          </a>
+
+          <a href="#reviews" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+                <i data-lucide="star" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">Client Reviews</span>
+            </div>
+            <span class="text-[11px] font-bold text-amber-400 px-2 py-0.5 rounded-md bg-zinc-800">5.0 ★</span>
+          </a>
+
+          <a href="#contact" class="mobile-nav-link group px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white font-medium flex items-center justify-between transition-colors hover:border-zinc-700 active:scale-98">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-400 flex items-center justify-center">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </div>
+              <span class="text-sm">Contact</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-zinc-600 group-hover:text-zinc-400 transition-colors"></i>
+          </a>
+
+        </nav>
+
+        <!-- Discord Quick Connect Card in Drawer -->
+        <div class="mt-6 p-3.5 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 flex items-center justify-center">
+              <i data-lucide="message-square" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <span class="text-[10px] text-zinc-400 block">Founder Discord</span>
+              <span class="text-xs font-semibold text-white">@vortexlabs</span>
+            </div>
+          </div>
+          <button class="copy-trigger px-2.5 py-1 rounded-lg text-[11px] font-medium bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-colors border border-zinc-700" data-copy="vortexlabs">
+            Copy
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Bottom Drawer CTA Action -->
+      <div class="pt-4 border-t border-zinc-800 mt-6">
+        <a href="#contact" class="mobile-nav-link w-full py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-colors text-sm flex items-center justify-center gap-2 active:scale-98">
+          <span>Get In Touch With Gaurav</span>
+          <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ================= HERO SECTION (MATCHING FIGMA DESIGN + MOTIVE OF VORTEXLABS) ================= -->
+  <section id="home" class="relative pt-12 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Side-by-side on Desktop view and tablet/mobile desktop mode (md:) -->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-8 lg:gap-12">
+        
+        <!-- Left Hero Content -->
+        <div class="w-full md:w-1/2 lg:w-7/12 flex flex-col items-start z-10">
+          
+          <!-- BuiltByBit Creator Badge (From Old Site) -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-dark-900 border border-emerald-500/30 text-xs font-semibold text-zinc-300 mb-6 shadow-lg shadow-emerald-500/10">
+            <svg class="w-4 h-4 text-blue-400 fill-current drop-shadow" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <span class="tracking-wider uppercase text-[11px] text-zinc-200 font-bold">BuiltByBit Creator</span>
+          </div>
+
+          <!-- Main Bold Headline (Exact Motive & Tagline) -->
+          <h1 class="font-display font-extrabold text-5xl sm:text-6xl md:text-5xl lg:text-[66px] xl:text-[74px] leading-[1.08] tracking-tight text-white mb-6">
+            Engineering Elite <br>
+            <span class="text-gradient-green">Server Mechanics</span>
+          </h1>
+
+          <!-- Description Text (Exact from old website) -->
+          <p class="text-zinc-400 text-base sm:text-lg leading-relaxed max-w-lg mb-8">
+            Specializing in custom Paper/Spigot plugins, advanced Maven/Gradle architecture, and fully optimized server setups.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-4">
+            <a href="#resources" class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all text-sm">
+              <span>View Resources</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+            <a href="https://discord.gg/ckJHr36Bet" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold bg-dark-900 border border-emerald-500/25 hover:border-emerald-500/50 text-white hover:text-emerald-400 transition-all text-sm">
+              <i data-lucide="message-square" class="w-4 h-4 text-[#5865F2]"></i>
+              <span>Contact Gaurav</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Right Hero Visual (Preserving Exact Figma Composition) -->
+        <div class="w-full md:w-1/2 lg:w-5/12 flex items-center justify-center md:justify-end py-4">
+          
+          <!-- Hero Visual Frame -->
+          <div class="relative w-[300px] sm:w-[340px] md:w-[370px] h-[380px] sm:h-[420px] md:h-[450px] flex items-center justify-center select-none mx-auto">
+            
+            <!-- 1. Outer Wireframe Offset Rounded Rectangle (Behind) -->
+            <div class="absolute w-[250px] sm:w-[280px] md:w-[300px] h-[330px] sm:h-[370px] md:h-[390px] border-2 border-white/40 rounded-[38px] -rotate-6 pointer-events-none transition-transform duration-500"></div>
+
+            <!-- 2. Main Angled Light Green Card (Tilted at -16deg) -->
+            <div class="absolute w-[240px] sm:w-[270px] md:w-[290px] h-[320px] sm:h-[360px] md:h-[380px] rounded-[38px] -rotate-[16deg] bg-[#22c55e] shadow-xl overflow-hidden"></div>
+
+            <!-- 3. Clean VortexLabs Logo (Tilted for a sleek dynamic look) -->
+            <div class="relative z-10 w-[190px] sm:w-[220px] md:w-[240px] h-[190px] sm:h-[220px] md:h-[240px] flex items-center justify-center transform -rotate-[10deg] transition-transform duration-300 hover:-rotate-[6deg]">
+              <img src="/assets/logo.png" alt="VortexLabs Logo" class="w-full h-full object-contain drop-shadow-md">
+            </div>
+
+            <!-- 4. FLOATING GEOMETRICAL BLOCKS (EXACT POSITIONS FROM FIGMA) -->
+            
+            <!-- Zigzag Doodle: Top-Left -->
+            <div class="absolute top-4 -left-6 sm:-left-8 z-20 animate-float-slow">
+              <svg width="50" height="26" viewBox="0 0 60 28" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white opacity-90">
+                <path d="M4 14L14 4L26 24L38 4L50 24L56 14" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <!-- Concentric Circles: Top-Right -->
+            <div class="absolute top-2 -right-6 sm:-right-8 z-20 animate-float-reverse">
+              <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white opacity-85">
+                <circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+                <circle cx="32" cy="32" r="16" stroke="currentColor" stroke-width="2"/>
+                <circle cx="32" cy="32" r="4" fill="#ffffff"/>
+              </svg>
+            </div>
+
+            <!-- Isometric 3D Triangle: Bottom-Left -->
+            <div class="absolute bottom-6 -left-8 sm:-left-10 z-20 animate-float-reverse">
+              <svg width="46" height="46" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white opacity-85">
+                <path d="M27 6L48 44H6L27 6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+                <path d="M27 6V44" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/>
+              </svg>
+            </div>
+
+            <!-- Plus Sign (+): Bottom-Right -->
+            <div class="absolute bottom-6 -right-4 sm:-right-6 z-20 text-white font-light text-3xl select-none animate-float-slow opacity-90 leading-none">
+              +
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= STATS STRIP (FROM OLD SITE) ================= -->
+  <div class="border-y border-emerald-500/15 bg-dark-900/50 backdrop-blur-md py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center sm:text-left">
+        <div>
+          <div class="text-2xl sm:text-3xl font-display font-bold text-white">5+</div>
+          <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Custom Resources</div>
+        </div>
+        <div>
+          <div class="text-2xl sm:text-3xl font-display font-bold text-emerald-400">100+</div>
+          <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Downloads Shipped</div>
+        </div>
+        <div>
+          <div class="text-2xl sm:text-3xl font-display font-bold text-white">20.0</div>
+          <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Locked TPS Engine</div>
+        </div>
+        <div>
+          <div class="text-2xl sm:text-3xl font-display font-bold text-amber-400 flex items-center justify-center sm:justify-start gap-1">
+            5.0 <i data-lucide="star" class="w-4 h-4 fill-amber-400 inline"></i>
+          </div>
+          <div class="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Star Client Rating</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ABOUT SECTION & WHY CHOOSE VORTEXLABS ================= -->
+  <section id="about" class="py-24 relative border-t border-emerald-500/15 bg-gradient-to-b from-dark-950 via-dark-900 to-dark-950">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Sub-Header -->
+      <div class="mb-12 text-center max-w-2xl mx-auto">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">Engineering Philosophy</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight leading-tight">
+          Why Choose <span class="text-emerald-400">VortexLabs</span>?
+        </h2>
+      </div>
+
+      <!-- 4 Core Pillars Grid (Matching Old Site Motives & Content) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <div class="glass-panel p-6 rounded-2xl neon-border hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4">
+            <i data-lucide="layout-template" class="w-6 h-6"></i>
+          </div>
+          <h4 class="font-display font-bold text-lg text-white mb-2">Premium Nostalgic UI</h4>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            Scoreboards, menus, and chat formats engineered with a clean, classic aesthetic that feels nostalgic yet entirely modern without bloated packs.
+          </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl neon-border hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4">
+            <i data-lucide="activity" class="w-6 h-6"></i>
+          </div>
+          <h4 class="font-display font-bold text-lg text-white mb-2">Surgical Optimization</h4>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            Plugins constructed with advanced code structures, featuring surgical lag-detection systems and pinpoint Redstone chunk monitoring.
+          </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl neon-border hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4">
+            <i data-lucide="git-merge" class="w-6 h-6"></i>
+          </div>
+          <h4 class="font-display font-bold text-lg text-white mb-2">Seamless Integration</h4>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            Flawless support strictly built for versions 1.20 to 1.21+, integrating seamlessly with MySQL databases and PlaceholderAPI.
+          </p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl neon-border hover:-translate-y-1 transition-all">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+          </div>
+          <h4 class="font-display font-bold text-lg text-white mb-2">20.0 TPS Guarantee</h4>
+          <p class="text-zinc-400 text-sm leading-relaxed">
+            Deep-dive diagnostic services and paper.yml tuning to eliminate thread bottlenecks and lock your production server safely at 20.0 TPS.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FEATURED RESOURCES SECTION (REPLACED FROM OLD SITE) ================= -->
+  <section id="resources" class="py-24 relative border-t border-emerald-500/15">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">Custom Portfolio</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight mb-4">
+          Featured <span class="text-emerald-400">Resources</span>
+        </h2>
+        <p class="text-zinc-400 text-base sm:text-lg">
+          Explore the custom Plugins, Setups, and Configs of VortexLabs.
+        </p>
+        <div id="resources-count" class="text-xs font-semibold text-emerald-400 mt-3">Showing 11 resources</div>
+      </div>
+
+      <!-- FILTER TABS FOR RESOURCES -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-12">
+        <button class="resource-tab-btn active px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-emerald-500/30 transition-all cursor-pointer" data-filter="all">
+          All Resources
+        </button>
+        <button class="resource-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="plugins">
+          Plugins
+        </button>
+        <button class="resource-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="survival">
+          Survival
+        </button>
+        <button class="resource-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="minigames">
+          Minigames
+        </button>
+        <button class="resource-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="configs">
+          Configs
+        </button>
+        <button class="resource-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="discord-bots">
+          Discord Bots
+        </button>
+        <button class="resource-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="discord-setups">
+          Discord Setups
+        </button>
+      </div>
+
+      <!-- RESOURCES CARDS GRID -->
+      <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- Resource 1: RuneForged Survival -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="survival">
+          <div>
+            <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+              <img src="/images/runeforged-banner.png" alt="RuneForged Survival" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
+                Survival
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                RuneForged Survival
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                A premium, feature-rich survival setup featuring custom biomes, 13 proprietary plugins, elite progression systems, and polished UI menus.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500">v1.20 - 1.21+</span>
+            <a href="/runeforged" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+              <span>View Showcase</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 2: RuneForgedRunes -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="plugins">
+          <div>
+            <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+              <img src="/images/runeforgedrunes-banner.png" alt="RuneForgedRunes" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40 backdrop-blur-md">
+                Plugin Showcase
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                RuneForgedRunes
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                60 unique collectible runes with drag-and-drop mechanics, success rates, custom salvage menus, and permanent stat enchantments.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500">60 Runes System</span>
+            <a href="/runeforgedrunes" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+              <span>View Showcase</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 3: RuneForgedVote Plugin -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="plugins">
+          <div>
+            <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+              <img src="/images/runeforgedvote-banner.png" alt="RuneForgedVote Plugin" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40 backdrop-blur-md">
+                Plugin
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                RuneForgedVote Plugin
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Astral Alignment voting engine featuring spinning 3D crystal holograms, server-wide meteor strikes, geode minigames, and 40 craftable artifacts.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500">3D Holograms</span>
+            <a href="/runeforgedvote" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+              <span>View Showcase</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 4: Custom Discord Bot Engine -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="discord-bots">
+          <div>
+            <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+              <img src="/images/vortexlabsbot-banner.png" alt="Custom Discord Bot Engine" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 backdrop-blur-md">
+                Discord Bot
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                Custom Discord Bot Engine
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Enterprise-grade Discord automation bot featuring real-time Minecraft server sync, automated support ticketing, custom button menus, and moderation suites.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500">Node.js / Discord.js</span>
+            <a href="/vortexlabsbot" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+              <span>View Showcase</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 5: Grimstone Network Setup -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="discord-setups">
+          <div>
+            <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+              <img src="/images/grimstonediscordsetup-banner.png" alt="Grimstone Network Setup" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 backdrop-blur-md">
+                Server Setup
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                Grimstone Network Setup
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Complete professional network setup with hex-styled channel typography, anti-raid security permissions, reaction verification, and integrated community roles.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500">Hex-Styled Discord</span>
+            <a href="/grimstonediscordserver" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+              <span>View Showcase</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 6: Hermes Survival Server -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="discord-setups">
+          <div>
+            <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+              <img src="/images/hermes-banner.png" alt="Hermes Survival Server" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 backdrop-blur-md">
+                Server Setup
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                Hermes Survival Server
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                A professionally structured Discord server designed specifically for a Minecraft Survival network, featuring secure roles, clean channels, and active community hubs.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-zinc-500">Community Architecture</span>
+            <a href="/hermessurvival" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+              <span>View Showcase</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Resource 7: RuneForgedCombat -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between opacity-80 hover:opacity-100 transition-all duration-300" data-category="plugins">
+          <div>
+            <div class="h-48 bg-gradient-to-br from-[#0a190f] to-[#13331c] flex items-center justify-center border-b border-emerald-500/15 relative">
+              <span class="font-display font-black text-xl tracking-widest text-emerald-400/30 uppercase">Coming Soon</span>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                Plugin
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-zinc-300 mb-2">
+                RuneForgedCombat
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Tactical combat overhaul introducing flashbangs, instant ice wall shields, molotov fields, and directional knockback dampening.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-amber-400 font-semibold">IN DEVELOPMENT</span>
+            <span class="text-xs text-zinc-500">Combat Suite</span>
+          </div>
+        </div>
+
+        <!-- Resource 8: RuneForgedQuests -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between opacity-80 hover:opacity-100 transition-all duration-300" data-category="plugins">
+          <div>
+            <div class="h-48 bg-gradient-to-br from-[#0a190f] to-[#13331c] flex items-center justify-center border-b border-emerald-500/15 relative">
+              <span class="font-display font-black text-xl tracking-widest text-emerald-400/30 uppercase">Coming Soon</span>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                Plugin
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-zinc-300 mb-2">
+                RuneForgedQuests
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Story-driven seasonal questing system hooked into citizens NPCs, awarding custom currency, catalysts, and tier progression.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-amber-400 font-semibold">IN DEVELOPMENT</span>
+            <span class="text-xs text-zinc-500">Story & NPCs</span>
+          </div>
+        </div>
+
+        <!-- Resource 9: RuneForgedCore -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between opacity-80 hover:opacity-100 transition-all duration-300" data-category="plugins">
+          <div>
+            <div class="h-48 bg-gradient-to-br from-[#0a190f] to-[#13331c] flex items-center justify-center border-b border-emerald-500/15 relative">
+              <span class="font-display font-black text-xl tracking-widest text-emerald-400/30 uppercase">Coming Soon</span>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                Plugin
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-zinc-300 mb-2">
+                RuneForgedCore
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Central infrastructure manager handling shared NBT data sync, database connections, chat formatting, and administrative bypass tools.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-amber-400 font-semibold">IN DEVELOPMENT</span>
+            <span class="text-xs text-zinc-500">Core Architecture</span>
+          </div>
+        </div>
+
+        <!-- Resource 10: Unannounced Minigame -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between opacity-80 hover:opacity-100 transition-all duration-300" data-category="minigames">
+          <div>
+            <div class="h-48 bg-gradient-to-br from-[#0a190f] to-[#13331c] flex items-center justify-center border-b border-emerald-500/15 relative">
+              <span class="font-display font-black text-xl tracking-widest text-emerald-400/30 uppercase">Coming Soon</span>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-300 border border-blue-500/40">
+                Minigames
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-zinc-300 mb-2">
+                Unannounced Minigame
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                A highly anticipated custom minigame mode is currently in development. Stay tuned for unique mechanics and fast-paced gameplay.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-amber-400 font-semibold">IN DEVELOPMENT</span>
+            <span class="text-xs text-zinc-500">Custom Arena</span>
+          </div>
+        </div>
+
+        <!-- Resource 11: Premium Configurations -->
+        <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between opacity-80 hover:opacity-100 transition-all duration-300" data-category="configs">
+          <div>
+            <div class="h-48 bg-gradient-to-br from-[#0a190f] to-[#13331c] flex items-center justify-center border-b border-emerald-500/15 relative">
+              <span class="font-display font-black text-xl tracking-widest text-emerald-400/30 uppercase">Coming Soon</span>
+              <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                Configs
+              </span>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display font-bold text-xl text-zinc-300 mb-2">
+                Premium Configurations
+              </h3>
+              <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                Advanced, drag-and-drop configurations for popular plugins including DeluxeMenus, CMI, and ShopGUI+ with nostalgic UI layouts.
+              </p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+            <span class="text-xs font-mono text-amber-400 font-semibold">IN DEVELOPMENT</span>
+            <span class="text-xs text-zinc-500">Menus & Formatting</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= VISUAL SHOWCASE SECTION (BENTO GRID FROM OLD SITE) ================= -->
+  <section id="gallery" class="py-24 border-t border-emerald-500/15 bg-dark-900/40 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">Visual Gallery</span>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
+            Visual <span class="text-emerald-400">Showcase</span>
+          </h2>
+        </div>
+        <p class="text-zinc-400 text-sm sm:text-base max-w-md">
+          In-game screenshots of our GUIs, Holograms, and Custom Server Mechanics.
+        </p>
+      </div>
+
+      <!-- Bento Grid (High resolution in-game media) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-[220px] gap-5 mb-10">
+        
+        <!-- Item 1: Survival Spawn -->
+        <div class="bento-gallery-item group relative overflow-hidden">
+          <img src="/images/runeforged/WhatsApp%20Image%202026-09-13%20at%204.05.14%20PM%20(23).jpeg" alt="Custom Survival Spawn" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Custom Survival Spawn</span>
+          </div>
+        </div>
+
+        <!-- Item 2: Rune Mechanics (Span 2) -->
+        <div class="bento-gallery-item group relative overflow-hidden sm:col-span-2">
+          <img src="/images/runeforgedrunes/Screenshot%202026-09-13%20172659%20-%20Copy%20(2).png" alt="Rune Mechanics UI" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Rune Mechanics & Enchanting</span>
+          </div>
+        </div>
+
+        <!-- Item 3: Vote Party UI -->
+        <div class="bento-gallery-item group relative overflow-hidden">
+          <img src="/images/runeforgedvote/Screenshot%202026-09-13%20182034.png" alt="Vote Party UI" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Vote Party Engine</span>
+          </div>
+        </div>
+
+        <!-- Item 4: Discord Bot UI (Tall: Row Span 2) -->
+        <div class="bento-gallery-item group relative overflow-hidden lg:row-span-2">
+          <img src="/images/vortexlabsbot/Screenshot%202026-10-13%20092951.png" alt="Discord Bot UI" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Discord Bot Embed UI</span>
+          </div>
+        </div>
+
+        <!-- Item 5: Grimstone Network Setup -->
+        <div class="bento-gallery-item group relative overflow-hidden">
+          <img src="/images/grimstonediscord/Screenshot%202026-10-13%20093941.png" alt="Grimstone Network Setup" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Grimstone Network Setup</span>
+          </div>
+        </div>
+
+        <!-- Item 6: Hermes Survival -->
+        <div class="bento-gallery-item group relative overflow-hidden">
+          <img src="/images/hermessurvival/Screenshot%202026-10-13%20094453.png" alt="Hermes Survival" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Hermes Survival Channels</span>
+          </div>
+        </div>
+
+        <!-- Item 7: Custom Server Biomes (Large: Span 2 Row Span 2) -->
+        <div class="bento-gallery-item group relative overflow-hidden sm:col-span-2 sm:row-span-2">
+          <img src="/images/runeforged/WhatsApp%20Image%202026-09-13%20at%204.05.14%20PM%20(24).jpeg" alt="Custom World Biomes" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-sm font-bold text-white drop-shadow">Custom World Terrain & Biomes</span>
+          </div>
+        </div>
+
+        <!-- Item 8: Inventory Rune Enchanting -->
+        <div class="bento-gallery-item group relative overflow-hidden">
+          <img src="/images/runeforgedrunes/Screenshot%202026-09-13%20172711%20-%20Copy%20(2).png" alt="Inventory Enchanting" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Rune Salvage Menu</span>
+          </div>
+        </div>
+
+        <!-- Item 9: Ticket & Verification Panel -->
+        <div class="bento-gallery-item group relative overflow-hidden">
+          <img src="/images/vortexlabsbot/Screenshot%202026-10-13%20093234.png" alt="Ticket Panel" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Automated Ticketing System</span>
+          </div>
+        </div>
+
+        <!-- Item 10: In-Game Astral Holograms (Span 2) -->
+        <div class="bento-gallery-item group relative overflow-hidden sm:col-span-2">
+          <img src="/images/runeforgedvote/Screenshot%202026-09-13%20182050.png" alt="Astral Holograms" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <div class="gallery-overlay absolute inset-0 flex items-end p-4">
+            <span class="text-xs font-semibold text-white drop-shadow">Astral Alignment 3D Holograms</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Gallery Footer CTA Button -->
+      <div class="flex justify-center">
+        <a href="/gallery" class="px-8 py-3.5 rounded-xl font-bold bg-dark-900 border border-emerald-500/30 text-white hover:text-emerald-400 hover:border-emerald-500/60 transition-all text-sm flex items-center gap-2 shadow-lg shadow-emerald-500/10">
+          <span>View Full Visual Showcase</span>
+          <i data-lucide="arrow-right" class="w-4 h-4 text-emerald-400"></i>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= PROFESSIONAL SERVICES SECTION (FROM OLD SITE) ================= -->
+  <section id="services" class="py-24 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">Tailor-Made Solutions</span>
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight mb-4">
+          Professional <span class="text-emerald-400">Services</span>
+        </h2>
+        <p class="text-zinc-400 text-base sm:text-lg">
+          Comprehensive development and optimization solutions for your Minecraft network and Discord infrastructure.
+        </p>
+        <div id="services-count" class="text-xs font-semibold text-emerald-400 mt-3">Showing 8 services</div>
+      </div>
+
+      <!-- FILTER TABS -->
+      <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-14">
+        <button class="service-tab-btn active px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-emerald-500/30 transition-all cursor-pointer" data-filter="all">
+          All
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="plugins">
+          Plugins
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="server setups">
+          Server setups
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="discord bots">
+          Discord bots
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="discord server setups">
+          Discord server setups
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="survival">
+          Survival
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="minigames">
+          Minigames
+        </button>
+        <button class="service-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="configs">
+          Configs
+        </button>
+      </div>
+
+      <!-- SERVICES CARDS GRID -->
+      <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- CARD 1: Custom Plugins -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="plugins">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Plugins
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="code-2" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Custom Plugins</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Tailor-made Paper and Spigot plugins coded cleanly in Java or Python. Whether you need an advanced custom currency system, unique player abilities, or brand new mini-game mechanics, I build them from the ground up.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Clean Java 21 & Python code architecture</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Strict Paper 1.20 - 1.21.11+ support</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>MySQL, SQLite & Redis database synchronization</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Plugins">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 2: Server Setups -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="server setups">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Server setups
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="server" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Server Setups</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Complete, ready-to-launch server architectures. From intricate Survival networks with elite progression to full Minigame hubs. Includes comprehensive permission setups, balanced economies, and clean console logs.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Complete turn-key server network architecture</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>LuckPerms rank hierarchy & staff roles</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Zero inflation economy & clean console</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Server setups">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 3: Advanced Configs -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="configs">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Configs
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="sliders" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Advanced Configs</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Professional configurations for heavy-duty plugins like DeluxeMenus, ShopGUI+, and CMI. I specialize in designing hex-styled visuals and premium nostalgic UI layouts that look incredible without requiring custom resource packs.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>DeluxeMenus, ShopGUI+ & CMI master configs</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Hex color typography & nostalgic UI styling</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Vanilla-friendly, no resource pack dependencies</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Configs">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 4: Server Issue Fixer -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="server setups">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Server setups
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="wrench" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Server Issue Fixer</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Deep-dive diagnostic services to rescue struggling networks. Pinpointing exact lag spikes, auditing rogue Redstone listeners, fixing plugin conflicts, and optimizing paper.yml configurations to lock your server safely at 20.0 TPS.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Spark & Timings profiler thread analysis</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Rogue Redstone entity & chunk lag audit</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Guaranteed 20.0 TPS performance lockdown</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Server setups">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 5: Custom Discord Bots -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="discord bots">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Discord bots
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="bot" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Custom Discord Bots</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Custom Node.js/Python Discord bots tailored for Minecraft networks. Live player count synchronization, automated ticket systems, Tebex store webhooks, and verified member roles.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Live Minecraft server player sync & RCON</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Interactive button ticket systems with transcripts</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Tebex / CraftingStore role sync & announcements</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Discord bots">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 6: Discord Server Setups -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="discord server setups">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Discord server setups
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Discord Server Setups</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Complete professional network setup with hex-styled channel typography, anti-raid security permissions, reaction verification, and integrated community roles.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Anti-raid lockdown & auto-moderation protection</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Hex-styled channel headers & aesthetic emojis</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Staff permission hierarchies & ticket channels</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Discord server setups">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 7: Survival SMP Architecture -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="survival">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Survival
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Custom SMP & Survival Core</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Turnkey Semi-Vanilla, Custom World Gen, or RPG Survival setups packed with player economy, custom enchantments, claims, and quests.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Custom biomes, structures & balanced loot tables</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>GriefDefender claim protection & anti-grief</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Dynamic shop, player warps, jobs & battlepass</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Survival">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- CARD 8: Competitive Minigames Suite -->
+        <div class="service-card glass-panel p-7 rounded-3xl neon-border flex flex-col justify-between" data-category="minigames">
+          <div>
+            <div class="flex items-center justify-between mb-5">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                Minigames
+              </span>
+              <div class="w-10 h-10 rounded-xl bg-dark-900 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <i data-lucide="gamepad-2" class="w-5 h-5"></i>
+              </div>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-white mb-3">Competitive Minigames Suite</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+              Bedwars, Skywars, Duels, Practice PvP, and custom gamemodes configured with fast arena rollbacks, matchmaking queues, and cosmetics.
+            </p>
+            <ul class="space-y-2.5 text-xs text-zinc-300 mb-8">
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Automated arena instancing & instant map reset</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>ELO ranking, winstreak leaderboards & stats tracking</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                <span>Bungee / Velocity matchmaking integration</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pt-5 border-t border-emerald-500/15">
+            <button class="order-service-btn w-full py-3 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20" data-service="Minigames">
+              <span>Order Service</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= CLIENT REVIEWS TAB / SECTION (WITH DISCORD TICKET SCREENSHOTS) ================= -->
+  <section id="reviews" class="py-24 relative border-t border-emerald-500/15">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="mb-14 text-center max-w-3xl mx-auto">
+        <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight">
+          Client <span class="text-emerald-400">Feedback</span>
+        </h2>
+        <p class="text-zinc-400 text-sm sm:text-base mt-2">
+          Real verified reviews and screenshots straight from our clients.
+        </p>
+      </div>
+
+      <!-- Testimonials / Screenshots Cards Grid -->
+      <div id="reviews-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Review 1: Rana (4.2 Stars) -->
+        <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                R
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  Rana
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400"></i>
+                </h4>
+                <span class="text-[11px] text-zinc-400">Verified Client</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 text-amber-400 bg-dark-950 px-3 py-1 rounded-full border border-emerald-500/20 text-xs font-bold">
+              <span>4.2</span>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+            </div>
+          </div>
+          <div class="rounded-2xl overflow-hidden bg-dark-950 border border-emerald-500/15 p-2">
+            <img src="/images/reviews/review1.png" alt="Client Review - Rana" class="w-full h-auto object-contain rounded-xl max-h-56 mx-auto">
+          </div>
+        </div>
+
+        <!-- Review 2: SugoiKenny (5 Stars) -->
+        <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                S
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  SugoiKenny
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400"></i>
+                </h4>
+                <span class="text-[11px] text-zinc-400">Verified Client</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 text-amber-400 bg-dark-950 px-3 py-1 rounded-full border border-emerald-500/20 text-xs font-bold">
+              <span>5.0</span>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+            </div>
+          </div>
+          <div class="rounded-2xl overflow-hidden bg-dark-950 border border-emerald-500/15 p-2">
+            <img src="/images/reviews/review2.png" alt="Client Review - SugoiKenny" class="w-full h-auto object-contain rounded-xl max-h-56 mx-auto">
+          </div>
+        </div>
+
+        <!-- Review 3: maybe_itsme282 (4 Stars) -->
+        <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                M
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  maybe_itsme282
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400"></i>
+                </h4>
+                <span class="text-[11px] text-zinc-400">Verified Client</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 text-amber-400 bg-dark-950 px-3 py-1 rounded-full border border-emerald-500/20 text-xs font-bold">
+              <span>4.0</span>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+            </div>
+          </div>
+          <div class="rounded-2xl overflow-hidden bg-dark-950 border border-emerald-500/15 p-2">
+            <img src="/images/reviews/review3.png" alt="Client Review - maybe_itsme282" class="w-full h-auto object-contain rounded-xl max-h-56 mx-auto">
+          </div>
+        </div>
+
+        <!-- Review 4: SerbanKitty (5 Stars) -->
+        <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 relative">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">
+                S
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center gap-1.5">
+                  SerbanKitty
+                  <i data-lucide="badge-check" class="w-3.5 h-3.5 text-blue-400"></i>
+                </h4>
+                <span class="text-[11px] text-zinc-400">Verified Client</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 text-amber-400 bg-dark-950 px-3 py-1 rounded-full border border-emerald-500/20 text-xs font-bold">
+              <span>5.0</span>
+              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+            </div>
+          </div>
+          <div class="rounded-2xl overflow-hidden bg-dark-950 border border-emerald-500/15 p-2">
+            <img src="/images/reviews/review4.png" alt="Client Review - SerbanKitty" class="w-full h-auto object-contain rounded-xl max-h-56 mx-auto">
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= CONTACT TAB / DIRECT COMMISSION ================= -->
+  <section id="contact" class="py-24 relative border-t border-emerald-500/15 bg-gradient-to-b from-dark-950 via-dark-900 to-dark-950">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      
+      <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">Direct Commission</span>
+      <h2 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl text-white tracking-tight mb-6">
+        Ready to elevate your <span class="text-emerald-400">Server</span>?
+      </h2>
+      <p class="text-zinc-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-12">
+        Ready to build your next-generation Minecraft server, custom Spigot plugin, or Discord infrastructure? Connect directly with Gaurav or join our Discord community.
+      </p>
+
+      <!-- Contact Channels Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        
+        <!-- Discord Founder -->
+        <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col items-center justify-between gap-4 text-center group hover:-translate-y-1 transition-all">
+          <div class="w-14 h-14 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/40 flex items-center justify-center text-[#5865F2] shadow-lg shadow-[#5865F2]/10 group-hover:scale-110 transition-transform">
+            <i data-lucide="message-square" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <span class="text-xs text-zinc-400 block font-medium uppercase tracking-wider mb-1">Direct Message Founder</span>
+            <span class="text-lg font-bold text-white">@vortexlabs</span>
+          </div>
+          <button class="copy-trigger w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-zinc-950 transition-all border border-emerald-500/30 flex items-center justify-center gap-2" data-copy="vortexlabs">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copy Discord Username</span>
+          </button>
+        </div>
+
+        <!-- Discord Server -->
+        <div class="glass-panel p-6 rounded-3xl neon-border flex flex-col items-center justify-between gap-4 text-center group hover:-translate-y-1 transition-all">
+          <div class="w-14 h-14 rounded-2xl bg-[#5865F2]/20 border border-[#5865F2]/40 flex items-center justify-center text-[#5865F2] shadow-lg shadow-[#5865F2]/10 group-hover:scale-110 transition-transform">
+            <i data-lucide="users" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <span class="text-xs text-zinc-400 block font-medium uppercase tracking-wider mb-1">Official Community</span>
+            <span class="text-lg font-bold text-white">VortexLabs Discord</span>
+          </div>
+          <a href="https://discord.gg/ckJHr36Bet" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2">
+            <span>Join Discord Server</span>
+            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="border-t border-emerald-500/15 bg-dark-950 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        
+        <!-- Brand Info -->
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3.5 mb-4">
+            <img src="/assets/logo.png" alt="VortexLabs" class="w-10 h-10 object-contain">
+            <span class="font-display font-extrabold text-2xl text-white">Vortex<span class="text-emerald-400">Labs</span></span>
+          </div>
+          <p class="text-zinc-400 text-sm max-w-sm leading-relaxed mb-6">
+            Elite Minecraft server setups, custom Spigot/Paper plugins, Discord bots, and community systems engineered for extreme concurrency by Gaurav.
+          </p>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>All Systems Operational • 20.0 TPS Guarantee</span>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-display font-bold text-white text-sm uppercase tracking-wider mb-4">Navigation</h4>
+          <ul class="space-y-2.5 text-sm text-zinc-400">
+            <li><a href="#home" class="hover:text-emerald-400 transition-colors">Home</a></li>
+            <li><a href="#about" class="hover:text-emerald-400 transition-colors">About Gaurav</a></li>
+            <li><a href="#resources" class="hover:text-emerald-400 transition-colors">Featured Resources</a></li>
+            <li><a href="#gallery" class="hover:text-emerald-400 transition-colors">Visual Showcase</a></li>
+            <li><a href="#services" class="hover:text-emerald-400 transition-colors">Services</a></li>
+            <li><a href="#reviews" class="hover:text-emerald-400 transition-colors">Client Reviews</a></li>
+            <li><a href="#contact" class="hover:text-emerald-400 transition-colors">Contact</a></li>
+          </ul>
+        </div>
+
+        <!-- Services Shortcut -->
+        <div>
+          <h4 class="font-display font-bold text-white text-sm uppercase tracking-wider mb-4">Resources & Portfolio</h4>
+          <ul class="space-y-2.5 text-sm text-zinc-400">
+            <li><a href="/runeforged" class="hover:text-emerald-400 transition-colors">RuneForged Survival</a></li>
+            <li><a href="/runeforgedrunes" class="hover:text-emerald-400 transition-colors">RuneForgedRunes Plugin</a></li>
+            <li><a href="/runeforgedvote" class="hover:text-emerald-400 transition-colors">RuneForgedVote Plugin</a></li>
+            <li><a href="/vortexlabsbot" class="hover:text-emerald-400 transition-colors">VortexLabs Discord Bot</a></li>
+            <li><a href="/grimstonediscordserver" class="hover:text-emerald-400 transition-colors">Grimstone Setup</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="pt-8 border-t border-emerald-500/10 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
+        <div>
+          © 2026 VortexLabs. Founded & Developed by <strong class="text-zinc-300">Gaurav</strong>. All rights reserved.
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="#home" class="hover:text-emerald-400 transition-colors">Back to top ↑</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App Script -->
+  <script src="/app.js?v=12"></script>
+</body>
+</html>

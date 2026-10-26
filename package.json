@@ -1,0 +1,13 @@
+{
+  "name": "vortexlabs-platform",
+  "version": "1.0.0",
+  "description": "VortexLabs - Next-Gen Minecraft, Discord & Development Studio led by Gaurav",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["vortexlabs", "minecraft", "discord", "plugins", "server-setups", "gaurav"],
+  "author": "Gaurav (VortexLabs)",
+  "license": "MIT"
+}

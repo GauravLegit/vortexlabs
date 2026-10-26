@@ -1,0 +1,79 @@
+[
+  {
+    "id": "runeforged",
+    "title": "RuneForged Survival",
+    "category": "setups",
+    "categoryBadge": "Setup Showcase",
+    "version": "v1.20 - 1.21+",
+    "description": "A premium, feature-rich survival setup featuring custom biomes, 13 proprietary plugins, elite progression systems, and polished UI menus.",
+    "banner": "/images/runeforged-banner.png",
+    "link": "/runeforged",
+    "active": true
+  },
+  {
+    "id": "runeforgedrunes",
+    "title": "RuneForgedRunes",
+    "category": "plugins",
+    "categoryBadge": "Plugin Showcase",
+    "version": "60 Runes System",
+    "description": "60 unique collectible runes with drag-and-drop mechanics, success rates, custom salvage menus, and permanent stat enchantments.",
+    "banner": "/images/runeforgedrunes-banner.png",
+    "link": "/runeforgedrunes",
+    "active": true
+  },
+  {
+    "id": "runeforgedvote",
+    "title": "RuneForgedVote Plugin",
+    "category": "plugins",
+    "categoryBadge": "Plugin",
+    "version": "3D Holograms",
+    "description": "Astral Alignment voting engine featuring spinning 3D crystal holograms, server-wide meteor strikes, geode minigames, and 40 craftable artifacts.",
+    "banner": "/images/runeforgedvote-banner.png",
+    "link": "/runeforgedvote",
+    "active": true
+  },
+  {
+    "id": "vortexlabsbot",
+    "title": "Custom Discord Bot Engine",
+    "category": "discord-bots",
+    "categoryBadge": "Discord Bot",
+    "version": "Node.js / Discord.js",
+    "description": "Enterprise-grade Discord automation bot featuring real-time Minecraft server sync, automated support ticketing, custom button menus, and moderation suites.",
+    "banner": "/images/vortexlabsbot-banner.png",
+    "link": "/vortexlabsbot",
+    "active": true
+  },
+  {
+    "id": "grimstonediscordserver",
+    "title": "Grimstone Network Setup",
+    "category": "discord-setups",
+    "categoryBadge": "Server Setup",
+    "version": "Hex-Styled Discord",
+    "description": "Complete professional network setup with hex-styled channel typography, anti-raid security permissions, reaction verification, and integrated community roles.",
+    "banner": "/images/grimstonediscordsetup-banner.png",
+    "link": "/grimstonediscordserver",
+    "active": true
+  },
+  {
+    "id": "hermessurvival",
+    "title": "Hermes Survival Server",
+    "category": "discord-setups",
+    "categoryBadge": "Server Setup",
+    "version": "Community Architecture",
+    "description": "A professionally structured Discord server designed specifically for a Minecraft Survival network, featuring secure roles, clean channels, and active community hubs.",
+    "banner": "/images/hermes-banner.png",
+    "link": "/hermessurvival",
+    "active": true
+  },
+  {
+    "id": "runeforgedcombat",
+    "title": "RuneForgedCombat",
+    "category": "plugins",
+    "categoryBadge": "Coming Soon",
+    "version": "In Development",
+    "description": "Next-gen competitive PvP & PvE combat enchantments engine with particle physics and combo chaining.",
+    "banner": "",
+    "link": "#",
+    "active": false
+  }
+]

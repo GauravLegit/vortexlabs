@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting to VortexLabs...</title>
+  <script>
+    // GitHub Pages Clean URL Router
+    (function() {
+      var pathname = window.location.pathname;
+      var repo = '/vortexlabs';
+      
+      // Remove trailing slash if any
+      if (pathname.length > 1 && pathname.endsWith('/')) {
+        pathname = pathname.slice(0, -1);
+      }
+      
+      var page = pathname;
+      if (pathname.startsWith(repo)) {
+        page = pathname.slice(repo.length);
+      }
+      
+      var routes = {
+        '/admin': '/admin.html',
+        '/gallery': '/gallery.html',
+        '/runeforged': '/runeforged.html',
+        '/runeforgedrunes': '/runeforgedrunes.html',
+        '/runeforgedvote': '/runeforgedvote.html',
+        '/vortexlabsbot': '/vortexlabsbot.html',
+        '/grimstonediscordserver': '/grimstonediscordserver.html',
+        '/hermessurvival': '/hermessurvival.html'
+      };
+      
+      var target = routes[page];
+      var base = pathname.startsWith(repo) ? repo : '';
+      
+      if (target) {
+        window.location.replace(base + target + window.location.search + window.location.hash);
+      } else {
+        window.location.replace(base + '/index.html' + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
+</head>
+<body style="background:#050811;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+  <div style="text-align:center;">
+    <h2 style="font-size:24px;color:#10b981;margin-bottom:8px;">VortexLabs</h2>
+    <p style="color:#888;font-size:14px;">Loading page, please wait...</p>
+  </div>
+</body>
+</html>

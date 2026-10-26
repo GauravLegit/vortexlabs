@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VortexLabs | RuneForged Vote</title>
+  <meta name="description" content="Astral voting events, 3D voting hologram stages, tiered rewards, party milestones, and server multipliers.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: { 950: '#080b09', 900: '#0e1411', 800: '#131b17' },
+            emerald: { 400: '#4ade80', 500: '#22c55e', 600: '#16a34a' }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    .showcase-item {
+      break-inside: avoid;
+      margin-bottom: 0.85rem;
+      transform: translateZ(0);
+    }
+  </style>
+</head>
+<body class="bg-[#080b09] text-zinc-100 min-h-screen selection:bg-emerald-500 selection:text-zinc-950 font-sans antialiased">
+
+  <!-- ================= MINIMAL NAVBAR ================= -->
+  <header class="sticky top-0 z-40 w-full bg-[#080b09]/90 backdrop-blur-md border-b border-zinc-800/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Left: Back link & Brand -->
+      <div class="flex items-center gap-3">
+        <a href="/#resources" class="text-zinc-400 hover:text-white transition-colors flex items-center gap-1.5 text-xs sm:text-sm font-medium">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>Resources</span>
+        </a>
+        <span class="text-zinc-700">/</span>
+        <a href="/#home" class="font-display font-extrabold text-white text-base tracking-tight hover:text-emerald-400 transition-colors">
+          Vortex<span class="text-emerald-400">Labs</span>
+        </a>
+      </div>
+
+      <!-- Right: Direct Link to All Showcases -->
+      <div class="flex items-center gap-3">
+        <a href="/gallery" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 transition-colors flex items-center gap-1.5">
+          <span>All Showcases</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-zinc-500"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= MINIMAL SHOWCASE HEADER ================= -->
+  <main class="py-10 sm:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Header Info -->
+      <div class="mb-8 max-w-3xl">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-400 font-semibold">Astral Alignment & Holograms</span>
+          <span class="text-zinc-700">•</span>
+          <span class="text-xs text-zinc-500 font-mono">50 Captures</span>
+        </div>
+        <h1 class="font-display font-extrabold text-2xl sm:text-4xl text-white tracking-tight mb-2">
+          RuneForged Vote
+        </h1>
+        <p class="text-sm text-zinc-400 leading-relaxed mb-4">
+          Astral voting events, 3D voting hologram stages, tiered rewards, party milestones, and server multipliers.
+        </p>
+
+        <!-- Meta tags -->
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-medium">Astral Alignments</span><span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-medium">3D Hologram Stage</span><span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-medium">Tiered Rewards</span><span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-medium">Streak Multipliers</span><span class="px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-medium">50 Captures</span>
+        </div>
+      </div>
+
+      <!-- Masonry Grid -->
+      <div id="grid-container" class="columns-1 sm:columns-2 md:columns-3 xl:columns-4 gap-3 sm:gap-4 space-y-3 sm:space-y-4">
+        <!-- Injected via JavaScript -->
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ================= MINIMAL LIGHTBOX ================= -->
+  <div id="lightbox" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200 flex flex-col justify-between">
+    
+    <!-- Top Bar inside Lightbox -->
+    <div class="px-4 sm:px-6 py-3.5 flex items-center justify-between border-b border-zinc-800/80 bg-zinc-950/80">
+      <div class="flex items-center gap-2.5">
+        <span class="text-xs font-mono uppercase text-emerald-400 font-semibold">RuneForged Vote</span>
+        <span class="text-zinc-700">•</span>
+        <span id="lb-counter" class="text-xs text-zinc-400 font-mono"></span>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <a id="lb-raw" href="#" target="_blank" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors" title="Open full image in new tab">
+          <i data-lucide="external-link" class="w-4 h-4"></i>
+        </a>
+        <button id="close-lb" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-900 transition-colors" aria-label="Close">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Center Stage -->
+    <div class="relative flex-1 flex items-center justify-center p-3 sm:p-6 overflow-hidden select-none" id="lb-stage">
+      
+      <!-- Prev Button -->
+      <button id="lb-prev" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-zinc-900/80 hover:bg-emerald-500 hover:text-zinc-950 text-white border border-zinc-800 transition-all" aria-label="Previous">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Current Image -->
+      <img id="lb-image" src="" alt="Showcase Preview" class="max-h-[82vh] max-w-[92vw] object-contain rounded-lg border border-zinc-800 shadow-2xl transition-transform duration-150">
+
+      <!-- Next Button -->
+      <button id="lb-next" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 rounded-full bg-zinc-900/80 hover:bg-emerald-500 hover:text-zinc-950 text-white border border-zinc-800 transition-all" aria-label="Next">
+        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      </button>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="px-4 py-2.5 text-center text-xs text-zinc-500 border-t border-zinc-800/80 bg-zinc-950/80">
+      <span>Use <kbd class="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-300 font-mono text-[11px]">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-300 font-mono text-[11px]">→</kbd> or swipe to navigate • <kbd class="px-1.5 py-0.5 rounded bg-zinc-900 text-zinc-300 font-mono text-[11px]">ESC</kbd> to close</span>
+    </div>
+
+  </div>
+
+  <!-- ================= MINIMAL FOOTER ================= -->
+  <footer class="border-t border-zinc-800/60 py-8 text-center text-xs text-zinc-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-display font-bold text-white text-sm">Vortex<span class="text-emerald-400">Labs</span></span>
+        <span class="text-zinc-700">•</span>
+        <span>RuneForged Vote</span>
+      </div>
+      <div class="flex items-center gap-4 text-xs">
+        <a href="/#resources" class="hover:text-zinc-300 transition-colors">Resources</a>
+        <span>•</span>
+        <a href="/gallery" class="hover:text-zinc-300 transition-colors">All Showcases</a>
+        <span>•</span>
+        <a href="/#contact" class="hover:text-zinc-300 transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const IMAGES = ["/images/runeforgedvote/Screenshot%202026-09-13%20171805.png", "/images/runeforgedvote/Screenshot%202026-09-13%20175840.png", "/images/runeforgedvote/Screenshot%202026-09-13%20175852.png", "/images/runeforgedvote/Screenshot%202026-09-13%20175906.png", "/images/runeforgedvote/Screenshot%202026-09-13%20175928.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180134.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180212.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180300.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180319.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180336.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180347.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180431.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180448.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180458.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180554.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180603.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180612.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180621.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180635.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180643.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180652.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180701.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180857.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180905.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180929.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180938.png", "/images/runeforgedvote/Screenshot%202026-09-13%20180945.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181452.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181728.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181737.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181745.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181805.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181814.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181823.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181831.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181843.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181919.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181946.png", "/images/runeforgedvote/Screenshot%202026-09-13%20181953.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182000.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182010.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182019.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182026.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182034.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182042.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182050.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182103.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182111.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182120.png", "/images/runeforgedvote/Screenshot%202026-09-13%20182514.png"];
+    let currentIndex = 0;
+
+    const container = document.getElementById('grid-container');
+    const lightbox = document.getElementById('lightbox');
+    const lbImage = document.getElementById('lb-image');
+    const lbCounter = document.getElementById('lb-counter');
+    const lbRaw = document.getElementById('lb-raw');
+    const closeLb = document.getElementById('close-lb');
+    const lbPrev = document.getElementById('lb-prev');
+    const lbNext = document.getElementById('lb-next');
+    const lbStage = document.getElementById('lb-stage');
+
+    function render() {
+      container.innerHTML = '';
+      IMAGES.forEach((src, idx) => {
+        const item = document.createElement('div');
+        item.className = 'showcase-item rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800/60 hover:border-emerald-500/50 transition-all duration-300 group cursor-pointer relative';
+        item.innerHTML = `
+          <img src="${src}" alt="Capture #${idx + 1}" loading="lazy" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end justify-between p-3">
+            <span class="text-xs font-medium text-white truncate drop-shadow">Capture #${idx + 1}</span>
+            <i data-lucide="maximize-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+          </div>
+        `;
+        item.addEventListener('click', () => openLb(idx));
+        container.appendChild(item);
+      });
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function openLb(index) {
+      currentIndex = index;
+      updateLb();
+      lightbox.classList.remove('opacity-0', 'pointer-events-none');
+      lightbox.classList.add('opacity-100', 'pointer-events-auto');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateLb() {
+      lbImage.src = IMAGES[currentIndex];
+      lbCounter.textContent = `${currentIndex + 1} / ${IMAGES.length}`;
+      lbRaw.href = IMAGES[currentIndex];
+    }
+
+    function closeLbModal() {
+      lightbox.classList.add('opacity-0', 'pointer-events-none');
+      lightbox.classList.remove('opacity-100', 'pointer-events-auto');
+      document.body.style.overflow = 'auto';
+      setTimeout(() => { lbImage.src = ''; }, 200);
+    }
+
+    function prev() {
+      currentIndex = (currentIndex > 0) ? currentIndex - 1 : IMAGES.length - 1;
+      updateLb();
+    }
+
+    function next() {
+      currentIndex = (currentIndex < IMAGES.length - 1) ? currentIndex + 1 : 0;
+      updateLb();
+    }
+
+    closeLb.addEventListener('click', closeLbModal);
+    lbPrev.addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+    lbNext.addEventListener('click', (e) => { e.stopPropagation(); next(); });
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox || e.target === lbStage) closeLbModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('opacity-100')) return;
+      if (e.key === 'Escape') closeLbModal();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+
+    // Swipe gestures
+    let startX = 0;
+    lbStage.addEventListener('touchstart', (e) => { startX = e.changedTouches[0].screenX; }, { passive: true });
+    lbStage.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].screenX - startX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) prev();
+        else next();
+      }
+    }, { passive: true });
+
+    render();
+  </script>
+</body>
+</html>
