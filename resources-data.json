@@ -1,5 +1,16 @@
 [
   {
+    "id": "res_1793020011615",
+    "title": "Bruhh",
+    "category": "plugins",
+    "categoryBadge": "Bruhh",
+    "version": "V120",
+    "description": "Bruhb",
+    "banner": "./images/runeforged-banner.png",
+    "link": "#",
+    "active": true
+  },
+  {
     "id": "runeforged",
     "title": "RuneForged Survival",
     "category": "setups",
