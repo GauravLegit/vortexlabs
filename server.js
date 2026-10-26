@@ -218,6 +218,14 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+function autoSyncGit() {
+  const { exec } = require('child_process');
+  exec('git add . && git commit -m "Auto sync admin update" && git push origin main', (err) => {
+    if (err) console.error('[Git Sync Error]:', err.message);
+    else console.log('[Git Sync]: Pushed update to GitHub Pages successfully');
+  });
+}
+
   // Admin: Add Gallery Capture (Drag & drop base64 image file)
   if (pathname === '/api/admin/gallery/add' && req.method === 'POST') {
     try {
@@ -225,18 +233,22 @@ const server = http.createServer(async (req, res) => {
       const { filename, fileData, title, category, categoryName, badge } = payload;
       
       const safeName = Date.now() + '_' + (filename || 'capture.png').replace(/[^a-zA-Z0-9._-]/g, '_');
-      const imageSrc = '/images/uploads/' + safeName;
+      const imageSrc = './images/uploads/' + safeName;
 
       if (fileData) {
         const base64Content = fileData.replace(/^data:image\/\w+;base64,/, '');
         const buffer = Buffer.from(base64Content, 'base64');
-        const diskPath = path.join(PUBLIC_DIR, 'images', 'uploads', safeName);
-        fs.writeFileSync(diskPath, buffer);
+        const diskPath1 = path.join(__dirname, 'images', 'uploads', safeName);
+        const diskPath2 = path.join(__dirname, 'public', 'images', 'uploads', safeName);
+        fs.writeFileSync(diskPath1, buffer);
+        if (fs.existsSync(path.join(__dirname, 'public', 'images', 'uploads'))) {
+          fs.writeFileSync(diskPath2, buffer);
+        }
       }
 
       let gallery = [];
       try {
-        gallery = JSON.parse(fs.readFileSync(GALLERY_FILE, 'utf8'));
+        gallery = JSON.parse(fs.readFileSync(path.join(__dirname, 'gallery-data.json'), 'utf8'));
       } catch (err) {
         gallery = [];
       }
@@ -250,7 +262,10 @@ const server = http.createServer(async (req, res) => {
       };
 
       gallery.unshift(newItem);
-      fs.writeFileSync(GALLERY_FILE, JSON.stringify(gallery, null, 2));
+      fs.writeFileSync(path.join(__dirname, 'gallery-data.json'), JSON.stringify(gallery, null, 2));
+      fs.writeFileSync(path.join(__dirname, 'public', 'gallery-data.json'), JSON.stringify(gallery, null, 2));
+
+      autoSyncGit();
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: true, item: newItem }));
@@ -265,14 +280,20 @@ const server = http.createServer(async (req, res) => {
   if (pathname === '/api/admin/gallery/delete' && req.method === 'POST') {
     try {
       const { src } = await readBody(req);
-      let gallery = JSON.parse(fs.readFileSync(GALLERY_FILE, 'utf8'));
+      let gallery = JSON.parse(fs.readFileSync(path.join(__dirname, 'gallery-data.json'), 'utf8'));
       gallery = gallery.filter(item => item.src !== src);
-      fs.writeFileSync(GALLERY_FILE, JSON.stringify(gallery, null, 2));
+      fs.writeFileSync(path.join(__dirname, 'gallery-data.json'), JSON.stringify(gallery, null, 2));
+      fs.writeFileSync(path.join(__dirname, 'public', 'gallery-data.json'), JSON.stringify(gallery, null, 2));
 
-      if (src && src.startsWith('/images/uploads/')) {
-        const diskPath = path.join(PUBLIC_DIR, src);
-        if (fs.existsSync(diskPath)) fs.unlinkSync(diskPath);
+      if (src && (src.startsWith('/images/uploads/') || src.startsWith('./images/uploads/'))) {
+        const cleanRel = src.replace(/^\.?\//, '');
+        const p1 = path.join(__dirname, cleanRel);
+        const p2 = path.join(__dirname, 'public', cleanRel);
+        if (fs.existsSync(p1)) fs.unlinkSync(p1);
+        if (fs.existsSync(p2)) fs.unlinkSync(p2);
       }
+
+      autoSyncGit();
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: true }));

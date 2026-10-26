@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#050811] text-zinc-100">
+<html lang="en" class="h-full bg-[#050811] text-zinc-100 antialiased">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VortexLabs Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>VortexLabs Admin</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,8 +23,9 @@
               600: '#059669',
             },
             dark: {
-              850: '#0c1220',
-              900: '#080d18',
+              800: '#0f172a',
+              850: '#0b1329',
+              900: '#080d1a',
               950: '#04070f'
             }
           },
@@ -42,530 +43,468 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    .glass-panel {
-      background: rgba(12, 18, 32, 0.7);
+    /* Safe mobile viewport */
+    body {
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .glass-card {
+      background: rgba(11, 19, 41, 0.7);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(16, 185, 129, 0.15);
     }
-    .neon-border {
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      box-shadow: 0 0 20px -5px rgba(16, 185, 129, 0.1);
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
     .dropzone-active {
       border-color: #10b981 !important;
-      background: rgba(16, 185, 129, 0.08) !important;
+      background: rgba(16, 185, 129, 0.12) !important;
     }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans antialiased text-sm text-zinc-300 selection:bg-emerald-500 selection:text-black">
+<body class="h-full flex flex-col font-sans bg-[#050811] text-zinc-300 selection:bg-emerald-500 selection:text-black">
 
   <!-- ================= NOTIFICATION TOAST ================= -->
-  <div id="toast" class="fixed top-5 right-5 z-50 transform transition-all duration-300 translate-y-[-100px] opacity-0 pointer-events-none">
-    <div class="glass-panel px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 text-white">
-      <i id="toast-icon" data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
-      <span id="toast-message" class="text-xs font-semibold">Action completed successfully</span>
+  <div id="toast" class="fixed top-4 left-4 right-4 z-50 transform transition-all duration-300 -translate-y-24 opacity-0 pointer-events-none max-w-sm mx-auto">
+    <div class="glass-card px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-emerald-500/40 text-white bg-dark-900/95">
+      <i id="toast-icon" data-lucide="check-circle" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+      <span id="toast-message" class="text-xs font-semibold flex-1">Action completed</span>
     </div>
   </div>
 
-  <!-- ================= LOGIN SCREEN (Shown if not logged in) ================= -->
-  <div id="login-container" class="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-[#04070f] via-[#091122] to-[#04070f]">
-    <div class="w-full max-w-md glass-panel p-8 rounded-3xl neon-border relative overflow-hidden shadow-2xl">
-      <!-- Ambient Glow -->
-      <div class="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div id="login-container" class="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-b from-[#050811] via-[#091124] to-[#050811]">
+    <div class="w-full max-w-sm glass-card p-6 sm:p-8 rounded-3xl border border-emerald-500/25 relative overflow-hidden shadow-2xl">
+      <!-- Glow -->
+      <div class="absolute -top-20 -left-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-      <!-- Header -->
-      <div class="text-center mb-8 relative">
-        <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4 text-emerald-400 shadow-lg shadow-emerald-500/10">
-          <i data-lucide="shield-check" class="w-8 h-8"></i>
+      <!-- Brand -->
+      <div class="text-center mb-6 relative">
+        <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3 text-emerald-400 shadow-lg shadow-emerald-500/10">
+          <i data-lucide="shield-check" class="w-7 h-7"></i>
         </div>
-        <h1 class="font-display font-extrabold text-2xl text-white tracking-tight">
-          Vortex<span class="text-emerald-400">Labs</span> Control Center
+        <h1 class="font-display font-extrabold text-xl text-white tracking-tight">
+          Vortex<span class="text-emerald-400">Labs</span> Admin
         </h1>
-        <p class="text-xs text-zinc-400 mt-1">Authorized Management & Administration Portal</p>
+        <p class="text-xs text-zinc-400 mt-1">Mobile Management Portal</p>
       </div>
 
-      <!-- Login Form -->
+      <!-- Form -->
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">Email Address</label>
+          <label class="block text-[11px] font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Email</label>
           <div class="relative">
             <i data-lucide="mail" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input type="email" id="login-email" required placeholder="vortexlab@gmail.com" class="w-full bg-dark-950/80 border border-zinc-800 rounded-xl pl-10 pr-4 py-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
+            <input type="email" id="login-email" required placeholder="vortexlab@gmail.com" class="w-full bg-dark-950 border border-zinc-800 rounded-xl pl-10 pr-4 py-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">Master Password</label>
+          <label class="block text-[11px] font-bold text-zinc-300 mb-1.5 uppercase tracking-wider">Password</label>
           <div class="relative">
             <i data-lucide="lock" class="w-4 h-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
-            <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full bg-dark-950/80 border border-zinc-800 rounded-xl pl-10 pr-10 py-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
-            <button type="button" id="toggle-pwd" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white">
+            <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full bg-dark-950 border border-zinc-800 rounded-xl pl-10 pr-10 py-3 text-white text-xs placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors">
+            <button type="button" id="toggle-pwd" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white p-1">
               <i data-lucide="eye" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs py-1">
-          <label class="flex items-center gap-2 cursor-pointer text-zinc-400 hover:text-white">
-            <input type="checkbox" id="remember-me" checked class="w-4 h-4 rounded border-zinc-700 bg-dark-950 text-emerald-500 focus:ring-0">
-            <span>Keep me logged in forever</span>
-          </label>
-        </div>
-
         <div id="login-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 flex items-center gap-2">
           <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
-          <span>Invalid email or password. Please verify credentials.</span>
+          <span>Invalid email or password.</span>
         </div>
 
-        <button type="submit" class="w-full py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-xs mt-2">
-          <span>Authenticate & Access Dashboard</span>
+        <button type="submit" class="w-full py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 text-xs">
+          <span>Login to Admin</span>
           <i data-lucide="arrow-right" class="w-4 h-4"></i>
         </button>
       </form>
-
-      <div class="mt-6 pt-6 border-t border-zinc-800/60 text-center text-[11px] text-zinc-500">
-        Protected by VortexLabs Security Engine • Session Persistent
-      </div>
     </div>
   </div>
 
-  <!-- ================= DASHBOARD INTERFACE (Shown when logged in) ================= -->
-  <div id="dashboard-container" class="hidden min-h-screen flex flex-col md:flex-row bg-[#050811]">
+  <!-- ================= DASHBOARD INTERFACE ================= -->
+  <div id="dashboard-container" class="hidden min-h-screen flex flex-col bg-[#050811] pb-24">
     
-    <!-- Sidebar -->
-    <aside class="w-full md:w-64 glass-panel border-r border-emerald-500/10 flex flex-col shrink-0">
-      
-      <!-- Logo & Profile -->
-      <div class="p-6 border-b border-zinc-800/80 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-black">
-            V
-          </div>
-          <div>
-            <span class="font-display font-extrabold text-base text-white block leading-tight">
-              Vortex<span class="text-emerald-400">Labs</span>
-            </span>
-            <span class="text-[10px] font-mono text-emerald-400 font-semibold uppercase tracking-wider">Admin Portal</span>
-          </div>
+    <!-- Top Mobile Header -->
+    <header class="sticky top-0 z-30 bg-[#050811]/90 backdrop-blur-md border-b border-zinc-800/80 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-black text-sm">
+          V
+        </div>
+        <div>
+          <span class="font-display font-extrabold text-sm text-white block leading-tight">
+            Vortex<span class="text-emerald-400">Labs</span>
+          </span>
+          <span class="text-[10px] text-zinc-400 font-mono">Control Panel</span>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="p-4 space-y-1.5 flex-1" id="nav-tabs">
-        <button data-tab="tab-overview" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-colors bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          <span>Overview</span>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Online</span>
+        </span>
+        <button id="logout-btn" title="Logout" class="w-8 h-8 rounded-xl bg-rose-500/15 hover:bg-rose-500 text-rose-300 hover:text-dark-950 border border-rose-500/30 flex items-center justify-center transition-colors">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
         </button>
-        <button data-tab="tab-gallery" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-colors text-zinc-400 hover:text-white hover:bg-zinc-900/60 border border-transparent">
-          <i data-lucide="image" class="w-4 h-4"></i>
-          <span>Visual Showcase</span>
-        </button>
-        <button data-tab="tab-resources" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-colors text-zinc-400 hover:text-white hover:bg-zinc-900/60 border border-transparent">
-          <i data-lucide="box" class="w-4 h-4"></i>
-          <span>Resources & Plugins</span>
-        </button>
-        <button data-tab="tab-reviews" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-colors text-zinc-400 hover:text-white hover:bg-zinc-900/60 border border-transparent">
-          <i data-lucide="star" class="w-4 h-4"></i>
-          <span>Client Reviews</span>
-        </button>
-        <button data-tab="tab-inquiries" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-colors text-zinc-400 hover:text-white hover:bg-zinc-900/60 border border-transparent">
-          <i data-lucide="inbox" class="w-4 h-4"></i>
-          <span>Inquiries & Leads</span>
-          <span id="badge-inquiries" class="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">1</span>
-        </button>
-        <button data-tab="tab-github" class="tab-btn w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-3 transition-colors text-zinc-400 hover:text-white hover:bg-zinc-900/60 border border-transparent">
-          <i data-lucide="git-branch" class="w-4 h-4"></i>
-          <span>GitHub Pages Sync</span>
-        </button>
-      </nav>
-
-      <!-- Bottom Session Info & Actions -->
-      <div class="p-4 border-t border-zinc-800/80 space-y-2">
-        <div class="px-3 py-2 rounded-xl bg-dark-950 border border-zinc-800/80 flex items-center gap-2 text-xs">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-zinc-400 truncate">vortexlab@gmail.com</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <a href="/" target="_blank" class="flex-1 px-3 py-2 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors flex items-center justify-center gap-1.5 border border-zinc-800">
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-            <span>Live Site</span>
-          </a>
-          <button id="logout-btn" class="px-3 py-2 rounded-xl text-xs font-semibold bg-rose-500/15 hover:bg-rose-500 text-rose-300 hover:text-zinc-950 transition-colors flex items-center justify-center gap-1.5 border border-rose-500/30">
-            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-            <span>Logout</span>
-          </button>
-        </div>
       </div>
-    </aside>
+    </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <!-- Main Content Container -->
+    <main class="flex-1 px-4 py-4 max-w-4xl mx-auto w-full space-y-4">
 
       <!-- ================= TAB: OVERVIEW ================= -->
-      <div id="tab-overview" class="tab-content space-y-6">
+      <section id="tab-overview" class="tab-pane space-y-4">
         
-        <!-- Header Banner -->
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl neon-border relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div class="space-y-2 relative">
-            <span class="text-xs font-mono text-emerald-400 font-semibold uppercase tracking-wider block">Admin Control Center</span>
-            <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">
-              Welcome, <span class="text-emerald-400">Gaurav</span>
-            </h2>
-            <p class="text-xs sm:text-sm text-zinc-400 max-w-xl">
-              Manage in-game captures, update plugin resources, manage client reviews, and sync everything with your GitHub Pages deployment.
-            </p>
-          </div>
-          
-          <div class="flex flex-wrap items-center gap-3">
-            <button onclick="switchTab('tab-gallery')" class="px-4 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
-              <i data-lucide="upload" class="w-4 h-4"></i>
-              <span>Upload New Capture</span>
-            </button>
-            <button onclick="switchTab('tab-github')" class="px-4 py-2.5 rounded-xl font-bold bg-zinc-900 hover:bg-zinc-800 text-white text-xs border border-zinc-700 flex items-center gap-2 transition-all">
-              <i data-lucide="git-commit" class="w-4 h-4 text-emerald-400"></i>
-              <span>Deploy to GitHub</span>
-            </button>
+        <!-- Welcome Card -->
+        <div class="glass-card p-5 rounded-3xl border border-emerald-500/20 relative overflow-hidden">
+          <div class="relative space-y-1">
+            <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Welcome Back</span>
+            <h2 class="font-display font-extrabold text-xl text-white">Gaurav</h2>
+            <p class="text-xs text-zinc-400">Manage all visual captures, server plugins, client reviews, and incoming leads from your phone.</p>
           </div>
         </div>
 
-        <!-- Metric Stats Grid -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="glass-panel p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-semibold text-zinc-400">Showcase Captures</span>
-              <div class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
-                <i data-lucide="image" class="w-4 h-4"></i>
-              </div>
+        <!-- Metric Grid -->
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="switchTab('tab-gallery')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-emerald-500/40 text-left transition-all flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-semibold text-zinc-400">Gallery</span>
+              <i data-lucide="image" class="w-4 h-4 text-emerald-400"></i>
             </div>
             <div class="font-display font-extrabold text-2xl text-white" id="stat-captures">142</div>
-            <span class="text-[11px] text-emerald-400/80 mt-1 font-mono">Live in Gallery</span>
-          </div>
+            <span class="text-[10px] text-emerald-400 font-mono mt-0.5">Captures Live →</span>
+          </button>
 
-          <div class="glass-panel p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-semibold text-zinc-400">Active Resources</span>
-              <div class="w-8 h-8 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center">
-                <i data-lucide="box" class="w-4 h-4"></i>
-              </div>
+          <button onclick="switchTab('tab-resources')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-purple-500/40 text-left transition-all flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-semibold text-zinc-400">Resources</span>
+              <i data-lucide="box" class="w-4 h-4 text-purple-400"></i>
             </div>
-            <div class="font-display font-extrabold text-2xl text-white" id="stat-resources">6</div>
-            <span class="text-[11px] text-purple-400/80 mt-1 font-mono">Plugins & Setups</span>
-          </div>
+            <div class="font-display font-extrabold text-2xl text-white" id="stat-resources">7</div>
+            <span class="text-[10px] text-purple-400 font-mono mt-0.5">Plugins & Setups →</span>
+          </button>
 
-          <div class="glass-panel p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-semibold text-zinc-400">Client Reviews</span>
-              <div class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center">
-                <i data-lucide="star" class="w-4 h-4"></i>
-              </div>
+          <button onclick="switchTab('tab-reviews')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-amber-500/40 text-left transition-all flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-semibold text-zinc-400">Reviews</span>
+              <i data-lucide="star" class="w-4 h-4 text-amber-400"></i>
             </div>
             <div class="font-display font-extrabold text-2xl text-white" id="stat-reviews">3</div>
-            <span class="text-[11px] text-amber-400/80 mt-1 font-mono">5.0 Star Rating</span>
-          </div>
+            <span class="text-[10px] text-amber-400 font-mono mt-0.5">5.0 Star Ratings →</span>
+          </button>
 
-          <div class="glass-panel p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-semibold text-zinc-400">Inquiries Received</span>
-              <div class="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center">
-                <i data-lucide="inbox" class="w-4 h-4"></i>
-              </div>
+          <button onclick="switchTab('tab-inquiries')" class="glass-card p-4 rounded-2xl border border-zinc-800 hover:border-blue-500/40 text-left transition-all flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-semibold text-zinc-400">Leads</span>
+              <i data-lucide="inbox" class="w-4 h-4 text-blue-400"></i>
             </div>
             <div class="font-display font-extrabold text-2xl text-white" id="stat-inquiries">1</div>
-            <span class="text-[11px] text-blue-400/80 mt-1 font-mono">Recent Leads</span>
-          </div>
-        </div>
-
-        <!-- Quick Info / Status -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          <div class="glass-panel p-6 rounded-3xl space-y-4">
-            <h3 class="font-display font-bold text-base text-white flex items-center gap-2">
-              <i data-lucide="server" class="w-4 h-4 text-emerald-400"></i>
-              <span>System & Deployment Status</span>
-            </h3>
-            <div class="space-y-3 text-xs">
-              <div class="flex items-center justify-between p-3 rounded-xl bg-dark-950 border border-zinc-800">
-                <span class="text-zinc-400">Local Engine Server</span>
-                <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Online (Port 3000)
-                </span>
-              </div>
-              <div class="flex items-center justify-between p-3 rounded-xl bg-dark-950 border border-zinc-800">
-                <span class="text-zinc-400">GitHub Repository</span>
-                <a href="https://github.com/riptodevelops/vortexlabs" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1">
-                  <span>riptodevelops/vortexlabs</span>
-                  <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-              <div class="flex items-center justify-between p-3 rounded-xl bg-dark-950 border border-zinc-800">
-                <span class="text-zinc-400">GitHub Pages URL</span>
-                <a href="https://riptodevelops.github.io/vortexlabs/" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1">
-                  <span>riptodevelops.github.io/vortexlabs</span>
-                  <i data-lucide="external-link" class="w-3 h-3"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="glass-panel p-6 rounded-3xl space-y-4">
-            <h3 class="font-display font-bold text-base text-white flex items-center gap-2">
-              <i data-lucide="zap" class="w-4 h-4 text-emerald-400"></i>
-              <span>Quick Management Actions</span>
-            </h3>
-            <div class="grid grid-cols-2 gap-3 text-xs">
-              <button onclick="switchTab('tab-gallery')" class="p-3.5 rounded-xl bg-dark-950 hover:bg-zinc-900 border border-zinc-800 text-left transition-colors flex flex-col gap-1.5 group">
-                <i data-lucide="image-plus" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform"></i>
-                <span class="font-bold text-white">Add Screenshot</span>
-                <span class="text-[11px] text-zinc-500">Drag & drop new capture</span>
-              </button>
-              <button onclick="switchTab('tab-resources')" class="p-3.5 rounded-xl bg-dark-950 hover:bg-zinc-900 border border-zinc-800 text-left transition-colors flex flex-col gap-1.5 group">
-                <i data-lucide="plus-circle" class="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform"></i>
-                <span class="font-bold text-white">New Resource</span>
-                <span class="text-[11px] text-zinc-500">Add plugin or server setup</span>
-              </button>
-              <button onclick="switchTab('tab-reviews')" class="p-3.5 rounded-xl bg-dark-950 hover:bg-zinc-900 border border-zinc-800 text-left transition-colors flex flex-col gap-1.5 group">
-                <i data-lucide="message-square-plus" class="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform"></i>
-                <span class="font-bold text-white">Add Review</span>
-                <span class="text-[11px] text-zinc-500">Post client feedback</span>
-              </button>
-              <button onclick="switchTab('tab-inquiries')" class="p-3.5 rounded-xl bg-dark-950 hover:bg-zinc-900 border border-zinc-800 text-left transition-colors flex flex-col gap-1.5 group">
-                <i data-lucide="user-check" class="w-5 h-5 text-blue-400 group-hover:scale-110 transition-transform"></i>
-                <span class="font-bold text-white">View Leads</span>
-                <span class="text-[11px] text-zinc-500">Check client inquiries</span>
-              </button>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- ================= TAB: VISUAL SHOWCASE / GALLERY ================= -->
-      <div id="tab-gallery" class="tab-content hidden space-y-6">
-        
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 class="font-display font-extrabold text-xl text-white tracking-tight">Visual Showcase Archive Manager</h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Upload new screenshots or manage existing captures in the gallery</p>
-          </div>
-          <button id="btn-toggle-upload" class="px-4 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all self-start">
-            <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Upload New Capture</span>
+            <span class="text-[10px] text-blue-400 font-mono mt-0.5">New Inquiries →</span>
           </button>
         </div>
 
-        <!-- Drag & Drop Upload Form (Collapsible) -->
-        <div id="upload-panel" class="glass-panel p-6 sm:p-8 rounded-3xl neon-border space-y-6">
-          <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
-            <h3 class="font-display font-bold text-base text-white flex items-center gap-2">
-              <i data-lucide="upload-cloud" class="w-5 h-5 text-emerald-400"></i>
-              <span>Upload Capture from File Manager</span>
-            </h3>
-            <span class="text-[11px] font-mono text-zinc-500">Supports PNG, JPG, JPEG, WEBP</span>
+        <!-- Quick Upload Action Button -->
+        <button onclick="switchTab('tab-gallery'); showUploadForm();" class="w-full py-4 rounded-2xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
+          <i data-lucide="camera" class="w-4 h-4"></i>
+          <span>Upload New Screenshot to Gallery</span>
+        </button>
+
+      </section>
+
+      <!-- ================= TAB: VISUAL SHOWCASE / GALLERY ================= -->
+      <section id="tab-gallery" class="tab-pane hidden space-y-4">
+        
+        <!-- Header & Action -->
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-display font-extrabold text-lg text-white">Visual Showcase</h2>
+            <p class="text-[11px] text-zinc-400">Manage all in-game screenshots & captures</p>
+          </div>
+          <button id="btn-toggle-upload" class="px-3.5 py-2 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs flex items-center gap-1.5 shadow-md shadow-emerald-500/20">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>Upload</span>
+          </button>
+        </div>
+
+        <!-- Mobile Touch Upload Card (Collapsible) -->
+        <div id="upload-panel" class="hidden glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-4">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+            <span class="text-xs font-bold text-white flex items-center gap-1.5">
+              <i data-lucide="image-plus" class="w-4 h-4 text-emerald-400"></i>
+              <span>Select Photo from Mobile / PC</span>
+            </span>
+            <button type="button" id="btn-close-upload" class="text-zinc-400 hover:text-white p-1">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
           </div>
 
-          <form id="form-upload-capture" class="space-y-6">
+          <form id="form-upload-capture" class="space-y-4">
             
-            <!-- Drag & Drop Area -->
-            <div>
-              <label class="block text-xs font-semibold text-zinc-300 mb-2 uppercase tracking-wider">Screenshot File (Drag & Drop or Select from Phone)</label>
+            <!-- Mobile Tap Target for Image Picker -->
+            <div id="dropzone" class="border-2 border-dashed border-zinc-700 hover:border-emerald-500/80 rounded-2xl p-6 text-center cursor-pointer transition-all bg-dark-950/80 relative">
+              <input type="file" id="capture-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
               
-              <div id="dropzone" class="border-2 border-dashed border-zinc-700 hover:border-emerald-500/80 rounded-2xl p-8 text-center cursor-pointer transition-all bg-dark-950/60 relative group">
-                <input type="file" id="capture-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                
-                <div id="dropzone-empty" class="flex flex-col items-center justify-center gap-3">
-                  <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                    <i data-lucide="image" class="w-7 h-7"></i>
-                  </div>
-                  <div>
-                    <span class="text-sm font-bold text-white block">Drop screenshot here or click to browse</span>
-                    <span class="text-xs text-zinc-500 mt-1 block">Select directly from mobile File Manager / Photos / PC</span>
-                  </div>
+              <div id="dropzone-empty" class="flex flex-col items-center justify-center gap-2 py-2">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <i data-lucide="camera" class="w-6 h-6"></i>
                 </div>
+                <span class="text-xs font-bold text-white">Tap to Choose from Gallery / Files</span>
+                <span class="text-[10px] text-zinc-500">Supports PNG, JPG, JPEG, WEBP</span>
+              </div>
 
-                <!-- Preview Area -->
-                <div id="dropzone-preview" class="hidden flex flex-col items-center justify-center gap-3">
-                  <img id="preview-img" src="" alt="Preview" class="max-h-48 rounded-xl object-contain border border-emerald-500/30 shadow-lg">
-                  <span id="preview-filename" class="text-xs font-mono text-emerald-400 font-semibold"></span>
-                  <span class="text-[11px] text-zinc-500 underline">Click to change file</span>
+              <!-- Preview -->
+              <div id="dropzone-preview" class="hidden flex flex-col items-center justify-center gap-2">
+                <img id="preview-img" src="" alt="Preview" class="max-h-40 rounded-xl object-contain border border-emerald-500/30 shadow-md">
+                <span id="preview-filename" class="text-[11px] font-mono text-emerald-400 font-semibold truncate max-w-xs"></span>
+                <span class="text-[10px] text-rose-400 underline font-semibold">Tap to change image</span>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Title *</label>
+                <input type="text" id="capture-title" required placeholder="e.g. Astral Alignment Crystal Hologram" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[11px] font-bold text-zinc-400 mb-1">Category *</label>
+                  <select id="capture-category" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-2.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                    <option value="runeforged">Survival World</option>
+                    <option value="runeforgedrunes">Rune Mechanics</option>
+                    <option value="runeforgedvote">Vote Holograms</option>
+                    <option value="vortexlabsbot">Discord Bot</option>
+                    <option value="grimstonediscord">Grimstone Setup</option>
+                    <option value="hermessurvival">Hermes Server</option>
+                    <option value="custom">Custom Capture</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-zinc-400 mb-1">Badge Tag</label>
+                  <input type="text" id="capture-badge" placeholder="e.g. In-Game GUI" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
                 </div>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">Capture Title *</label>
-                <input type="text" id="capture-title" required placeholder="e.g. Astral Alignment Crystal 3D" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
-              </div>
-
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">Category *</label>
-                <select id="capture-category" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-                  <option value="runeforged">Survival Spawn & World</option>
-                  <option value="runes">Rune Mechanics & GUIs</option>
-                  <option value="vote">Astral Voting Holograms</option>
-                  <option value="bot">Discord Bot Systems</option>
-                  <option value="grimstone">Grimstone Network Setup</option>
-                  <option value="hermes">Hermes Survival Server</option>
-                  <option value="custom">Custom Capture</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-xs font-semibold text-zinc-300 mb-1.5 uppercase tracking-wider">Badge Tag</label>
-                <input type="text" id="capture-badge" placeholder="e.g. Plugin Showcase" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500">
-              </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-3 pt-2">
-              <button type="button" id="btn-cancel-upload" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 transition-colors">
-                Cancel
-              </button>
-              <button type="submit" id="btn-save-capture" class="px-6 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
-                <i data-lucide="check" class="w-4 h-4"></i>
-                <span>Save & Add to Showcase</span>
-              </button>
-            </div>
+            <button type="submit" id="btn-save-capture" class="w-full py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Save & Add to Showcase</span>
+            </button>
           </form>
         </div>
 
-        <!-- Existing Captures Filter & Search -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="gallery-admin-filters">
-            <button data-cat="all" class="filter-pill active px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-dark-950">All</button>
-            <button data-cat="runeforged" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-400 hover:text-white">Survival</button>
-            <button data-cat="runes" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-400 hover:text-white">Runes</button>
-            <button data-cat="vote" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-400 hover:text-white">Voting</button>
-            <button data-cat="bot" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-400 hover:text-white">Bot</button>
-            <button data-cat="grimstone" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-400 hover:text-white">Grimstone</button>
-            <button data-cat="hermes" class="filter-pill px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-900 text-zinc-400 hover:text-white">Hermes</button>
+        <!-- Filter Pills & Search Bar -->
+        <div class="space-y-2">
+          <!-- Search input -->
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input type="text" id="gallery-search" placeholder="Search 142+ captures..." class="w-full bg-dark-950 border border-zinc-800 rounded-xl pl-9 pr-8 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            <button id="clear-search" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
 
-          <div class="relative w-full sm:w-64 shrink-0">
-            <i data-lucide="search" class="w-4 h-4 text-zinc-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
-            <input type="text" id="gallery-search" placeholder="Search captures..." class="w-full bg-dark-950 border border-zinc-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+          <!-- Horizontal Scrolling Filter Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1" id="gallery-filters">
+            <button data-cat="all" class="filter-pill active px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-emerald-500 text-dark-950">All (142)</button>
+            <button data-cat="runeforged" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Survival</button>
+            <button data-cat="runeforgedrunes" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Runes</button>
+            <button data-cat="runeforgedvote" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Voting</button>
+            <button data-cat="vortexlabsbot" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Discord Bot</button>
+            <button data-cat="grimstonediscord" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Grimstone</button>
+            <button data-cat="hermessurvival" class="filter-pill px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap bg-dark-950 text-zinc-400 border border-zinc-800">Hermes</button>
           </div>
         </div>
 
-        <!-- Captures Grid -->
-        <div id="gallery-admin-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <!-- 2-Column Mobile Image Grid -->
+        <div id="gallery-grid" class="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
           <!-- Populated by JS -->
         </div>
 
-        <div id="gallery-empty" class="hidden text-center py-12 glass-panel rounded-2xl">
-          <i data-lucide="image-off" class="w-8 h-8 text-zinc-600 mx-auto mb-2"></i>
-          <span class="text-xs text-zinc-400 font-semibold block">No captures found matching criteria</span>
+        <!-- Load More Button -->
+        <div id="load-more-container" class="text-center pt-2">
+          <button id="btn-load-more" class="w-full py-2.5 rounded-xl text-xs font-semibold bg-dark-950 hover:bg-zinc-900 border border-zinc-800 text-zinc-300 transition-colors">
+            Load More Captures...
+          </button>
         </div>
 
-      </div>
+      </section>
 
       <!-- ================= TAB: RESOURCES & PLUGINS ================= -->
-      <div id="tab-resources" class="tab-content hidden space-y-6">
+      <section id="tab-resources" class="tab-pane hidden space-y-4">
+        
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-display font-extrabold text-xl text-white tracking-tight">Showcase Resources & Plugins</h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Manage the cards displayed in the Featured Resources section</p>
+            <h2 class="font-display font-extrabold text-lg text-white">Featured Resources</h2>
+            <p class="text-[11px] text-zinc-400">Manage all 7 plugins and setup cards</p>
           </div>
-          <button id="btn-add-resource" class="px-4 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
+          <button id="btn-toggle-add-resource" class="px-3.5 py-2 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs flex items-center gap-1.5">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add New Resource</span>
+            <span>Add</span>
           </button>
         </div>
 
-        <!-- Resources List -->
-        <div id="resources-admin-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Add Resource Form (Collapsible) -->
+        <div id="add-resource-panel" class="hidden glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-3">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+            <span class="text-xs font-bold text-white">Add New Resource / Plugin</span>
+            <button type="button" id="btn-close-resource-panel" class="text-zinc-400 p-1">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <form id="form-add-resource" class="space-y-3">
+            <div>
+              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Title *</label>
+              <input type="text" id="res-title" required placeholder="e.g. RuneForgedDungeons" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Category</label>
+                <select id="res-category" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-2.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                  <option value="plugins">Plugins</option>
+                  <option value="setups">Server Setups</option>
+                  <option value="discord-bots">Discord Bots</option>
+                  <option value="discord-setups">Discord Setups</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Version / Tag</label>
+                <input type="text" id="res-version" placeholder="v1.20 - 1.21+" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Description *</label>
+              <textarea id="res-desc" rows="2" required placeholder="Feature description..." class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs">
+              Save Resource
+            </button>
+          </form>
+        </div>
+
+        <!-- Resources Stacked List -->
+        <div id="resources-list" class="space-y-3">
           <!-- Populated by JS -->
         </div>
-      </div>
 
-      <!-- ================= TAB: CLIENT REVIEWS ================= -->
-      <div id="tab-reviews" class="tab-content hidden space-y-6">
+      </section>
+
+      <!-- ================= TAB: REVIEWS ================= -->
+      <section id="tab-reviews" class="tab-pane hidden space-y-4">
+        
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="font-display font-extrabold text-xl text-white tracking-tight">Client Reviews & Testimonials</h2>
-            <p class="text-xs text-zinc-400 mt-0.5">Manage customer feedback, star ratings, and review cards</p>
+            <h2 class="font-display font-extrabold text-lg text-white">Client Reviews</h2>
+            <p class="text-[11px] text-zinc-400">Manage client testimonials & 5-star reviews</p>
           </div>
-          <button id="btn-add-review" class="px-4 py-2.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
+          <button id="btn-toggle-add-review" class="px-3.5 py-2 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs flex items-center gap-1.5">
             <i data-lucide="plus" class="w-4 h-4"></i>
-            <span>Add New Review</span>
+            <span>Add</span>
           </button>
         </div>
 
-        <!-- Reviews List -->
-        <div id="reviews-admin-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Add Review Form (Collapsible) -->
+        <div id="add-review-panel" class="hidden glass-card p-5 rounded-3xl border border-emerald-500/30 space-y-3">
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-2">
+            <span class="text-xs font-bold text-white">Add Client Review</span>
+            <button type="button" id="btn-close-review-panel" class="text-zinc-400 p-1">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <form id="form-add-review" class="space-y-3">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Author Name *</label>
+                <input type="text" id="rev-author" required placeholder="e.g. Sarah M." class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-zinc-400 mb-1">Role / Network</label>
+                <input type="text" id="rev-role" placeholder="Owner, Apex SMP" class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-zinc-400 mb-1">Review Content *</label>
+              <textarea id="rev-content" rows="2" required placeholder="Tell what the client said..." class="w-full bg-dark-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl font-bold bg-emerald-500 text-dark-950 text-xs">
+              Save Review
+            </button>
+          </form>
+        </div>
+
+        <!-- Reviews Stacked List -->
+        <div id="reviews-list" class="space-y-3">
           <!-- Populated by JS -->
         </div>
-      </div>
+
+      </section>
 
       <!-- ================= TAB: INQUIRIES & LEADS ================= -->
-      <div id="tab-inquiries" class="tab-content hidden space-y-6">
+      <section id="tab-inquiries" class="tab-pane hidden space-y-4">
+        
         <div>
-          <h2 class="font-display font-extrabold text-xl text-white tracking-tight">Commission Inquiries & Leads</h2>
-          <p class="text-xs text-zinc-400 mt-0.5">Messages and quotes submitted by server owners from the website</p>
+          <h2 class="font-display font-extrabold text-lg text-white">Inquiries & Leads</h2>
+          <p class="text-[11px] text-zinc-400">Incoming quotes submitted by server owners</p>
         </div>
 
-        <div id="inquiries-admin-list" class="space-y-4">
+        <div id="inquiries-list" class="space-y-3">
           <!-- Populated by JS -->
         </div>
-      </div>
 
-      <!-- ================= TAB: GITHUB PAGES SYNC ================= -->
-      <div id="tab-github" class="tab-content hidden space-y-6">
-        <div>
-          <h2 class="font-display font-extrabold text-xl text-white tracking-tight">GitHub Pages Deployment & Sync</h2>
-          <p class="text-xs text-zinc-400 mt-0.5">Push your website changes directly to GitHub to keep your 24/7 Pages link updated</p>
-        </div>
-
-        <div class="glass-panel p-6 sm:p-8 rounded-3xl neon-border space-y-6">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-700 flex items-center justify-center text-white">
-              <i data-lucide="github" class="w-6 h-6"></i>
-            </div>
-            <div>
-              <span class="font-display font-bold text-lg text-white block">Repository: riptodevelops/vortexlabs</span>
-              <span class="text-xs text-emerald-400 font-mono flex items-center gap-1.5 mt-0.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Connected with Personal Access Token
-              </span>
-            </div>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-dark-950 border border-zinc-800 space-y-3">
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-zinc-400">Public Live URL:</span>
-              <a href="https://riptodevelops.github.io/vortexlabs/" target="_blank" class="text-emerald-400 font-bold hover:underline flex items-center gap-1">
-                <span>https://riptodevelops.github.io/vortexlabs/</span>
-                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-              </a>
-            </div>
-            <div class="flex items-center justify-between text-xs">
-              <span class="text-zinc-400">Deployment Branch:</span>
-              <span class="font-mono text-zinc-300 font-semibold">main</span>
-            </div>
-          </div>
-
-          <div class="flex flex-col sm:flex-row items-center gap-3">
-            <button id="btn-sync-github" class="w-full sm:w-auto px-6 py-3.5 rounded-xl font-bold bg-emerald-500 hover:bg-emerald-400 text-dark-950 text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all">
-              <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i>
-              <span id="sync-text">Deploy & Sync Now to GitHub</span>
-            </button>
-            <a href="https://github.com/riptodevelops/vortexlabs" target="_blank" class="w-full sm:w-auto px-5 py-3.5 rounded-xl font-semibold bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs flex items-center justify-center gap-2 border border-zinc-800 transition-colors">
-              <i data-lucide="git-pull-request" class="w-4 h-4"></i>
-              <span>View Repository on GitHub</span>
-            </a>
-          </div>
-
-          <div id="sync-status" class="hidden text-xs p-4 rounded-xl border"></div>
-        </div>
-      </div>
+      </section>
 
     </main>
+
+    <!-- ================= THUMB-FRIENDLY BOTTOM NAVIGATION BAR ================= -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#070b16]/95 backdrop-blur-lg border-t border-zinc-800 px-2 py-1.5 flex items-center justify-around">
+      
+      <button data-tab="tab-overview" class="bottom-nav-item active flex flex-col items-center justify-center py-1 px-3 rounded-xl text-emerald-400 transition-colors">
+        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold mt-0.5">Overview</span>
+      </button>
+
+      <button data-tab="tab-gallery" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors relative">
+        <i data-lucide="image" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold mt-0.5">Gallery</span>
+        <span id="nav-badge-gallery" class="absolute top-0 right-2 w-2 h-2 rounded-full bg-emerald-400"></span>
+      </button>
+
+      <button data-tab="tab-resources" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors">
+        <i data-lucide="box" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold mt-0.5">Plugins</span>
+      </button>
+
+      <button data-tab="tab-reviews" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors">
+        <i data-lucide="star" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold mt-0.5">Reviews</span>
+      </button>
+
+      <button data-tab="tab-inquiries" class="bottom-nav-item flex flex-col items-center justify-center py-1 px-3 rounded-xl text-zinc-400 transition-colors relative">
+        <i data-lucide="inbox" class="w-5 h-5"></i>
+        <span class="text-[10px] font-semibold mt-0.5">Leads</span>
+        <span id="nav-badge-inquiries" class="absolute top-0.5 right-2 w-4 h-4 rounded-full bg-emerald-500 text-dark-950 font-bold text-[9px] flex items-center justify-center">1</span>
+      </button>
+
+    </nav>
+
   </div>
 
-  <!-- App Script -->
+  <!-- JavaScript -->
   <script>
-    // ================= CREDENTIALS & SESSION =================
     const AUTH_EMAIL = "vortexlab@gmail.com";
     const AUTH_PASS = "Vortex1209$";
     const SESSION_KEY = "vortex_admin_session";
@@ -576,7 +515,7 @@
     const loginError = document.getElementById('login-error');
     const logoutBtn = document.getElementById('logout-btn');
 
-    // Check persistent login immediately on load
+    // Check persistent login
     function checkAuth() {
       const session = localStorage.getItem(SESSION_KEY);
       if (session) {
@@ -595,13 +534,13 @@
       loginContainer.classList.add('hidden');
       dashboardContainer.classList.remove('hidden');
       loadAllData();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function showLogin() {
       dashboardContainer.classList.add('hidden');
       loginContainer.classList.remove('hidden');
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     loginForm.addEventListener('submit', (e) => {
@@ -611,13 +550,12 @@
 
       if (email.toLowerCase() === AUTH_EMAIL.toLowerCase() && pass === AUTH_PASS) {
         loginError.classList.add('hidden');
-        // Save persistent login forever
         localStorage.setItem(SESSION_KEY, JSON.stringify({
           email: AUTH_EMAIL,
-          token: 'vortex_' + Date.now(),
-          loggedInAt: new Date().toISOString()
+          loggedIn: true,
+          time: Date.now()
         }));
-        showToast('Login successful. Welcome Gaurav!');
+        showToast('Welcome, Gaurav!');
         showDashboard();
       } else {
         loginError.classList.remove('hidden');
@@ -625,39 +563,39 @@
     });
 
     logoutBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to log out of the admin panel?')) {
+      if (confirm('Log out from Admin?')) {
         localStorage.removeItem(SESSION_KEY);
-        showToast('Logged out successfully');
+        showToast('Logged out');
         showLogin();
       }
     });
 
-    // Toggle Password Visibility
     document.getElementById('toggle-pwd').addEventListener('click', () => {
       const input = document.getElementById('login-password');
       input.type = input.type === 'password' ? 'text' : 'password';
     });
 
-    // ================= TAB NAVIGATION =================
+    // ================= MOBILE BOTTOM TAB NAVIGATION =================
     function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
-        btn.classList.add('text-zinc-400', 'border-transparent');
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+        btn.classList.remove('text-emerald-400', 'active');
+        btn.classList.add('text-zinc-400');
       });
 
-      const targetTab = document.getElementById(tabId);
-      if (targetTab) targetTab.classList.remove('hidden');
+      const target = document.getElementById(tabId);
+      if (target) target.classList.remove('hidden');
 
       const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
       if (activeBtn) {
-        activeBtn.classList.remove('text-zinc-400', 'border-transparent');
-        activeBtn.classList.add('bg-emerald-500/15', 'text-emerald-400', 'border-emerald-500/30');
+        activeBtn.classList.remove('text-zinc-400');
+        activeBtn.classList.add('text-emerald-400', 'active');
       }
-      lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (window.lucide) lucide.createIcons();
     }
 
-    document.querySelectorAll('.tab-btn').forEach(btn => {
+    document.querySelectorAll('.bottom-nav-item').forEach(btn => {
       btn.addEventListener('click', () => {
         switchTab(btn.dataset.tab);
       });
@@ -672,17 +610,17 @@
       toastMsg.textContent = msg;
       if (isError) {
         toastIcon.setAttribute('data-lucide', 'alert-circle');
-        toastIcon.className = 'w-5 h-5 text-rose-400';
+        toastIcon.className = 'w-5 h-5 text-rose-400 shrink-0';
       } else {
         toastIcon.setAttribute('data-lucide', 'check-circle');
-        toastIcon.className = 'w-5 h-5 text-emerald-400';
+        toastIcon.className = 'w-5 h-5 text-emerald-400 shrink-0';
       }
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
-      toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+      toast.classList.remove('-translate-y-24', 'opacity-0');
       setTimeout(() => {
-        toast.classList.add('translate-y-[-100px]', 'opacity-0');
-      }, 3500);
+        toast.classList.add('-translate-y-24', 'opacity-0');
+      }, 3000);
     }
 
     // ================= DATA STATE =================
@@ -692,259 +630,260 @@
     let inquiriesData = [];
 
     async function loadAllData() {
-      // Load Gallery
       try {
-        const res = await fetch('/gallery-data.json');
+        const res = await fetch('./gallery-data.json');
         if (res.ok) galleryData = await res.json();
-      } catch (e) { galleryData = []; }
-
-      // Load Resources
-      try {
-        const res = await fetch('/data/resources.json');
-        if (res.ok) resourcesData = await res.json();
-        else {
-          const res2 = await fetch('/resources-data.json');
-          if (res2.ok) resourcesData = await res2.json();
-        }
       } catch (e) {}
 
-      // Load Reviews
       try {
-        const res = await fetch('/api/reviews');
+        const res = await fetch('./resources-data.json');
+        if (res.ok) resourcesData = await res.json();
+      } catch (e) {}
+
+      try {
+        const res = await fetch('./reviews-data.json');
         if (res.ok) reviewsData = await res.json();
       } catch (e) {}
 
-      // Load Inquiries
       try {
         const res = await fetch('/data/inquiries.json');
         if (res.ok) inquiriesData = await res.json();
       } catch (e) {}
 
-      updateStats();
+      updateCounts();
       renderGallery();
       renderResources();
       renderReviews();
       renderInquiries();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
-    function updateStats() {
+    function updateCounts() {
       document.getElementById('stat-captures').textContent = galleryData.length;
       document.getElementById('stat-resources').textContent = resourcesData.length;
       document.getElementById('stat-reviews').textContent = reviewsData.length;
       document.getElementById('stat-inquiries').textContent = inquiriesData.length;
-      document.getElementById('badge-inquiries').textContent = inquiriesData.length;
+      document.getElementById('nav-badge-inquiries').textContent = inquiriesData.length;
     }
 
-    // ================= DRAG & DROP MEDIA HANDLER =================
+    // ================= GALLERY UPLOAD & MANAGEMENT =================
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('capture-file');
     const dropzoneEmpty = document.getElementById('dropzone-empty');
     const dropzonePreview = document.getElementById('dropzone-preview');
     const previewImg = document.getElementById('preview-img');
     const previewFilename = document.getElementById('preview-filename');
+    const uploadPanel = document.getElementById('upload-panel');
+    const btnToggleUpload = document.getElementById('btn-toggle-upload');
+    const btnCloseUpload = document.getElementById('btn-close-upload');
 
-    let currentSelectedFile = null;
+    let selectedFile = null;
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.add('dropzone-active');
-      }, false);
-    });
+    function showUploadForm() {
+      uploadPanel.classList.remove('hidden');
+      uploadPanel.scrollIntoView({ behavior: 'smooth' });
+    }
 
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropzone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('dropzone-active');
-      }, false);
-    });
-
-    dropzone.addEventListener('drop', (e) => {
-      const files = e.dataTransfer.files;
-      if (files && files[0]) {
-        handleFileSelection(files[0]);
+    btnToggleUpload.addEventListener('click', () => {
+      uploadPanel.classList.toggle('hidden');
+      if (!uploadPanel.classList.contains('hidden')) {
+        uploadPanel.scrollIntoView({ behavior: 'smooth' });
       }
+    });
+
+    btnCloseUpload.addEventListener('click', () => {
+      uploadPanel.classList.add('hidden');
+      resetUpload();
     });
 
     fileInput.addEventListener('change', (e) => {
       if (e.target.files && e.target.files[0]) {
-        handleFileSelection(e.target.files[0]);
+        handleFile(e.target.files[0]);
       }
     });
 
-    function handleFileSelection(file) {
+    function handleFile(file) {
       if (!file.type.startsWith('image/')) {
         showToast('Please select a valid image file', true);
         return;
       }
-      currentSelectedFile = file;
+      selectedFile = file;
       const reader = new FileReader();
       reader.onload = (e) => {
         previewImg.src = e.target.result;
-        previewFilename.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        previewFilename.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
         dropzoneEmpty.classList.add('hidden');
         dropzonePreview.classList.remove('hidden');
       };
       reader.readAsDataURL(file);
     }
 
-    // Save Capture Form
+    function resetUpload() {
+      document.getElementById('form-upload-capture').reset();
+      selectedFile = null;
+      dropzonePreview.classList.add('hidden');
+      dropzoneEmpty.classList.remove('hidden');
+      previewImg.src = '';
+    }
+
+    // Save Capture
     document.getElementById('form-upload-capture').addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!currentSelectedFile) {
-        showToast('Please drop or select an image file first!', true);
+      if (!selectedFile) {
+        showToast('Please tap to select a screenshot first!', true);
         return;
       }
 
       const title = document.getElementById('capture-title').value.trim();
       const category = document.getElementById('capture-category').value;
       const badge = document.getElementById('capture-badge').value.trim() || 'Showcase Capture';
-
       const saveBtn = document.getElementById('btn-save-capture');
+
       saveBtn.disabled = true;
       saveBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i><span>Saving...</span>';
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
-      try {
-        // Read file as base64
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const base64Data = reader.result;
-          
-          const payload = {
-            filename: currentSelectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_'),
-            fileData: base64Data,
-            title: title,
-            category: category,
-            categoryName: getCategoryName(category),
-            badge: badge
-          };
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const payload = {
+          filename: selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_'),
+          fileData: reader.result,
+          title: title,
+          category: category,
+          categoryName: getCategoryName(category),
+          badge: badge
+        };
 
+        try {
           const res = await fetch('/api/admin/gallery/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
-
           if (res.ok) {
             const data = await res.json();
             galleryData.unshift(data.item);
-            showToast('Capture added to Visual Showcase!');
-            resetUploadForm();
+            showToast('Added to Visual Showcase!');
+            resetUpload();
+            uploadPanel.classList.add('hidden');
             renderGallery();
-            updateStats();
+            updateCounts();
           } else {
-            showToast('Failed to save capture. Check server connection.', true);
+            showToast('Save failed. Server issue.', true);
           }
-          saveBtn.disabled = false;
-          saveBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Save & Add to Showcase</span>';
-          lucide.createIcons();
-        };
-        reader.readAsDataURL(currentSelectedFile);
-      } catch (err) {
-        showToast('Error uploading image', true);
+        } catch (err) {
+          showToast('Network error saving capture', true);
+        }
         saveBtn.disabled = false;
         saveBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i><span>Save & Add to Showcase</span>';
-        lucide.createIcons();
-      }
+        if (window.lucide) lucide.createIcons();
+      };
+      reader.readAsDataURL(selectedFile);
     });
-
-    function resetUploadForm() {
-      document.getElementById('form-upload-capture').reset();
-      currentSelectedFile = null;
-      dropzonePreview.classList.add('hidden');
-      dropzoneEmpty.classList.remove('hidden');
-      previewImg.src = '';
-    }
 
     function getCategoryName(cat) {
-      switch (cat) {
-        case 'runeforged': return 'Survival Spawn & World';
-        case 'runes': return 'Rune Mechanics & GUIs';
-        case 'vote': return 'Astral Voting Holograms';
-        case 'bot': return 'Discord Bot Systems';
-        case 'grimstone': return 'Grimstone Network Setup';
-        case 'hermes': return 'Hermes Survival Server';
-        default: return 'Custom Showcase';
-      }
+      const map = {
+        'runeforged': 'Survival Spawn & World',
+        'runeforgedrunes': 'Rune Mechanics & GUIs',
+        'runeforgedvote': 'Astral Voting Holograms',
+        'vortexlabsbot': 'Discord Bot Systems',
+        'grimstonediscord': 'Grimstone Network Setup',
+        'hermessurvival': 'Hermes Survival Server'
+      };
+      return map[cat] || 'Custom Showcase';
     }
 
-    // Toggle Upload Panel
-    const uploadPanel = document.getElementById('upload-panel');
-    const btnToggleUpload = document.getElementById('btn-toggle-upload');
-    const btnCancelUpload = document.getElementById('btn-cancel-upload');
-
-    btnToggleUpload.addEventListener('click', () => {
-      uploadPanel.scrollIntoView({ behavior: 'smooth' });
-      document.getElementById('capture-title').focus();
-    });
-
-    btnCancelUpload.addEventListener('click', () => {
-      resetUploadForm();
-    });
-
-    // ================= RENDER GALLERY =================
-    let currentGalleryFilter = 'all';
+    // ================= GALLERY RENDER & PAGINATION =================
+    let currentCat = 'all';
+    let gallerySearch = '';
+    let displayLimit = 20;
 
     function renderGallery() {
-      const grid = document.getElementById('gallery-admin-grid');
-      const empty = document.getElementById('gallery-empty');
-      const search = document.getElementById('gallery-search').value.toLowerCase().trim();
+      const grid = document.getElementById('gallery-grid');
+      const loadMoreContainer = document.getElementById('btn-load-more');
 
       const filtered = galleryData.filter(item => {
-        const matchesCat = (currentGalleryFilter === 'all' || item.category === currentGalleryFilter);
-        const matchesSearch = !search || item.title.toLowerCase().includes(search) || (item.badge && item.badge.toLowerCase().includes(search));
-        return matchesCat && matchesSearch;
+        const matchCat = (currentCat === 'all' || item.category === currentCat);
+        const matchSearch = !gallerySearch || item.title.toLowerCase().includes(gallerySearch) || (item.badge && item.badge.toLowerCase().includes(gallerySearch));
+        return matchCat && matchSearch;
       });
 
-      if (filtered.length === 0) {
-        grid.innerHTML = '';
-        empty.classList.remove('hidden');
+      const visible = filtered.slice(0, displayLimit);
+
+      if (visible.length === 0) {
+        grid.innerHTML = '<div class="col-span-2 text-center py-8 text-zinc-500 text-xs">No captures found matching filter.</div>';
+        loadMoreContainer.classList.add('hidden');
         return;
       }
 
-      empty.classList.add('hidden');
-      grid.innerHTML = filtered.slice(0, 60).map((item, idx) => `
-        <div class="glass-panel rounded-2xl overflow-hidden border border-zinc-800/80 group flex flex-col justify-between hover:border-emerald-500/40 transition-colors">
-          <div class="h-36 bg-dark-950 overflow-hidden relative">
-            <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-            <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-dark-950/80 text-emerald-300 border border-emerald-500/30 backdrop-blur-md">
+      grid.innerHTML = visible.map(item => `
+        <div class="glass-card rounded-2xl overflow-hidden border border-zinc-800 flex flex-col justify-between group">
+          <div class="h-28 bg-dark-950 overflow-hidden relative">
+            <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover" loading="lazy">
+            <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase bg-dark-950/80 text-emerald-400 border border-emerald-500/30">
               ${item.badge || 'Capture'}
             </span>
-            <button onclick="deleteGalleryItem('${item.src}')" title="Delete capture" class="absolute top-2 right-2 w-7 h-7 rounded-lg bg-rose-500/80 hover:bg-rose-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <button onclick="deleteCapture('${item.src}')" title="Delete" class="absolute top-1.5 right-1.5 w-6 h-6 rounded-lg bg-rose-500/80 hover:bg-rose-500 text-white flex items-center justify-center">
+              <i data-lucide="trash-2" class="w-3 h-3"></i>
             </button>
           </div>
-          <div class="p-3">
-            <h4 class="text-xs font-semibold text-white truncate" title="${item.title}">${item.title}</h4>
-            <span class="text-[11px] text-zinc-500 block truncate mt-0.5">${item.categoryName || item.category}</span>
+          <div class="p-2">
+            <h4 class="text-[11px] font-semibold text-white truncate" title="${item.title}">${item.title}</h4>
+            <span class="text-[9px] text-zinc-500 block truncate">${item.categoryName || item.category}</span>
           </div>
         </div>
       `).join('');
 
-      lucide.createIcons();
+      if (displayLimit < filtered.length) {
+        loadMoreContainer.classList.remove('hidden');
+        loadMoreContainer.textContent = `Load More (${filtered.length - displayLimit} remaining)...`;
+      } else {
+        loadMoreContainer.classList.add('hidden');
+      }
+
+      if (window.lucide) lucide.createIcons();
     }
 
-    // Gallery Filters
-    document.querySelectorAll('#gallery-admin-filters .filter-pill').forEach(pill => {
+    document.getElementById('btn-load-more').addEventListener('click', () => {
+      displayLimit += 24;
+      renderGallery();
+    });
+
+    // Filter pills
+    document.querySelectorAll('#gallery-filters .filter-pill').forEach(pill => {
       pill.addEventListener('click', () => {
-        document.querySelectorAll('#gallery-admin-filters .filter-pill').forEach(p => {
+        document.querySelectorAll('#gallery-filters .filter-pill').forEach(p => {
           p.classList.remove('bg-emerald-500', 'text-dark-950');
-          p.classList.add('bg-zinc-900', 'text-zinc-400');
+          p.classList.add('bg-dark-950', 'text-zinc-400');
         });
-        pill.classList.remove('bg-zinc-900', 'text-zinc-400');
+        pill.classList.remove('bg-dark-950', 'text-zinc-400');
         pill.classList.add('bg-emerald-500', 'text-dark-950');
-        currentGalleryFilter = pill.dataset.cat;
+        currentCat = pill.dataset.cat;
+        displayLimit = 20;
         renderGallery();
       });
     });
 
-    document.getElementById('gallery-search').addEventListener('input', renderGallery);
+    const searchInput = document.getElementById('gallery-search');
+    const clearSearch = document.getElementById('clear-search');
 
-    async function deleteGalleryItem(src) {
-      if (!confirm('Are you sure you want to remove this capture from the visual showcase?')) return;
-      
+    searchInput.addEventListener('input', (e) => {
+      gallerySearch = e.target.value.toLowerCase().trim();
+      clearSearch.classList.toggle('hidden', !gallerySearch);
+      displayLimit = 20;
+      renderGallery();
+    });
+
+    clearSearch.addEventListener('click', () => {
+      searchInput.value = '';
+      gallerySearch = '';
+      clearSearch.classList.add('hidden');
+      displayLimit = 20;
+      renderGallery();
+    });
+
+    async function deleteCapture(src) {
+      if (!confirm('Delete this capture?')) return;
       try {
         const res = await fetch('/api/admin/gallery/delete', {
           method: 'POST',
@@ -954,55 +893,49 @@
         if (res.ok) {
           galleryData = galleryData.filter(i => i.src !== src);
           renderGallery();
-          updateStats();
-          showToast('Capture deleted successfully');
-        } else {
-          showToast('Failed to delete item', true);
+          updateCounts();
+          showToast('Capture deleted');
         }
       } catch (e) {
-        showToast('Error deleting item', true);
+        showToast('Error deleting capture', true);
       }
     }
 
-    // ================= RENDER RESOURCES =================
+    // ================= RESOURCES RENDER =================
+    const addResourcePanel = document.getElementById('add-resource-panel');
+    document.getElementById('btn-toggle-add-resource').addEventListener('click', () => {
+      addResourcePanel.classList.toggle('hidden');
+    });
+    document.getElementById('btn-close-resource-panel').addEventListener('click', () => {
+      addResourcePanel.classList.add('hidden');
+    });
+
     function renderResources() {
-      const container = document.getElementById('resources-admin-list');
+      const container = document.getElementById('resources-list');
       container.innerHTML = resourcesData.map(res => `
-        <div class="glass-panel p-5 rounded-2xl border border-zinc-800/80 flex flex-col justify-between gap-4">
-          <div class="flex items-start gap-4">
-            <div class="w-16 h-16 rounded-xl bg-dark-950 border border-zinc-800 overflow-hidden shrink-0">
-              <img src="${res.banner || '/assets/logo.png'}" alt="${res.title}" class="w-full h-full object-cover">
-            </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  ${res.categoryBadge || res.category}
-                </span>
-                <span class="text-[10px] font-mono text-zinc-500">${res.version}</span>
-              </div>
-              <h4 class="font-display font-bold text-base text-white truncate">${res.title}</h4>
-              <p class="text-xs text-zinc-400 mt-1 line-clamp-2">${res.description}</p>
-            </div>
+        <div class="glass-card p-4 rounded-2xl border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-300 border border-purple-500/30">
+              ${res.categoryBadge || res.category}
+            </span>
+            <span class="text-[10px] font-mono text-zinc-500">${res.version}</span>
           </div>
-          <div class="pt-3 border-t border-zinc-800/60 flex items-center justify-between text-xs">
-            <a href="${res.link}" target="_blank" class="text-emerald-400 hover:underline flex items-center gap-1 font-semibold">
-              <span>View Page</span>
-              <i data-lucide="external-link" class="w-3 h-3"></i>
-            </a>
-            <div class="flex items-center gap-2">
-              <button onclick="deleteResource('${res.id}')" class="px-3 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500 text-rose-300 hover:text-zinc-950 font-semibold transition-colors flex items-center gap-1">
-                <i data-lucide="trash-2" class="w-3 h-3"></i>
-                <span>Delete</span>
-              </button>
-            </div>
+          <h4 class="font-display font-bold text-sm text-white">${res.title}</h4>
+          <p class="text-[11px] text-zinc-400 line-clamp-2">${res.description}</p>
+          <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between">
+            <span class="text-[10px] text-zinc-500 font-mono">${res.link || '#'}</span>
+            <button onclick="deleteResource('${res.id}')" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold p-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>Delete</span>
+            </button>
           </div>
         </div>
       `).join('');
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     async function deleteResource(id) {
-      if (!confirm('Are you sure you want to delete this resource?')) return;
+      if (!confirm('Delete this resource?')) return;
       try {
         const res = await fetch('/api/admin/resources/delete', {
           method: 'POST',
@@ -1012,49 +945,49 @@
         if (res.ok) {
           resourcesData = resourcesData.filter(r => r.id !== id);
           renderResources();
-          updateStats();
-          showToast('Resource deleted successfully');
+          updateCounts();
+          showToast('Resource deleted');
         }
       } catch (e) {
         showToast('Error deleting resource', true);
       }
     }
 
-    // ================= RENDER REVIEWS =================
+    // ================= REVIEWS RENDER =================
+    const addReviewPanel = document.getElementById('add-review-panel');
+    document.getElementById('btn-toggle-add-review').addEventListener('click', () => {
+      addReviewPanel.classList.toggle('hidden');
+    });
+    document.getElementById('btn-close-review-panel').addEventListener('click', () => {
+      addReviewPanel.classList.add('hidden');
+    });
+
     function renderReviews() {
-      const container = document.getElementById('reviews-admin-list');
+      const container = document.getElementById('reviews-list');
       container.innerHTML = reviewsData.map(rev => `
-        <div class="glass-panel p-5 rounded-2xl border border-zinc-800/80 flex flex-col justify-between gap-3">
+        <div class="glass-card p-4 rounded-2xl border border-zinc-800 space-y-2">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-xs">
-                ${rev.author ? rev.author.charAt(0) : 'C'}
-              </div>
-              <div>
-                <h4 class="text-xs font-bold text-white">${rev.author}</h4>
-                <span class="text-[11px] text-zinc-500">${rev.role}</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-1 text-amber-400 text-xs font-bold bg-dark-950 px-2.5 py-1 rounded-full border border-amber-500/20">
+            <span class="text-xs font-bold text-white">${rev.author} (${rev.role || 'Client'})</span>
+            <div class="flex items-center gap-1 text-amber-400 text-xs font-bold bg-dark-950 px-2 py-0.5 rounded-full border border-amber-500/20">
               <span>${rev.rating || 5}.0</span>
-              <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+              <i data-lucide="star" class="w-3 h-3 fill-amber-400"></i>
             </div>
           </div>
-          <p class="text-xs text-zinc-300 italic leading-relaxed">"${rev.content}"</p>
-          <div class="pt-2 border-t border-zinc-800/60 flex items-center justify-between text-[11px] text-zinc-500">
-            <span>${rev.service || 'Plugins'} • ${rev.date || 'Recent'}</span>
-            <button onclick="deleteReview(${rev.id})" class="text-rose-400 hover:text-rose-300 flex items-center gap-1">
-              <i data-lucide="trash-2" class="w-3 h-3"></i>
+          <p class="text-xs text-zinc-300 italic">"${rev.content}"</p>
+          <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
+            <span>${rev.service || 'Service'} • ${rev.date || 'Recent'}</span>
+            <button onclick="deleteReview(${rev.id})" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 p-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               <span>Delete</span>
             </button>
           </div>
         </div>
       `).join('');
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     async function deleteReview(id) {
-      if (!confirm('Are you sure you want to delete this review?')) return;
+      if (!confirm('Delete this review?')) return;
       try {
         const res = await fetch('/api/admin/reviews/delete', {
           method: 'POST',
@@ -1064,7 +997,7 @@
         if (res.ok) {
           reviewsData = reviewsData.filter(r => r.id !== id);
           renderReviews();
-          updateStats();
+          updateCounts();
           showToast('Review deleted');
         }
       } catch (e) {
@@ -1072,59 +1005,41 @@
       }
     }
 
-    // ================= RENDER INQUIRIES =================
+    // ================= INQUIRIES RENDER =================
     function renderInquiries() {
-      const container = document.getElementById('inquiries-admin-list');
+      const container = document.getElementById('inquiries-list');
       if (inquiriesData.length === 0) {
-        container.innerHTML = `
-          <div class="glass-panel p-8 rounded-2xl text-center text-zinc-500">
-            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
-            <span class="text-xs font-semibold">No inquiries received yet</span>
-          </div>
-        `;
-        lucide.createIcons();
+        container.innerHTML = '<div class="glass-card p-6 rounded-2xl text-center text-zinc-500 text-xs">No client inquiries received yet.</div>';
         return;
       }
 
       container.innerHTML = inquiriesData.map(inq => `
-        <div class="glass-panel p-6 rounded-2xl border border-zinc-800/80 space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800 pb-3">
-            <div>
-              <h4 class="font-display font-bold text-base text-white">${inq.name || 'Anonymous Client'}</h4>
-              <span class="text-xs text-emerald-400 font-mono flex items-center gap-1 mt-0.5">
-                <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
-                Discord: ${inq.discord}
-              </span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                Budget: ${inq.budget || 'Custom'}
-              </span>
-              <span class="text-[11px] text-zinc-500 font-mono">
-                ${inq.receivedAt ? new Date(inq.receivedAt).toLocaleDateString() : 'Recent'}
-              </span>
-            </div>
+        <div class="glass-card p-4 rounded-2xl border border-zinc-800 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-sm text-white">${inq.name}</h4>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              Budget: ${inq.budget || 'Custom'}
+            </span>
           </div>
-          <div>
-            <span class="text-[11px] uppercase tracking-wider text-zinc-500 font-bold block mb-1">Project Requirements:</span>
-            <p class="text-xs text-zinc-300 bg-dark-950 p-3.5 rounded-xl border border-zinc-800/80 leading-relaxed">
-              ${inq.details || 'No details provided.'}
-            </p>
+          <div class="text-xs text-emerald-400 font-mono flex items-center gap-1">
+            <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+            <span>Discord: ${inq.discord}</span>
           </div>
-          <div class="flex items-center justify-between pt-2">
-            <span class="text-xs text-zinc-500 font-medium">Service: <strong class="text-zinc-300">${inq.service || 'General'}</strong></span>
-            <button onclick="deleteInquiry(${inq.id})" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1">
+          <p class="text-xs text-zinc-300 bg-dark-950 p-2.5 rounded-xl border border-zinc-800">${inq.details}</p>
+          <div class="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-500">
+            <span>Service: <strong class="text-zinc-300">${inq.service || 'General'}</strong></span>
+            <button onclick="deleteInquiry(${inq.id})" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 p-1">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              <span>Delete Lead</span>
+              <span>Delete</span>
             </button>
           </div>
         </div>
       `).join('');
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     async function deleteInquiry(id) {
-      if (!confirm('Delete this inquiry?')) return;
+      if (!confirm('Delete this lead?')) return;
       try {
         const res = await fetch('/api/admin/inquiries/delete', {
           method: 'POST',
@@ -1134,51 +1049,13 @@
         if (res.ok) {
           inquiriesData = inquiriesData.filter(i => i.id !== id);
           renderInquiries();
-          updateStats();
+          updateCounts();
           showToast('Inquiry removed');
         }
       } catch (e) {
         showToast('Error deleting inquiry', true);
       }
     }
-
-    // ================= GITHUB PAGES SYNC =================
-    const btnSync = document.getElementById('btn-sync-github');
-    const syncStatus = document.getElementById('sync-status');
-    const syncIcon = document.getElementById('sync-icon');
-    const syncText = document.getElementById('sync-text');
-
-    btnSync.addEventListener('click', async () => {
-      btnSync.disabled = true;
-      syncIcon.classList.add('animate-spin');
-      syncText.textContent = 'Syncing & Deploying to GitHub...';
-      syncStatus.classList.remove('hidden');
-      syncStatus.className = 'text-xs p-4 rounded-xl border border-zinc-800 bg-dark-950 text-zinc-400';
-      syncStatus.innerHTML = '<span class="flex items-center gap-2"><i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Staging files and pushing commit to GitHub Pages...</span>';
-      lucide.createIcons();
-
-      try {
-        const res = await fetch('/api/admin/sync-github', { method: 'POST' });
-        const result = await res.json();
-        
-        if (res.ok && result.success) {
-          syncStatus.className = 'text-xs p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 flex items-center gap-2';
-          syncStatus.innerHTML = '<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400 shrink-0"></i><div><strong>Deployment Successful!</strong> Changes pushed to <code>riptodevelops/vortexlabs</code>. GitHub Pages will refresh live shortly.</div>';
-          showToast('Deployed successfully to GitHub Pages!');
-        } else {
-          syncStatus.className = 'text-xs p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300';
-          syncStatus.innerHTML = '<strong>Deployment Notice:</strong> ' + (result.message || 'Push completed with status.');
-        }
-      } catch (err) {
-        syncStatus.className = 'text-xs p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300';
-        syncStatus.textContent = 'Failed to execute deployment: ' + err.message;
-      }
-
-      btnSync.disabled = false;
-      syncIcon.classList.remove('animate-spin');
-      syncText.textContent = 'Deploy & Sync Now to GitHub';
-      lucide.createIcons();
-    });
 
     // Start
     checkAuth();
