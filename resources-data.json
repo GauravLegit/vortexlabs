@@ -1,16 +1,5 @@
 [
   {
-    "id": "dickblock",
-    "title": "DickBlock",
-    "category": "plugins",
-    "categoryBadge": "TungTungSahur",
-    "version": "1.21+",
-    "description": "Descriptions of features!",
-    "banner": "./images/runeforged-banner.png",
-    "link": "#",
-    "active": true
-  },
-  {
     "id": "runeforgedrunes",
     "title": "RuneForgedRunes",
     "category": "plugins",
