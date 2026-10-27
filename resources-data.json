@@ -1,27 +1,5 @@
 [
   {
-    "id": "res_1793020011615",
-    "title": "Bruhh",
-    "category": "plugins",
-    "categoryBadge": "Bruhh",
-    "version": "V120",
-    "description": "Bruhb",
-    "banner": "./images/runeforged-banner.png",
-    "link": "#",
-    "active": true
-  },
-  {
-    "id": "runeforged",
-    "title": "RuneForged Survival",
-    "category": "setups",
-    "categoryBadge": "Setup Showcase",
-    "version": "v1.20 - 1.21+",
-    "description": "A premium, feature-rich survival setup featuring custom biomes, 13 proprietary plugins, elite progression systems, and polished UI menus.",
-    "banner": "./images/runeforged-banner.png",
-    "link": "/runeforged",
-    "active": true
-  },
-  {
     "id": "runeforgedrunes",
     "title": "RuneForgedRunes",
     "category": "plugins",
