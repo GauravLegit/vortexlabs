@@ -1,5 +1,16 @@
 [
   {
+    "id": "vortexdesk",
+    "title": "VortexDesk",
+    "category": "plugins",
+    "categoryBadge": "Plugin Showcase",
+    "version": "1.21+",
+    "description": "Features are here!",
+    "banner": "./images/banners/res_1793109185579_banner.png",
+    "link": "#",
+    "active": true
+  },
+  {
     "id": "runeforgedrunes",
     "title": "RuneForgedRunes",
     "category": "plugins",
