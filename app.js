@@ -116,17 +116,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 2b. Featured Resources Filter Tabs Logic
-  const resourceFilterBtns = document.querySelectorAll('.resource-tab-btn');
-  const resourceCards = document.querySelectorAll('.resource-card');
+  let currentResourceCategory = 'all';
   const resourceCounter = document.getElementById('resources-count');
 
   function filterResources(category) {
+    currentResourceCategory = (category || 'all').trim().toLowerCase();
     let count = 0;
-    const cat = category.trim().toLowerCase();
     const cards = document.querySelectorAll('.resource-card');
     cards.forEach(card => {
       const cardCat = (card.getAttribute('data-category') || '').trim().toLowerCase();
-      if (cat === 'all' || cardCat === cat) {
+      if (currentResourceCategory === 'all' || cardCat === currentResourceCategory) {
         card.classList.remove('hidden-card');
         count++;
       } else {
@@ -139,13 +138,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  resourceFilterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      resourceFilterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      filterResources(btn.getAttribute('data-filter') || 'all');
+  function bindResourceFilterButtons() {
+    const btns = document.querySelectorAll('.resource-tab-btn');
+    btns.forEach(btn => {
+      btn.onclick = () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterResources(btn.getAttribute('data-filter') || 'all');
+      };
     });
-  });
+  }
+
+  bindResourceFilterButtons();
 
   // 3. Smooth scroll to Contact when clicking "Order Service"
   const orderButtons = document.querySelectorAll('.order-service-btn');
@@ -478,6 +482,29 @@ document.addEventListener('DOMContentLoaded', () => {
       console.warn('Gallery sync error', e);
     }
 
+    // Fetch Categories and render Dynamic Category Tabs
+    try {
+      const catRes = await fetch('./categories-data.json?v=' + Date.now());
+      if (catRes.ok) {
+        const categoriesList = await catRes.json();
+        if (Array.isArray(categoriesList) && categoriesList.length > 0) {
+          const filterTabsContainer = document.getElementById('resources-filter-tabs');
+          if (filterTabsContainer) {
+            const allBtn = `<button class="resource-tab-btn ${currentResourceCategory === 'all' ? 'active' : ''} px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-emerald-500/30 transition-all cursor-pointer" data-filter="all">All Resources</button>`;
+            const catBtns = categoriesList.map(c => `
+              <button class="resource-tab-btn ${currentResourceCategory === c.id.toLowerCase() ? 'active' : ''} px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="${c.id}">
+                ${c.name}
+              </button>
+            `).join('');
+            filterTabsContainer.innerHTML = allBtn + catBtns;
+            bindResourceFilterButtons();
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Categories sync error', e);
+    }
+
     // A. Resources
     const resourcesGrid = document.getElementById('resources-grid');
     if (resourcesGrid) {
@@ -489,6 +516,8 @@ document.addEventListener('DOMContentLoaded', () => {
             resourcesGrid.innerHTML = resources.map(item => {
               const captures = getCapturesForResource(item, allCaptures);
               const showcaseCount = captures.length;
+              const isComingSoon = (item.active === false);
+              const hasShowcase = !isComingSoon && (showcaseCount >= 1);
 
               // Compute showcase link:
               // If dedicated static HTML link exists, use it.
@@ -504,9 +533,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>
                   <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
                     <img src="${item.banner || './images/runeforged-banner.png'}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${isComingSoon ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'} backdrop-blur-md">
                       ${item.categoryBadge || item.category}
                     </span>
+                    ${isComingSoon ? `
+                    <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-zinc-900/90 text-amber-400 border border-amber-500/30 backdrop-blur-md">
+                      Coming Soon
+                    </span>
+                    ` : ''}
                   </div>
                   <div class="p-6">
                     <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
@@ -519,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
                   <span class="text-xs font-mono text-zinc-500">${item.version || 'v1.20+'}</span>
-                  ${showcaseCount >= 1 ? `
+                  ${hasShowcase ? `
                   <a href="${showcaseLink}" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
                     <span>View Showcase</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
@@ -532,8 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             }).join('');
 
-            const counter = document.getElementById('resources-count');
-            if (counter) counter.textContent = `Showing ${resources.length} resources`;
+            filterResources(currentResourceCategory);
             if (window.lucide) lucide.createIcons();
           }
         }

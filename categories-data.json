@@ -1,0 +1,32 @@
+[
+  {
+    "id": "plugins",
+    "name": "Plugins",
+    "badge": "Plugin Showcase"
+  },
+  {
+    "id": "survival",
+    "name": "Survival",
+    "badge": "Survival Setup"
+  },
+  {
+    "id": "minigames",
+    "name": "Minigames",
+    "badge": "Minigame Setup"
+  },
+  {
+    "id": "configs",
+    "name": "Configs",
+    "badge": "Custom Config"
+  },
+  {
+    "id": "discord-bots",
+    "name": "Discord Bots",
+    "badge": "Discord Bot"
+  },
+  {
+    "id": "discord-setups",
+    "name": "Discord Setups",
+    "badge": "Server Setup"
+  }
+]

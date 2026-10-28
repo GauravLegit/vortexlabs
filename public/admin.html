@@ -129,14 +129,29 @@
           <input type="text" id="edit-res-title" required class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
-            <label class="block text-xs font-medium text-zinc-400 mb-1">Badge</label>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Category</label>
+            <select id="edit-res-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 cursor-pointer">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
             <input type="text" id="edit-res-badge" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
           </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
             <label class="block text-xs font-medium text-zinc-400 mb-1">Version</label>
             <input type="text" id="edit-res-version" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+          </div>
+          <div class="flex items-end pb-2">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="edit-res-coming-soon" class="w-4 h-4 rounded bg-zinc-950 border-zinc-800 text-emerald-500 focus:ring-0">
+              <span class="text-xs text-zinc-300">Mark as <strong class="text-amber-400 font-mono">Coming Soon</strong></span>
+            </label>
           </div>
         </div>
 
@@ -215,6 +230,47 @@
       <!-- Captures List Grid -->
       <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="res-showcase-grid">
         <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Categories Modal -->
+  <div id="modal-manage-categories" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 w-full max-w-md rounded-2xl p-5 space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i data-lucide="tags" class="w-4 h-4 text-emerald-400"></i>
+            Manage Resource Categories
+          </h3>
+          <p class="text-xs text-zinc-400 mt-0.5">Categories appear as filter buttons on the website & dropdown options</p>
+        </div>
+        <button id="close-manage-categories-modal" class="text-zinc-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Add New Category Form inside modal -->
+      <form id="form-create-category" class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 space-y-2.5 shrink-0">
+        <span class="text-xs font-semibold text-white block">Add New Category</span>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[11px] text-zinc-400 mb-1">Category Name *</label>
+            <input type="text" id="modal-cat-name" required placeholder="e.g. Bedrock" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="block text-[11px] text-zinc-400 mb-1">Badge Tag *</label>
+            <input type="text" id="modal-cat-badge" required placeholder="e.g. Bedrock Edition" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+        <button type="submit" id="btn-submit-create-cat" class="w-full py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-colors">
+          + Add Category
+        </button>
+      </form>
+
+      <!-- Existing Categories List -->
+      <div class="flex-1 overflow-y-auto space-y-2 pr-1" id="categories-modal-list">
+        <!-- Rendered by JS -->
       </div>
     </div>
   </div>
@@ -465,12 +521,18 @@
         <div class="flex items-center justify-between">
           <div>
             <h2 class="text-base font-bold text-white">Featured Resources</h2>
-            <p class="text-xs text-zinc-400">Manage plugins, setups, thumbnails, and showcase pictures</p>
+            <p class="text-xs text-zinc-400">Manage plugins, setups, thumbnails, categories & showcase pictures</p>
           </div>
-          <button id="btn-toggle-add-resource" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Resource</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button id="btn-manage-categories" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-850 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 flex items-center gap-1.5 transition-colors">
+              <i data-lucide="tags" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span>Categories</span>
+            </button>
+            <button id="btn-toggle-add-resource" class="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-zinc-200 text-black flex items-center gap-1.5 transition-colors">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Add Resource</span>
+            </button>
+          </div>
         </div>
 
         <!-- Add Resource Panel -->
@@ -488,14 +550,54 @@
               <input type="text" id="res-title" required placeholder="e.g. RuneForgedDungeons" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
             </div>
 
-            <div class="grid grid-cols-2 gap-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="block text-xs font-medium text-zinc-400">Category *</label>
+                  <button type="button" id="btn-quick-add-cat" class="text-[11px] text-emerald-400 hover:text-emerald-300 font-medium cursor-pointer">
+                    + New Category
+                  </button>
+                </div>
+                <select id="res-category" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600 cursor-pointer">
+                  <!-- Populated dynamically by JS -->
+                </select>
+              </div>
               <div>
                 <label class="block text-xs font-medium text-zinc-400 mb-1">Badge Tag</label>
                 <input type="text" id="res-badge" placeholder="e.g. Plugin Showcase" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
               </div>
+            </div>
+
+            <!-- Inline Quick Add Category Box (Hidden by default) -->
+            <div id="quick-add-cat-box" class="hidden bg-zinc-950 border border-emerald-500/30 rounded-xl p-3 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+                  <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                  Create New Category
+                </span>
+                <button type="button" id="btn-close-quick-cat" class="text-zinc-500 hover:text-white">
+                  <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input type="text" id="new-cat-name" placeholder="Category Name (e.g. Bedrock)" class="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+                <input type="text" id="new-cat-badge" placeholder="Badge Tag (e.g. Bedrock Edition)" class="bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+              </div>
+              <button type="button" id="btn-save-new-cat" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-zinc-950 transition-colors cursor-pointer">
+                Save & Select Category
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               <div>
                 <label class="block text-xs font-medium text-zinc-400 mb-1">Version</label>
                 <input type="text" id="res-version" placeholder="v1.20 - 1.21+" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-zinc-600">
+              </div>
+              <div class="flex items-end pb-2">
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                  <input type="checkbox" id="res-coming-soon" class="w-4 h-4 rounded bg-zinc-950 border-zinc-800 text-emerald-500 focus:ring-0">
+                  <span class="text-xs text-zinc-300">Mark as <strong class="text-amber-400 font-mono">Coming Soon</strong></span>
+                </label>
               </div>
             </div>
 
@@ -850,6 +952,7 @@
     let galleryData = [];
     let resourcesData = [];
     let reviewsData = [];
+    let categoriesData = [];
 
     async function loadAllData() {
       try {
@@ -867,6 +970,23 @@
         if (res.ok) reviewsData = await res.json();
       } catch (e) {}
 
+      try {
+        const res = await fetch('./categories-data.json?v=' + Date.now());
+        if (res.ok) categoriesData = await res.json();
+      } catch (e) {}
+
+      if (!Array.isArray(categoriesData) || categoriesData.length === 0) {
+        categoriesData = [
+          { id: 'plugins', name: 'Plugins', badge: 'Plugin Showcase' },
+          { id: 'survival', name: 'Survival', badge: 'Survival Setup' },
+          { id: 'minigames', name: 'Minigames', badge: 'Minigame Setup' },
+          { id: 'configs', name: 'Configs', badge: 'Custom Config' },
+          { id: 'discord-bots', name: 'Discord Bots', badge: 'Discord Bot' },
+          { id: 'discord-setups', name: 'Discord Setups', badge: 'Server Setup' }
+        ];
+      }
+
+      populateCategoryDropdowns();
       updateCounts();
       renderGallery();
       renderResources();
@@ -1236,6 +1356,186 @@
       reader.readAsDataURL(file);
     });
 
+    function populateCategoryDropdowns(selectedId) {
+      const addSelect = document.getElementById('res-category');
+      const editSelect = document.getElementById('edit-res-category');
+      const optionsHtml = categoriesData.map(c => 
+        `<option value="${c.id}" data-badge="${escapeHtml(c.badge)}">${escapeHtml(c.name)} (${escapeHtml(c.badge)})</option>`
+      ).join('');
+      
+      if (addSelect) {
+        addSelect.innerHTML = optionsHtml;
+        if (selectedId) addSelect.value = selectedId;
+        const selOpt = addSelect.selectedOptions[0];
+        const badgeInput = document.getElementById('res-badge');
+        if (badgeInput && selOpt && !badgeInput.value) {
+          badgeInput.value = selOpt.getAttribute('data-badge') || '';
+        }
+      }
+      if (editSelect) {
+        editSelect.innerHTML = optionsHtml;
+        if (selectedId) editSelect.value = selectedId;
+      }
+    }
+
+    // Auto-update badge input when category selection changes
+    const addCatSelect = document.getElementById('res-category');
+    if (addCatSelect) {
+      addCatSelect.addEventListener('change', (e) => {
+        const selOpt = e.target.selectedOptions[0];
+        if (selOpt) {
+          const badge = selOpt.getAttribute('data-badge');
+          if (badge) document.getElementById('res-badge').value = badge;
+        }
+      });
+    }
+    const editCatSelect = document.getElementById('edit-res-category');
+    if (editCatSelect) {
+      editCatSelect.addEventListener('change', (e) => {
+        const selOpt = e.target.selectedOptions[0];
+        if (selOpt) {
+          const badge = selOpt.getAttribute('data-badge');
+          if (badge) document.getElementById('edit-res-badge').value = badge;
+        }
+      });
+    }
+
+    // Quick add category inline
+    const quickBox = document.getElementById('quick-add-cat-box');
+    const btnQuickAdd = document.getElementById('btn-quick-add-cat');
+    if (btnQuickAdd && quickBox) {
+      btnQuickAdd.addEventListener('click', () => {
+        quickBox.classList.remove('hidden');
+        document.getElementById('new-cat-name').focus();
+      });
+    }
+    const btnCloseQuick = document.getElementById('btn-close-quick-cat');
+    if (btnCloseQuick && quickBox) {
+      btnCloseQuick.addEventListener('click', () => {
+        quickBox.classList.add('hidden');
+      });
+    }
+    const btnSaveNewCat = document.getElementById('btn-save-new-cat');
+    if (btnSaveNewCat) {
+      btnSaveNewCat.addEventListener('click', async () => {
+        const name = document.getElementById('new-cat-name').value.trim();
+        const badge = document.getElementById('new-cat-badge').value.trim() || name;
+        if (!name) {
+          showToast('Please enter category name', true);
+          return;
+        }
+        const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/^-+|-+$/g, '');
+        if (!id) {
+          showToast('Invalid category name', true);
+          return;
+        }
+        if (categoriesData.find(c => c.id === id)) {
+          showToast('Category already exists', true);
+          populateCategoryDropdowns(id);
+          quickBox.classList.add('hidden');
+          return;
+        }
+        const newCat = { id, name, badge };
+        categoriesData.push(newCat);
+        populateCategoryDropdowns(id);
+        document.getElementById('res-badge').value = badge;
+        quickBox.classList.add('hidden');
+        document.getElementById('new-cat-name').value = '';
+        document.getElementById('new-cat-badge').value = '';
+
+        showToast('Saving category...');
+        try {
+          await githubSaveJSON('categories-data.json', categoriesData, `Add category ${name}`);
+          showToast(`Category "${name}" saved & selected!`);
+        } catch (err) {
+          showToast('Saved locally', true);
+        }
+      });
+    }
+
+    // Manage Categories Modal
+    const modalManageCat = document.getElementById('modal-manage-categories');
+    const btnManageCat = document.getElementById('btn-manage-categories');
+    if (btnManageCat && modalManageCat) {
+      btnManageCat.addEventListener('click', () => {
+        renderCategoriesModalList();
+        modalManageCat.classList.remove('hidden');
+        modalManageCat.classList.add('flex');
+        if (window.lucide) lucide.createIcons();
+      });
+    }
+    const closeManageCat = document.getElementById('close-manage-categories-modal');
+    if (closeManageCat && modalManageCat) {
+      closeManageCat.addEventListener('click', () => {
+        modalManageCat.classList.add('hidden');
+        modalManageCat.classList.remove('flex');
+      });
+    }
+
+    function renderCategoriesModalList() {
+      const list = document.getElementById('categories-modal-list');
+      if (!list) return;
+      list.innerHTML = categoriesData.map(c => `
+        <div class="bg-zinc-950 border border-zinc-800 rounded-xl p-3 flex items-center justify-between gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white">${escapeHtml(c.name)}</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">${escapeHtml(c.id)}</span>
+            </div>
+            <span class="text-[11px] text-zinc-400 font-mono">Badge: ${escapeHtml(c.badge)}</span>
+          </div>
+          <button onclick="deleteCategory('${c.id}')" class="text-zinc-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-zinc-900 transition-colors cursor-pointer" title="Delete category">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    window.deleteCategory = async function(catId) {
+      if (categoriesData.length <= 1) {
+        showToast('At least one category is required', true);
+        return;
+      }
+      categoriesData = categoriesData.filter(c => c.id !== catId);
+      renderCategoriesModalList();
+      populateCategoryDropdowns();
+      showToast('Deleting category...');
+      try {
+        await githubSaveJSON('categories-data.json', categoriesData, `Delete category ${catId}`);
+        showToast('Category deleted');
+      } catch (e) {
+        showToast('Deleted locally');
+      }
+    };
+
+    const formCreateCat = document.getElementById('form-create-category');
+    if (formCreateCat) {
+      formCreateCat.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('modal-cat-name').value.trim();
+        const badge = document.getElementById('modal-cat-badge').value.trim() || name;
+        if (!name) return;
+        const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/^-+|-+$/g, '');
+        if (categoriesData.find(c => c.id === id)) {
+          showToast('Category already exists', true);
+          return;
+        }
+        const newCat = { id, name, badge };
+        categoriesData.push(newCat);
+        renderCategoriesModalList();
+        populateCategoryDropdowns(id);
+        formCreateCat.reset();
+        showToast('Saving category...');
+        try {
+          await githubSaveJSON('categories-data.json', categoriesData, `Add category ${name}`);
+          showToast(`Category "${name}" created!`);
+        } catch (err) {
+          showToast('Saved locally', true);
+        }
+      });
+    }
+
     function renderResources() {
       const container = document.getElementById('resources-list');
       container.innerHTML = resourcesData.map(res => {
@@ -1250,6 +1550,7 @@
           return false;
         }).length;
         const bannerSrc = res.banner || './images/runeforged-banner.png';
+        const isComingSoon = (res.active === false);
 
         return `
           <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1261,6 +1562,9 @@
                     ${escapeHtml(res.categoryBadge || res.category)}
                   </span>
                   <span class="text-[10px] font-mono text-zinc-500">${escapeHtml(res.version)}</span>
+                  ${isComingSoon ? `
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Coming Soon</span>
+                  ` : ''}
                 </div>
                 <h4 class="text-sm font-semibold text-white">${escapeHtml(res.title)}</h4>
                 <p class="text-xs text-zinc-400 line-clamp-1 max-w-md">${escapeHtml(res.description)}</p>
@@ -1290,11 +1594,14 @@
     function openEditResource(id) {
       const res = resourcesData.find(r => r.id === id);
       if (!res) return;
+      populateCategoryDropdowns(res.category || 'plugins');
       document.getElementById('edit-res-id').value = id;
       document.getElementById('edit-res-title').value = res.title;
+      document.getElementById('edit-res-category').value = res.category || 'plugins';
       document.getElementById('edit-res-badge').value = res.categoryBadge || '';
       document.getElementById('edit-res-version').value = res.version || '';
       document.getElementById('edit-res-desc').value = res.description || '';
+      document.getElementById('edit-res-coming-soon').checked = (res.active === false);
       
       const prev = document.getElementById('edit-res-banner-preview');
       prev.src = res.banner || './images/runeforged-banner.png';
@@ -1327,9 +1634,11 @@
 
       try {
         res.title = document.getElementById('edit-res-title').value.trim();
+        res.category = document.getElementById('edit-res-category').value.trim() || res.category || 'plugins';
         res.categoryBadge = document.getElementById('edit-res-badge').value.trim();
         res.version = document.getElementById('edit-res-version').value.trim();
         res.description = document.getElementById('edit-res-desc').value.trim();
+        res.active = !document.getElementById('edit-res-coming-soon').checked;
 
         // If user picked a new banner image
         if (editStagedBannerData) {
@@ -1360,9 +1669,11 @@
       submitBtn.textContent = 'Saving...';
 
       const title = document.getElementById('res-title').value.trim();
+      const catId = document.getElementById('res-category').value.trim() || 'plugins';
       const badge = document.getElementById('res-badge').value.trim() || 'Plugin';
       const version = document.getElementById('res-version').value.trim() || 'v1.20+';
       const desc = document.getElementById('res-desc').value.trim();
+      const isComingSoon = document.getElementById('res-coming-soon').checked;
 
       const newId = title.toLowerCase().replace(/[^a-z0-9]/g, '');
       let bannerPath = './images/runeforged-banner.png';
@@ -1378,13 +1689,13 @@
         const newRes = {
           id: newId || 'res_' + Date.now(),
           title: title,
-          category: 'plugins',
+          category: catId,
           categoryBadge: badge,
           version: version,
           description: desc,
           banner: bannerPath,
           link: `#`,
-          active: true
+          active: !isComingSoon
         };
 
         resourcesData.unshift(newRes);
@@ -1392,8 +1703,10 @@
         updateCounts();
         addResourcePanel.classList.add('hidden');
         document.getElementById('form-add-resource').reset();
+        document.getElementById('res-coming-soon').checked = false;
         document.getElementById('res-banner-preview').classList.add('hidden');
         stagedBannerData = null;
+        populateCategoryDropdowns();
 
         await githubSaveJSON('resources-data.json', resourcesData, `Add resource ${title}`);
         showToast('Resource published');
