@@ -450,6 +450,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 10. Dynamic Data Fetch & Live Rendering (Connected to Admin Panel)
   async function initDynamicWebsite() {
+    // Helper to match captures for any resource
+    function getCapturesForResource(res, capturesList) {
+      if (!Array.isArray(capturesList) || !res) return [];
+      const targetId = (res.id || '').toLowerCase().trim();
+      const targetLink = (res.link || '').replace(/^\//, '').replace(/\.html$/, '').toLowerCase().trim();
+
+      return capturesList.filter(c => {
+        const cat = (c.category || '').toLowerCase().trim();
+        if (!cat) return false;
+        if (targetId && cat === targetId) return true;
+        if (targetId === 'grimstonediscordserver' && cat === 'grimstonediscord') return true;
+        if (targetLink && targetLink !== '#' && cat === targetLink) return true;
+        return false;
+      });
+    }
+
+    // Fetch Gallery Captures first so resources know their showcase status
+    let allCaptures = [];
+    try {
+      const gRes = await fetch('./gallery-data.json?v=' + Date.now());
+      if (gRes.ok) {
+        allCaptures = await gRes.json();
+        if (!Array.isArray(allCaptures)) allCaptures = [];
+      }
+    } catch (e) {
+      console.warn('Gallery sync error', e);
+    }
+
     // A. Resources
     const resourcesGrid = document.getElementById('resources-grid');
     if (resourcesGrid) {
@@ -458,7 +486,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (res.ok) {
           const resources = await res.json();
           if (Array.isArray(resources) && resources.length > 0) {
-            resourcesGrid.innerHTML = resources.map(item => `
+            resourcesGrid.innerHTML = resources.map(item => {
+              const captures = getCapturesForResource(item, allCaptures);
+              const showcaseCount = captures.length;
+
+              // Compute showcase link:
+              // If dedicated static HTML link exists, use it.
+              // Otherwise link to the dynamic visual showcase archive for this resource.
+              let showcaseLink = `./gallery.html?cat=${encodeURIComponent(item.id)}`;
+              if (item.link && item.link !== '#' && !item.link.startsWith('#')) {
+                const clean = item.link.replace(/^\//, '');
+                showcaseLink = './' + (clean.endsWith('.html') ? clean : clean + '.html');
+              }
+
+              return `
               <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="${item.category}">
                 <div>
                   <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
@@ -478,8 +519,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
                   <span class="text-xs font-mono text-zinc-500">${item.version || 'v1.20+'}</span>
-                  ${item.link && item.link !== '#' ? `
-                  <a href="${item.link.endsWith('.html') ? item.link : item.link + '.html'}" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+                  ${showcaseCount >= 1 ? `
+                  <a href="${showcaseLink}" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
                     <span>View Showcase</span>
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                   </a>
@@ -488,7 +529,8 @@ document.addEventListener('DOMContentLoaded', () => {
                   `}
                 </div>
               </div>
-            `).join('');
+            `;
+            }).join('');
 
             const counter = document.getElementById('resources-count');
             if (counter) counter.textContent = `Showing ${resources.length} resources`;
@@ -502,29 +544,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // B. Gallery Showcase
     const galleryContainer = document.getElementById('gallery-container');
-    if (galleryContainer) {
+    if (galleryContainer && allCaptures.length > 0) {
       try {
-        const res = await fetch('./gallery-data.json?v=' + Date.now());
-        if (res.ok) {
-          const captures = await res.json();
-          if (Array.isArray(captures) && captures.length > 0) {
-            const topCaptures = captures.slice(0, 8);
-            galleryContainer.innerHTML = topCaptures.map((item, idx) => {
-              const isWide = idx === 1 || idx === 6;
-              const isTall = idx === 3;
-              return `
-                <div class="bento-gallery-item group relative overflow-hidden rounded-2xl cursor-pointer ${isWide ? 'sm:col-span-2' : ''} ${isTall ? 'lg:row-span-2' : ''}" onclick="openSiteLightbox('${item.src}', '${item.title.replace(/'/g, "\\'")}')">
-                  <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                  <div class="gallery-overlay absolute inset-0 flex items-end justify-between p-4 bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                    <span class="text-xs font-semibold text-white drop-shadow truncate max-w-[80%]">${item.title}</span>
-                    <span class="text-[10px] font-mono uppercase bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">${item.badge || 'Showcase'}</span>
-                  </div>
-                </div>
-              `;
-            }).join('');
-            if (window.lucide) lucide.createIcons();
-          }
-        }
+        const topCaptures = allCaptures.slice(0, 8);
+        galleryContainer.innerHTML = topCaptures.map((item, idx) => {
+          const isWide = idx === 1 || idx === 6;
+          const isTall = idx === 3;
+          return `
+            <div class="bento-gallery-item group relative overflow-hidden rounded-2xl cursor-pointer ${isWide ? 'sm:col-span-2' : ''} ${isTall ? 'lg:row-span-2' : ''}" onclick="openSiteLightbox('${item.src}', '${item.title.replace(/'/g, "\\'")}')">
+              <img src="${item.src}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <div class="gallery-overlay absolute inset-0 flex items-end justify-between p-4 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                <span class="text-xs font-semibold text-white drop-shadow truncate max-w-[80%]">${item.title}</span>
+                <span class="text-[10px] font-mono uppercase bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/30">${item.badge || 'Showcase'}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+        if (window.lucide) lucide.createIcons();
       } catch (e) {
         console.warn('Fallback to static gallery');
       }

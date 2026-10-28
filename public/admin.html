@@ -1239,7 +1239,16 @@
     function renderResources() {
       const container = document.getElementById('resources-list');
       container.innerHTML = resourcesData.map(res => {
-        const showcaseCount = galleryData.filter(g => g.category === res.id).length;
+        const targetId = (res.id || '').toLowerCase().trim();
+        const targetLink = (res.link || '').replace(/^\//, '').replace(/\.html$/, '').toLowerCase().trim();
+        const showcaseCount = galleryData.filter(g => {
+          const cat = (g.category || '').toLowerCase().trim();
+          if (!cat) return false;
+          if (targetId && cat === targetId) return true;
+          if (targetId === 'grimstonediscordserver' && cat === 'grimstonediscord') return true;
+          if (targetLink && targetLink !== '#' && cat === targetLink) return true;
+          return false;
+        }).length;
         const bannerSrc = res.banner || './images/runeforged-banner.png';
 
         return `
