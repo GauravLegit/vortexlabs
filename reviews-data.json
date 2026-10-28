@@ -1,5 +1,13 @@
 [
   {
+    "id": 1793165190613,
+    "author": "BLAZE_XD",
+    "role": "Verified Client",
+    "rating": 5,
+    "image": "./images/reviews/rev_1793165189136_Screenshot_2026-10-28_105601.png",
+    "date": "Verified Client"
+  },
+  {
     "id": 1,
     "author": "Rana",
     "role": "Verified Client",
@@ -11,7 +19,7 @@
     "id": 2,
     "author": "SugoiKenny",
     "role": "Verified Client",
-    "rating": 5.0,
+    "rating": 5,
     "image": "./images/reviews/review2.png",
     "date": "Verified Client"
   },
@@ -19,7 +27,7 @@
     "id": 3,
     "author": "maybe_itsme282",
     "role": "Verified Client",
-    "rating": 4.0,
+    "rating": 4,
     "image": "./images/reviews/review3.png",
     "date": "Verified Client"
   },
@@ -27,7 +35,7 @@
     "id": 4,
     "author": "SerbanKitty",
     "role": "Verified Client",
-    "rating": 5.0,
+    "rating": 5,
     "image": "./images/reviews/review4.png",
     "date": "Verified Client"
   }
