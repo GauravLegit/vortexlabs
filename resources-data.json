@@ -11,28 +11,6 @@
     "active": false
   },
   {
-    "id": "vortexdesk",
-    "title": "VortexDesk",
-    "category": "plugins",
-    "categoryBadge": "Plugin Showcase",
-    "version": "1.21+",
-    "description": "Features are here!",
-    "banner": "./images/banners/res_vortexdesk_banner.png",
-    "link": "#",
-    "active": true
-  },
-  {
-    "id": "runeforgedrunes",
-    "title": "RuneForgedRunes",
-    "category": "plugins",
-    "categoryBadge": "Plugin Showcase",
-    "version": "60 Runes System",
-    "description": "60 unique collectible runes with drag-and-drop mechanics, success rates, custom salvage menus, and permanent stat enchantments.",
-    "banner": "./images/runeforgedrunes-banner.png",
-    "link": "/runeforgedrunes",
-    "active": true
-  },
-  {
     "id": "runeforgedvote",
     "title": "RuneForgedVote Plugin",
     "category": "plugins",
