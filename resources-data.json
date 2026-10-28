@@ -1,14 +1,14 @@
 [
   {
     "id": "bhak",
-    "title": "Bhak",
-    "category": "plugins",
-    "categoryBadge": "Plugin Showcase",
-    "version": "V120",
-    "description": "Bhak",
+    "title": "Runeforged Survival Setup",
+    "category": "survival",
+    "categoryBadge": "Survival Setup",
+    "version": "Custom RPG Survival Setup",
+    "description": "A premium, feature-rich survival setup featuring custom biomes, 13 proprietary plugins, elite progression systems, and polished UI menus.",
     "banner": "./images/runeforged-banner.png",
     "link": "#",
-    "active": false
+    "active": true
   },
   {
     "id": "runeforgedvote",
