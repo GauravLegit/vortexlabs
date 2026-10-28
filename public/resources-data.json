@@ -1,5 +1,16 @@
 [
   {
+    "id": "bhak",
+    "title": "Bhak",
+    "category": "plugins",
+    "categoryBadge": "Plugin Showcase",
+    "version": "V120",
+    "description": "Bhak",
+    "banner": "./images/runeforged-banner.png",
+    "link": "#",
+    "active": false
+  },
+  {
     "id": "vortexdesk",
     "title": "VortexDesk",
     "category": "plugins",

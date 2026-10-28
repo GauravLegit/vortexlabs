@@ -150,7 +150,7 @@
           <div class="flex items-end pb-2">
             <label class="flex items-center gap-2 cursor-pointer select-none">
               <input type="checkbox" id="edit-res-coming-soon" class="w-4 h-4 rounded bg-zinc-950 border-zinc-800 text-emerald-500 focus:ring-0">
-              <span class="text-xs text-zinc-300">Mark as <strong class="text-amber-400 font-mono">Coming Soon</strong></span>
+              <span class="text-xs text-zinc-300">Mark as <strong class="text-emerald-400 font-mono">Coming Soon</strong></span>
             </label>
           </div>
         </div>
@@ -596,7 +596,7 @@
               <div class="flex items-end pb-2">
                 <label class="flex items-center gap-2 cursor-pointer select-none">
                   <input type="checkbox" id="res-coming-soon" class="w-4 h-4 rounded bg-zinc-950 border-zinc-800 text-emerald-500 focus:ring-0">
-                  <span class="text-xs text-zinc-300">Mark as <strong class="text-amber-400 font-mono">Coming Soon</strong></span>
+                  <span class="text-xs text-zinc-300">Mark as <strong class="text-emerald-400 font-mono">Coming Soon</strong></span>
                 </label>
               </div>
             </div>
@@ -1538,7 +1538,14 @@
 
     function renderResources() {
       const container = document.getElementById('resources-list');
-      container.innerHTML = resourcesData.map(res => {
+      const sorted = [...resourcesData].sort((a, b) => {
+        const isComingSoonA = (a.active === false);
+        const isComingSoonB = (b.active === false);
+        if (!isComingSoonA && isComingSoonB) return -1;
+        if (isComingSoonA && !isComingSoonB) return 1;
+        return 0;
+      });
+      container.innerHTML = sorted.map(res => {
         const targetId = (res.id || '').toLowerCase().trim();
         const targetLink = (res.link || '').replace(/^\//, '').replace(/\.html$/, '').toLowerCase().trim();
         const showcaseCount = galleryData.filter(g => {
@@ -1563,7 +1570,7 @@
                   </span>
                   <span class="text-[10px] font-mono text-zinc-500">${escapeHtml(res.version)}</span>
                   ${isComingSoon ? `
-                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Coming Soon</span>
+                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Coming Soon</span>
                   ` : ''}
                 </div>
                 <h4 class="text-sm font-semibold text-white">${escapeHtml(res.title)}</h4>

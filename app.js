@@ -511,12 +511,25 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const res = await fetch('./resources-data.json?v=' + Date.now());
         if (res.ok) {
-          const resources = await res.json();
-          if (Array.isArray(resources) && resources.length > 0) {
+          const rawResources = await res.json();
+          if (Array.isArray(rawResources) && rawResources.length > 0) {
+            // Sort: Available first (active !== false AND showcaseCount >= 1), Coming Soon at the bottom
+            const resources = [...rawResources].sort((a, b) => {
+              const capA = getCapturesForResource(a, allCaptures).length;
+              const isComingSoonA = (a.active === false || capA === 0);
+
+              const capB = getCapturesForResource(b, allCaptures).length;
+              const isComingSoonB = (b.active === false || capB === 0);
+
+              if (!isComingSoonA && isComingSoonB) return -1;
+              if (isComingSoonA && !isComingSoonB) return 1;
+              return 0;
+            });
+
             resourcesGrid.innerHTML = resources.map(item => {
               const captures = getCapturesForResource(item, allCaptures);
               const showcaseCount = captures.length;
-              const isComingSoon = (item.active === false);
+              const isComingSoon = (item.active === false || showcaseCount === 0);
               const hasShowcase = !isComingSoon && (showcaseCount >= 1);
 
               // Compute showcase link:
@@ -533,11 +546,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div>
                   <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
                     <img src="${item.banner || './images/runeforged-banner.png'}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${isComingSoon ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'} backdrop-blur-md">
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
                       ${item.categoryBadge || item.category}
                     </span>
                     ${isComingSoon ? `
-                    <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-zinc-900/90 text-amber-400 border border-amber-500/30 backdrop-blur-md">
+                    <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-950/90 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-[0_0_10px_rgba(16,185,129,0.25)]">
                       Coming Soon
                     </span>
                     ` : ''}
@@ -559,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                   </a>
                   ` : `
-                  <span class="text-xs font-mono text-zinc-500">Coming Soon</span>
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/25">Coming Soon</span>
                   `}
                 </div>
               </div>
