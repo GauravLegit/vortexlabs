@@ -1,5 +1,16 @@
 [
   {
+    "id": "vortexdesk",
+    "title": "VortexDesk",
+    "category": "plugins",
+    "categoryBadge": "Plugin Showcase",
+    "version": "1.20+",
+    "description": "A complete web-based management panel, real-time terminal, and map integration for your server.",
+    "banner": "./images/banners/res_1793334895738_banner.png",
+    "link": "#",
+    "active": true
+  },
+  {
     "id": "bhak",
     "title": "Runeforged Survival Setup",
     "category": "survival",
