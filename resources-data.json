@@ -56,13 +56,13 @@
   },
   {
     "id": "runeforgedcombat",
-    "title": "RuneForgedCombat",
+    "title": "RuneForgedRunes",
     "category": "plugins",
-    "categoryBadge": "Coming Soon",
-    "version": "In Development",
-    "description": "Next-gen competitive PvP & PvE combat enchantments engine with particle physics and combo chaining.",
-    "banner": "",
+    "categoryBadge": "Custom Minecraft Runes",
+    "version": "Private plugin!",
+    "description": "60 unique collectible runes with drag-and-drop mechanics, success rates, custom salvage menus, and permanent stat enchantments.",
+    "banner": "./images/banners/res_runeforgedcombat_banner.png",
     "link": "#",
-    "active": false
+    "active": true
   }
 ]
