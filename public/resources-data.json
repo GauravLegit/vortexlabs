@@ -1,35 +1,24 @@
 [
   {
-    "id": "bhak",
-    "title": "Bhak",
-    "category": "plugins",
-    "categoryBadge": "Plugin Showcase",
-    "version": "V120",
-    "description": "Bhak",
-    "banner": "./images/runeforged-banner.png",
-    "link": "#",
-    "active": false
-  },
-  {
     "id": "vortexdesk",
     "title": "VortexDesk",
     "category": "plugins",
     "categoryBadge": "Plugin Showcase",
-    "version": "1.21+",
-    "description": "Features are here!",
-    "banner": "./images/banners/res_vortexdesk_banner.png",
+    "version": "1.20+",
+    "description": "A complete web-based management panel, real-time terminal, and map integration for your server.",
+    "banner": "./images/banners/res_1793334895738_banner.png",
     "link": "#",
     "active": true
   },
   {
-    "id": "runeforgedrunes",
-    "title": "RuneForgedRunes",
-    "category": "plugins",
-    "categoryBadge": "Plugin Showcase",
-    "version": "60 Runes System",
-    "description": "60 unique collectible runes with drag-and-drop mechanics, success rates, custom salvage menus, and permanent stat enchantments.",
-    "banner": "./images/runeforgedrunes-banner.png",
-    "link": "/runeforgedrunes",
+    "id": "bhak",
+    "title": "Runeforged Survival Setup",
+    "category": "survival",
+    "categoryBadge": "Survival Setup",
+    "version": "Custom RPG Survival Setup",
+    "description": "A premium, feature-rich survival setup featuring custom biomes, 13 proprietary plugins, elite progression systems, and polished UI menus.",
+    "banner": "./images/runeforged-banner.png",
+    "link": "#",
     "active": true
   },
   {
@@ -37,7 +26,7 @@
     "title": "RuneForgedVote Plugin",
     "category": "plugins",
     "categoryBadge": "Plugin",
-    "version": "3D Holograms",
+    "version": "Custom Voting Experience!",
     "description": "Astral Alignment voting engine featuring spinning 3D crystal holograms, server-wide meteor strikes, geode minigames, and 40 craftable artifacts.",
     "banner": "./images/runeforgedvote-banner.png",
     "link": "/runeforgedvote",
@@ -78,13 +67,13 @@
   },
   {
     "id": "runeforgedcombat",
-    "title": "RuneForgedCombat",
+    "title": "RuneForgedRunes",
     "category": "plugins",
-    "categoryBadge": "Coming Soon",
-    "version": "In Development",
-    "description": "Next-gen competitive PvP & PvE combat enchantments engine with particle physics and combo chaining.",
-    "banner": "",
+    "categoryBadge": "Custom Minecraft Runes",
+    "version": "Private plugin!",
+    "description": "60 unique collectible runes with drag-and-drop mechanics, success rates, custom salvage menus, and permanent stat enchantments.",
+    "banner": "./images/banners/res_runeforgedcombat_banner.png",
     "link": "#",
-    "active": false
+    "active": true
   }
 ]

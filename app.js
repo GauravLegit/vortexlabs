@@ -132,6 +132,28 @@ document.addEventListener('DOMContentLoaded', () => {
         card.classList.add('hidden-card');
       }
     });
+
+    const resourcesGrid = document.getElementById('resources-grid');
+    let emptyState = document.getElementById('resources-empty-state');
+    if (count === 0 && resourcesGrid) {
+      if (!emptyState) {
+        emptyState = document.createElement('div');
+        emptyState.id = 'resources-empty-state';
+        emptyState.className = 'col-span-full py-14 px-6 text-center border border-dashed border-emerald-500/20 rounded-3xl bg-dark-950/70 backdrop-blur-md my-4 animate-fadeIn';
+        resourcesGrid.appendChild(emptyState);
+      }
+      emptyState.innerHTML = `
+        <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 mx-auto flex items-center justify-center mb-3 border border-emerald-500/25">
+          <i data-lucide="package-search" class="w-6 h-6"></i>
+        </div>
+        <h4 class="text-white font-bold text-base mb-1">No resources found in this category</h4>
+        <p class="text-zinc-400 text-xs max-w-sm mx-auto leading-relaxed">We are constantly crafting and releasing new setups, plugins, and configs. Check back soon or select another category above.</p>
+      `;
+      emptyState.style.display = 'block';
+    } else if (emptyState) {
+      emptyState.style.display = 'none';
+    }
+
     if (resourceCounter) {
       resourceCounter.textContent = `Showing ${count} resource${count === 1 ? '' : 's'}`;
     }
@@ -142,8 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const btns = document.querySelectorAll('.resource-tab-btn');
     btns.forEach(btn => {
       btn.onclick = () => {
-        btns.forEach(b => b.classList.remove('active'));
+        btns.forEach(b => {
+          b.classList.remove('active');
+          b.classList.add('text-zinc-300');
+        });
         btn.classList.add('active');
+        btn.classList.remove('text-zinc-300');
         filterResources(btn.getAttribute('data-filter') || 'all');
       };
     });
@@ -454,6 +480,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 10. Dynamic Data Fetch & Live Rendering (Connected to Admin Panel)
   async function initDynamicWebsite() {
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     // Helper to match captures for any resource
     function getCapturesForResource(res, capturesList) {
       if (!Array.isArray(capturesList) || !res) return [];
@@ -470,121 +506,126 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    // Fetch Gallery Captures first so resources know their showcase status
+    // Fetch Gallery Captures, Categories, and Resources concurrently in parallel
     let allCaptures = [];
+    let categoriesList = [];
+    let rawResources = [];
+
     try {
-      const gRes = await fetch('./gallery-data.json?v=' + Date.now());
-      if (gRes.ok) {
+      const [gRes, catRes, resRes] = await Promise.all([
+        fetch('./gallery-data.json?v=' + Date.now()).catch(() => null),
+        fetch('./categories-data.json?v=' + Date.now()).catch(() => null),
+        fetch('./resources-data.json?v=' + Date.now()).catch(() => null)
+      ]);
+
+      if (gRes && gRes.ok) {
         allCaptures = await gRes.json();
         if (!Array.isArray(allCaptures)) allCaptures = [];
       }
-    } catch (e) {
-      console.warn('Gallery sync error', e);
-    }
 
-    // Fetch Categories and render Dynamic Category Tabs
-    try {
-      const catRes = await fetch('./categories-data.json?v=' + Date.now());
-      if (catRes.ok) {
-        const categoriesList = await catRes.json();
-        if (Array.isArray(categoriesList) && categoriesList.length > 0) {
-          const filterTabsContainer = document.getElementById('resources-filter-tabs');
-          if (filterTabsContainer) {
-            const allBtn = `<button class="resource-tab-btn ${currentResourceCategory === 'all' ? 'active' : ''} px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-emerald-500/30 transition-all cursor-pointer" data-filter="all">All Resources</button>`;
-            const catBtns = categoriesList.map(c => `
-              <button class="resource-tab-btn ${currentResourceCategory === c.id.toLowerCase() ? 'active' : ''} px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-300 border border-emerald-500/20 transition-all cursor-pointer" data-filter="${c.id}">
-                ${c.name}
-              </button>
-            `).join('');
-            filterTabsContainer.innerHTML = allBtn + catBtns;
-            bindResourceFilterButtons();
-          }
-        }
+      if (catRes && catRes.ok) {
+        categoriesList = await catRes.json();
+        if (!Array.isArray(categoriesList)) categoriesList = [];
+      }
+
+      if (resRes && resRes.ok) {
+        rawResources = await resRes.json();
+        if (!Array.isArray(rawResources)) rawResources = [];
       }
     } catch (e) {
-      console.warn('Categories sync error', e);
+      console.warn('Dynamic data loading error', e);
+    }
+
+    // Render Dynamic Category Tabs
+    if (categoriesList.length > 0) {
+      const filterTabsContainer = document.getElementById('resources-filter-tabs');
+      if (filterTabsContainer) {
+        const allBtn = `<button class="resource-tab-btn ${currentResourceCategory === 'all' ? 'active' : ''} px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-emerald-500/30 transition-all cursor-pointer" data-filter="all">All Resources</button>`;
+        const catBtns = categoriesList.map(c => `
+          <button class="resource-tab-btn ${currentResourceCategory === c.id.toLowerCase() ? 'active' : ''} px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold border border-emerald-500/20 transition-all cursor-pointer" data-filter="${c.id}">
+            ${escapeHtml(c.name)}
+          </button>
+        `).join('');
+        filterTabsContainer.innerHTML = allBtn + catBtns;
+        bindResourceFilterButtons();
+      }
     }
 
     // A. Resources
     const resourcesGrid = document.getElementById('resources-grid');
-    if (resourcesGrid) {
+    if (resourcesGrid && rawResources.length > 0) {
       try {
-        const res = await fetch('./resources-data.json?v=' + Date.now());
-        if (res.ok) {
-          const rawResources = await res.json();
-          if (Array.isArray(rawResources) && rawResources.length > 0) {
-            // Sort: Available first (active !== false AND showcaseCount >= 1), Coming Soon at the bottom
-            const resources = [...rawResources].sort((a, b) => {
-              const capA = getCapturesForResource(a, allCaptures).length;
-              const isComingSoonA = (a.active === false || capA === 0);
+        // Sort: Available first (active !== false AND showcaseCount >= 1), Coming Soon at the bottom
+        const resources = [...rawResources].sort((a, b) => {
+          const capA = getCapturesForResource(a, allCaptures).length;
+          const isComingSoonA = (a.active === false || capA === 0);
 
-              const capB = getCapturesForResource(b, allCaptures).length;
-              const isComingSoonB = (b.active === false || capB === 0);
+          const capB = getCapturesForResource(b, allCaptures).length;
+          const isComingSoonB = (b.active === false || capB === 0);
 
-              if (!isComingSoonA && isComingSoonB) return -1;
-              if (isComingSoonA && !isComingSoonB) return 1;
-              return 0;
-            });
+          if (!isComingSoonA && isComingSoonB) return -1;
+          if (isComingSoonA && !isComingSoonB) return 1;
+          return 0;
+        });
 
-            resourcesGrid.innerHTML = resources.map(item => {
-              const captures = getCapturesForResource(item, allCaptures);
-              const showcaseCount = captures.length;
-              const isComingSoon = (item.active === false || showcaseCount === 0);
-              const hasShowcase = !isComingSoon && (showcaseCount >= 1);
+        resourcesGrid.innerHTML = resources.map(item => {
+          const captures = getCapturesForResource(item, allCaptures);
+          const showcaseCount = captures.length;
+          const isComingSoon = (item.active === false || showcaseCount === 0);
+          const hasShowcase = !isComingSoon && (showcaseCount >= 1);
 
-              // Compute showcase link:
-              // If dedicated static HTML link exists, use it.
-              // Otherwise link to the dynamic visual showcase archive for this resource.
-              let showcaseLink = `./gallery.html?cat=${encodeURIComponent(item.id)}`;
-              if (item.link && item.link !== '#' && !item.link.startsWith('#')) {
-                const clean = item.link.replace(/^\//, '');
-                showcaseLink = './' + (clean.endsWith('.html') ? clean : clean + '.html');
-              }
+          const matchedCat = categoriesList.find(c => c.id.toLowerCase() === (item.category || '').toLowerCase());
+          const displayBadge = matchedCat ? (matchedCat.badge || matchedCat.name) : (item.categoryBadge || item.category);
 
-              return `
-              <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="${item.category}">
-                <div>
-                  <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
-                    <img src="${item.banner || './images/runeforged-banner.png'}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
-                      ${item.categoryBadge || item.category}
-                    </span>
-                    ${isComingSoon ? `
-                    <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-950/90 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-[0_0_10px_rgba(16,185,129,0.25)]">
-                      Coming Soon
-                    </span>
-                    ` : ''}
-                  </div>
-                  <div class="p-6">
-                    <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
-                      ${item.title}
-                    </h3>
-                    <p class="text-zinc-400 text-sm leading-relaxed mb-6">
-                      ${item.description}
-                    </p>
-                  </div>
-                </div>
-                <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
-                  <span class="text-xs font-mono text-zinc-500">${item.version || 'v1.20+'}</span>
-                  ${hasShowcase ? `
-                  <a href="${showcaseLink}" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
-                    <span>View Showcase</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                  </a>
-                  ` : `
-                  <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/25">Coming Soon</span>
-                  `}
-                </div>
-              </div>
-            `;
-            }).join('');
-
-            filterResources(currentResourceCategory);
-            if (window.lucide) lucide.createIcons();
+          // Compute showcase link
+          let showcaseLink = `./gallery.html?cat=${encodeURIComponent(item.id)}`;
+          if (item.link && item.link !== '#' && !item.link.startsWith('#')) {
+            const clean = item.link.replace(/^\//, '');
+            showcaseLink = './' + (clean.endsWith('.html') ? clean : clean + '.html');
           }
-        }
+
+          return `
+          <div class="resource-card glass-panel rounded-3xl overflow-hidden neon-border flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 group" data-category="${item.category}">
+            <div>
+              <div class="h-48 overflow-hidden bg-dark-950 border-b border-emerald-500/15 relative">
+                <img src="${item.banner || './images/runeforged-banner.png'}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <span class="absolute top-3 left-3 px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 backdrop-blur-md">
+                  ${escapeHtml(displayBadge)}
+                </span>
+                ${isComingSoon ? `
+                <span class="absolute top-3 right-3 px-2.5 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-950/90 text-emerald-400 border border-emerald-500/40 backdrop-blur-md shadow-[0_0_10px_rgba(16,185,129,0.25)]">
+                  Coming Soon
+                </span>
+                ` : ''}
+              </div>
+              <div class="p-6">
+                <h3 class="font-display font-bold text-xl text-white mb-2 group-hover:text-emerald-400 transition-colors">
+                  ${escapeHtml(item.title)}
+                </h3>
+                <p class="text-zinc-400 text-sm leading-relaxed mb-6">
+                  ${escapeHtml(item.description)}
+                </p>
+              </div>
+            </div>
+            <div class="px-6 pb-6 pt-3 border-t border-emerald-500/10 flex items-center justify-between">
+              <span class="text-xs font-mono text-zinc-500">${escapeHtml(item.version || 'v1.20+')}</span>
+              ${hasShowcase ? `
+              <a href="${showcaseLink}" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors">
+                <span>View Showcase</span>
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+              </a>
+              ` : `
+              <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold text-emerald-400/90 bg-emerald-500/10 border border-emerald-500/25">Coming Soon</span>
+              `}
+            </div>
+          </div>
+        `;
+        }).join('');
+
+        filterResources(currentResourceCategory);
+        if (window.lucide) lucide.createIcons();
       } catch (e) {
-        console.warn('Fallback to static resources');
+        console.warn('Fallback to static resources', e);
       }
     }
 
